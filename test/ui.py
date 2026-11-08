@@ -1,0 +1,57 @@
+"""ステージ以外の 画面を ぜんぶ ひらいて チェック"""
+from pw import *
+OUT = ROOT/'test/shots/ui'; OUT.mkdir(parents=True, exist_ok=True)
+def full_save(pg, certs=True):
+    pg.evaluate("""(c)=>{SAVE.name='やまだ はなこさ';STAGES.forEach(s=>SAVE.clear[s.id]=true);STAGES.slice(0,20).forEach(s=>SAVE.mclear[s.id+':0']=true);
+      SAVE.certs=c?[3,2,1,'m',3,2,1,3,2,1,'m',3].map((g,i)=>({g:g,date:'2026-11-'+String(1+i).padStart(2,'0'),miss:i%3,time:200+i*13,name:'やまだ はなこさ'})):[];store();}""", certs)
+with sync_playwright() as p:
+    b, pg = launch(p)
+    openapp(pg, {'name':'','method':'','clear':{},'mclear':{},'certs':[],'sound':False})
+    def shot(n, wait=1300):
+        pg.wait_for_timeout(wait); pg.screenshot(path=str(OUT/(n+'.png'))); r = check(pg); print(n, 'OK' if not r else r)
+    shot('name_hello')
+    pg.evaluate("document.querySelectorAll('.step')[2].click()"); shot('name_kana')
+    for t in ['な','つ','き']: pg.evaluate("t=>[...document.querySelectorAll('.kbtn')].find(b=>b.textContent===t).click()", t)
+    pg.evaluate("[...document.querySelectorAll('.btn')].find(b=>b.textContent==='は〜ん').click()"); shot('name_kana2', 400)
+    pg.evaluate("[...document.querySelectorAll('.btn')].find(b=>b.textContent==='カタカナ').click()"); shot('name_kana3', 400)
+    pg.evaluate("[...document.querySelectorAll('.btn')].find(b=>b.textContent==='けってい').click()"); shot('name_confirm')
+    print('name typed:', pg.evaluate("document.querySelector('.bubble .bt').textContent"))
+    pg.evaluate("go(scrTitle)"); shot('title')
+    pg.evaluate("go(scrHome)"); shot('home_new')
+    full_save(pg); pg.evaluate("go(scrHome)"); shot('home_master')
+    pg.evaluate("go(scrSelect,3,0)"); shot('select3')
+    pg.evaluate("go(scrSelect,2,0)"); shot('select2')
+    pg.evaluate("go(scrSelect,1,0)"); shot('select1')
+    pg.evaluate("go(scrSelect,'m',0)"); shot('selectm')
+    pg.evaluate("go(scrSelect,'m',5)"); shot('selectm5')
+    pg.evaluate("go(scrExamIntro,3)"); shot('intro3')
+    pg.evaluate("go(scrExamIntro,'m')"); shot('introm')
+    pg.evaluate("go(scrResult,{g:2,pass:true,miss:1,time:333,missBy:{}})"); shot('result_pass', 2600)
+    shot('result_cert', 1800)
+    pg.evaluate("closeOverlay();go(scrResult,{g:1,pass:false,miss:3,time:333,missBy:{replace:2,share:1,history:1,typing:1}})"); shot('result_fail', 2600)
+    pg.evaluate("showCert(SAVE.certs.find(c=>c.g===3))"); shot('cert3', 600)
+    pg.evaluate("showCert(SAVE.certs.find(c=>c.g===2))"); shot('cert2', 600)
+    pg.evaluate("showCert(SAVE.certs.find(c=>c.g===1))"); shot('cert1', 600)
+    pg.evaluate("showCert(SAVE.certs.find(c=>c.g==='m'))"); shot('certm', 600)
+    pg.evaluate("closeOverlay();go(scrSettings)"); shot('settings')
+    pg.evaluate("go(scrCerts,0)"); shot('certs0')
+    pg.evaluate("go(scrCerts,1)"); shot('certs1')
+    for i in range(6): pg.evaluate("i=>go(scrTeacher,i)", i); shot('teacher%d'%i)
+    pg.evaluate("ask('しけんを やめて いい？\\nきろくは のこらないよ。','やめる','つづける',()=>{})"); shot('ask', 500)
+    pg.evaluate("closeOverlay();go(scrPlay,{mode:'prac',g:3,list:[{st:stageById('click'),v:'p'}]})"); pg.wait_for_timeout(1300)
+    pg.evaluate("closeOverlay()"); pg.wait_for_timeout(300)
+    for i in range(5): pg.evaluate("document.querySelector('#area .tgt').click()"); pg.wait_for_timeout(150)
+    shot('clear_dialog', 2200)
+    # しけんの ミス
+    pg.evaluate("closeOverlay();go(scrPlay,{mode:'exam',g:3,list:[{st:stageById('click'),v:0},{st:stageById('dbl'),v:0}]})"); pg.wait_for_timeout(1300)
+    t = pg.query_selector('#area .tgt'); bb = t.bounding_box(); pg.mouse.click(bb['x']+bb['width']/2,bb['y']+bb['height']/2,button='right'); shot('exam_miss', 300)
+    shot('exam_reset', 1500)
+    pg.evaluate("document.querySelector('.wctl.close').click()"); shot('exam_quit', 600)
+    # タイトルの ヒント
+    pg.evaluate("closeOverlay();go(scrTitle)"); pg.wait_for_timeout(1000); pg.click('.dicon'); shot('title_hint', 2600)
+    pg.dblclick('.dicon'); shot('home_after_dbl', 1500)
+    # 豆知識 すべて 2行に おさまるか
+    over = pg.evaluate("""()=>{const b=makeBubble(document.getElementById('scr'),856,100,400,156,'down');const bad=[];
+      [TIPS_FIRST].concat(TIPS).forEach(t=>t.split('|').forEach(pg=>{b.set(pg);const e=b.el.querySelector('.bt');const lh=parseFloat(getComputedStyle(e).lineHeight);if(e.scrollHeight>lh*2+2||e.scrollWidth>e.clientWidth+1)bad.push(pg);}));b.el.remove();return bad;}""")
+    print('TIPS over 2 lines:', over)
+    b.close()
