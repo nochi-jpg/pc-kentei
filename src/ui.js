@@ -136,20 +136,25 @@ function scrSelect(s,g,page){const G=GR[g];
    el('div','sno',String(i+1),b);el('div','sic',st.icon||'',b);el('div','snm',st.title,b);if(SAVE.clear[st.id])el('div','clr',IC.check,b);
    b.addEventListener('click',()=>{se('decide');go(scrPlay,{mode:'prac',g:g,list:[{st:st,v:'p'}]});});return b;});
   stag(items);}
- else{const all=[];[3,2,1].forEach(x=>stagesOf(x).forEach(st=>all.push(st)));const per=5,np=Math.ceil(all.length/per);page=Math.max(0,Math.min(np-1,page||0));
-  const items=all.slice(page*per,page*per+per).map((st,i)=>{const r=el('div','mrow',null,body);r.style.top=(20+i*88)+'px';
+ else{const all=[];[3,2,1].forEach(x=>stagesOf(x).forEach(st=>all.push(st)));
+  const VH=500,PITCH=88;const vp=pos(el('div','abs',null,body),0,0,1240,VH);vp.style.overflow='hidden';vp.dataset.clip='1';
+  const C=pos(el('div','abs',null,vp),0,0,1240,20+all.length*PITCH);
+  all.forEach((st,i)=>{const r=el('div','mrow',null,C);r.style.top=(20+i*PITCH)+'px';r.style.width='1164px';
    el('div','badge '+GR[st.g].cls,GR[st.g].label,r).style.cssText='width:56px;height:56px;font-size:17px;-webkit-text-stroke:4px #10264d';
    el('div','mn',st.title,r);
    [0,1,2].forEach(v=>{const k=st.id+':'+v,b=el('button','btn sm'+(SAVE.mclear[k]?' done':''),(SAVE.mclear[k]?IC.check.replace('viewBox','width="26" height="26" viewBox'):'')+'もんだい '+(v+1),r);
-    b.addEventListener('click',()=>{se('decide');go(scrPlay,{mode:'mprac',g:'m',page:page,list:[{st:st,v:v}]});});});return r;});
-  const pg=el('div','pager',null,body);pos(pg,380,452);
-  const bp=el('button','btn sm','まえへ',pg),pn=el('div','pn',(page+1)+' / '+np,pg),bn=el('button','btn sm','つぎへ',pg);
-  if(page===0)bp.disabled=true;if(page>=np-1)bn.disabled=true;
-  bp.addEventListener('click',()=>{se('cursor');go(scrSelect,'m',page-1);});bn.addEventListener('click',()=>{se('cursor');go(scrSelect,'m',page+1);});
-  stag(items.concat([pg]));}}
+    b.addEventListener('click',()=>{se('decide');go(scrPlay,{mode:'mprac',g:'m',page:off,list:[{st:st,v:v}]});});});});
+  const trk=pos(el('div','mtrk',null,body),1206,12,22,VH-24),th=el('div','mthm',null,trk);
+  let off=Math.max(0,page||0);const max=20+all.length*PITCH+12-VH;const TH=Math.max(60,(VH-24)*VH/(VH+max));th.style.height=TH+'px';
+  const upd=()=>{off=Math.max(0,Math.min(max,off));C.style.transform='translateY('+(-off)+'px)';th.style.top=(off/max*(VH-24-TH))+'px';};upd();
+  s.on(vp,'wheel',e=>{e.preventDefault();if(e.ctrlKey)return;off+=e.deltaY*(e.deltaMode===1?32:1);upd();},{passive:false});
+  let dg=null;s.on(th,'pointerdown',e=>{e.preventDefault();try{th.setPointerCapture(e.pointerId);}catch(_){}dg={y:e.clientY,o:off};});
+  s.on(th,'pointermove',e=>{if(!dg)return;off=dg.o+(e.clientY-dg.y)/S*max/(VH-24-TH);upd();});
+  s.on(th,'pointerup',()=>{dg=null;});
+  stag([vp]);}}
 
 /* ---------- しけんの前 ---------- */
-function scrExamIntro(s,g){const G=GR[g];const n=g==='m'?STAGES.length*3:stagesOf(g).length;
+function scrExamIntro(s,g){const G=GR[g];const n=g==='m'?stagesOf(3).length+stagesOf(2).length+stagesOf(1).length*2:stagesOf(g).length;
  const R=winEl(s.el,150,24,980,616,G.label+'　しけん',()=>go(scrHome));const B=R.body;
  const P=makePasota(s,B,40,70,300,{still:true});P.face('cheer');
  el('div','abs h2',G.label+' の しけん',B).style.cssText+=';left:380px;top:34px;font-size:34px';
@@ -162,7 +167,7 @@ function scrExamIntro(s,g){const G=GR[g];const n=g==='m'?STAGES.length*3:stagesO
  bs.addEventListener('click',()=>{se('decide');startExam(g);});bb.addEventListener('click',()=>{se('cursor');go(scrHome);});
  stag(ls.concat([hr,bs,bb]));}
 function startExam(g){let list;
- if(g==='m'){list=[];STAGES.forEach(st=>[0,1,2].forEach(v=>list.push({st:st,v:v})));shuffle(list);}
+ if(g==='m'){list=[];STAGES.forEach(st=>{const vs=shuffle([0,1,2]).slice(0,st.g===1?2:1);vs.forEach(v=>list.push({st:st,v:v}));});shuffle(list);}
  else list=stagesOf(g).map(st=>({st:st,v:Math.random()*3|0}));
  go(scrPlay,{mode:'exam',g:g,list:list});}
 
@@ -218,10 +223,14 @@ function scrSettings(s){const R=winEl(s.el,16,12,1248,636,'せってい',()=>go(
  const r3=row(200,'にんていしょう');el('div','v',null,r3).textContent=SAVE.certs.length+'まい';el('button','btn','見る',r3).addEventListener('click',()=>{se('decide');go(scrCerts,0);});
  const r4=row(288,'先生へ');const v4=el('div','v',null,r4);v4.textContent='計画表との たいおう・トラックパッドの せってい';v4.style.cssText+=';font-size:17px;color:#4d6290';
  el('button','btn','ひらく',r4).addEventListener('click',()=>{se('decide');go(scrTeacher,0);});
- const r5=row(376,'きろくを ぜんぶ けす');const v5=el('div','v',null,r5);v5.textContent='つぎの 年の 人に わたすとき';v5.style.cssText+=';font-size:17px;color:#4d6290';
+ const r5=row(376,'きろくを ぜんぶ けす');el('div','v',null,r5);
  el('button','btn r','けす',r5).addEventListener('click',()=>{ask('ぜんぶの きろくを けして いい？\n（なまえ・れんしゅう・にんていしょう）','けす','やめる',ok=>{if(!ok)return;
    ask('ほんとうに けすよ？\nもとに もどせないよ。','けす','やめる',ok2=>{if(!ok2)return;SAVE=defSave();store();tipFirstShown=false;go(scrName);});});});
- const ft=pos(el('div','abs',null,B),900,524,320);ft.style.cssText+=';text-align:right;font-size:14px;color:#4d6290';ft.textContent='作った人：K.nom';
+ const ft=pos(el('div','abs',null,B),900,524,320);ft.style.cssText+=';text-align:right;font-size:14px;color:#4d6290;cursor:default';ft.textContent='作った人：K.nom';
+ let dbg=0;ft.addEventListener('click',()=>{dbg++;if(dbg<20)return;dbg=0;
+  STAGES.forEach(st=>{SAVE.clear[st.id]=true;[0,1,2].forEach(v=>{SAVE.mclear[st.id+':'+v]=true;});});
+  [3,2,1,'m'].forEach(g=>{if(!passed(g))SAVE.certs.push({g:g,date:today(),miss:0,time:0,name:SAVE.name});});SAVE.susp=null;store();updTask();se('finish');
+  ask('デバッグモード：\nぜんぶの 級を 合格に して、ぜんぶ ひらいたよ。','OK','とじる',()=>go(scrSettings),'happy');});
  stag(rows);}
 
 function scrCerts(s,page){const R=winEl(s.el,16,12,1248,636,'にんていしょう',()=>go(scrSettings));const B=R.body;
@@ -240,7 +249,7 @@ function scrCerts(s,page){const R=winEl(s.el,16,12,1248,636,'にんていしょ�
 function teacherPages(){const tb=g=>'<table><tr><th style="width:60px">No.</th><th style="width:260px">ステージ（技能）</th><th>れんしゅうの内容</th></tr>'+
   stagesOf(g).map((st,i)=>'<tr><td>'+(i+1)+'</td><td>'+st.title+'</td><td>'+(st.desc||'')+'</td></tr>').join('')+'</table>';
  return[
- '<h3>このアプリについて</h3><ul><li>勤務校の「情報活用能力の計画（基本的操作）」にある操作を、どのアプリにも共通する形で練習します。</li><li>STEP1（1・2年）＝3級、STEP2（3・4年）＝2級、STEP3（5・6年）＝1級。学年はめやすで、どの級の練習もできます。</li><li>試験はその級の練習をすべてクリアすると受けられます（飛び級なし）。各技能3パターンからランダムに出題し、ハート3つ（ミス2回まで）で合格です。</li><li>1級に合格すると「マスター」（全81問）が出現します。</li><li>タスクバー右はしの小さな文字は進行度です（クリア数/練習数、合格した級にメダル）。</li></ul>',
+ '<h3>このアプリについて</h3><ul><li>勤務校の「情報活用能力の計画（基本的操作）」にある操作を、どのアプリにも共通する形で練習します。</li><li>STEP1（1・2年）＝3級、STEP2（3・4年）＝2級、STEP3（5・6年）＝1級。学年はめやすで、どの級の練習もできます。</li><li>試験はその級の練習をすべてクリアすると受けられます（飛び級なし）。各技能3パターンからランダムに出題し、ハート3つ（ミス2回まで）で合格です。</li><li>1級に合格すると「マスター」が出現します。練習では全81問を選べます。試験は3級・2級の各技能から1問、1級の各技能から2問（計35問）をランダムに出題します。</li><li>タスクバー右はしの小さな文字は進行度です（クリア数/練習数、合格した級にメダル）。</li></ul>',
  '<h3>計画表との対応　3級（STEP1・1〜2年めやす）</h3>'+tb(3),
  '<h3>計画表との対応　2級（STEP2・3〜4年めやす）</h3>'+tb(2),
  '<h3>計画表との対応　1級（STEP3・5〜6年めやす）</h3>'+tb(1),

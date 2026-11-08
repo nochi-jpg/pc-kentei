@@ -38,6 +38,15 @@ for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++){const A=items[i
   out.push('かぶり: '+name(A).slice(0,40)+' × '+name(B).slice(0,40));}}
 // 5) スクロールバー
 for(const e of all){const cs=getComputedStyle(e);if((cs.overflowY==='auto'||cs.overflowY==='scroll'||cs.overflowX==='auto'||cs.overflowX==='scroll')&&!e.closest('[data-scrollok]'))out.push('スクロール: '+name(e));}
+// 6) スクロールする 入れもの（data-clip）から はみでて 見えていないか
+for(const c of app.querySelectorAll('[data-clip]')){if(!vis(c))continue;const cs=getComputedStyle(c);if(cs.overflow==='hidden'||cs.overflowX==='hidden')continue;const R=c.getBoundingClientRect();
+ for(const e of c.querySelectorAll('*')){if(!vis(e))continue;const r=e.getBoundingClientRect();if(r.left<R.left-1||r.top<R.top-1||r.right>R.right+1||r.bottom>R.bottom+1){out.push('スクロールで はみでる: '+name(e).slice(0,40));break;}}}
+// 7) ふりがな の ない 漢字
+{const w=document.createTreeWalker(app,NodeFilter.SHOW_TEXT);let n;const miss=new Set();while(n=w.nextNode()){const p=n.parentNode;if(!p||!vis(p))continue;if(p.closest('ruby,input,textarea,svg,.noruby,.sel-box'))continue;const m=n.nodeValue.match(/[\u4e00-\u9fff々]+/g);if(m)m.forEach(x=>miss.add(x));}
+ if(miss.size)out.push('ふりがな なし: '+[...miss].join(' '));}
+// 8) ふりがな が 入れものや 画面から 出ていないか（rt）
+for(const rt of app.querySelectorAll('rt')){if(!vis(rt)||rt.closest('[data-clip]'))continue;const r=rt.getBoundingClientRect();if(r.top<AR.top-1){out.push('ふりがな 切れ: '+name(rt.parentNode));continue;}
+ let p=rt.parentNode.parentElement;while(p&&p!==app){const cs=getComputedStyle(p);if(cs.overflow==='hidden'||cs.overflowY==='hidden'){const R=p.getBoundingClientRect();if(r.top<R.top-1||r.bottom>R.bottom+1){if(!p.closest('[data-clip]'))out.push('ふりがな はみでる: '+name(rt.parentNode)+' in '+name(p).slice(0,30));}break;}p=p.parentElement;}}
 return [...new Set(out)];
 })()
 """

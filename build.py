@@ -9,7 +9,7 @@ for f in ['normal','blink','happy','trouble','cheer']:
 for f in sorted((R/'assets/se').glob('*.mp3')):
     asset['se'][f.stem] = b64(f, 'audio/mpeg')
 css = (R/'src/style.css').read_text(encoding='utf-8')
-order = ['tips','core','ui','play','stages3','stages2','stages1','boot']
+order = ['tips','core','furidict','furi','ui','play','stages3','stages2','stages1','boot']
 js = '\n'.join((R/'src'/(n+'.js')).read_text(encoding='utf-8') for n in order if (R/'src'/(n+'.js')).exists())
 html = ('<!DOCTYPE html>\n<html lang="ja">\n<head>\n<meta charset="utf-8">\n'
  '<meta name="viewport" content="width=device-width,initial-scale=1">\n'

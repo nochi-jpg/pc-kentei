@@ -3,7 +3,7 @@
    ========================================================= */
 function padSVG(g){
  const f=(x,y,c)=>'<g class="'+c+'"><circle cx="'+x+'" cy="'+y+'" r="22" class="fg"/></g>';
- const L=[62,247],Rr=[252,247];let fs='',hl='';
+ const L=[62,247],Rr=[362,247];let fs='',hl='';
  const zone=(x)=>'<rect x="'+x+'" y="214" width="190" height="66" fill="#ffd23f" opacity=".55" clip-path="url(#pclip)"/>';
  if(g==='tap1'){hl=zone(20);fs=f(L[0],L[1],'a-tap');}
  else if(g==='dbl'){hl=zone(20);fs=f(L[0],L[1],'a-dbl');}
@@ -13,7 +13,7 @@ function padSVG(g){
  else if(g==='scroll')fs='<g class="a-scroll">'+f(184,120,'')+f(238,120,'')+'</g>';
  else if(g==='scrollx')fs='<g class="a-scrollx">'+f(184,120,'')+f(238,120,'')+'</g>';
  else if(g==='pinch')fs='<g class="a-pinL">'+f(186,130,'')+'</g><g class="a-pinR">'+f(234,100,'')+'</g>';
- return '<svg class="pad" viewBox="0 0 420 300" width="400" height="286"><defs><clipPath id="pclip"><rect x="20" y="20" width="380" height="260" rx="22"/></clipPath></defs><rect x="20" y="20" width="380" height="260" rx="22" class="pd"/>'+hl+'<line x1="20" y1="214" x2="400" y2="214" class="pl"/><line x1="210" y1="214" x2="210" y2="280" class="pl"/><text x="145" y="254" class="pt">左クリック</text><text x="335" y="254" class="pt">右クリック</text>'+fs+'</svg>';}
+ return '<svg class="pad" viewBox="0 0 420 300" width="400" height="286"><defs><clipPath id="pclip"><rect x="20" y="20" width="380" height="260" rx="22"/></clipPath></defs><rect x="20" y="20" width="380" height="260" rx="22" class="pd"/>'+hl+'<line x1="20" y1="214" x2="400" y2="214" class="pl"/><line x1="210" y1="214" x2="210" y2="280" class="pl"/><text x="140" y="254" class="pt">左クリック</text><text x="280" y="254" class="pt">右クリック</text>'+fs+'</svg>';}
 function keysFig(rows){return '<div class="keyfig">'+rows.map(r=>{const k=r.slice(0,-1),l=r[r.length-1];return '<div class="keyrow">'+k.map(x=>'<span class="key">'+x+'</span>').join('<span>+</span>')+'<span class="kl">'+l+'</span></div>';}).join('')+'</div>';}
 
 function showHow(st,first,cb){const o=overlay();const h=st.how;const d=el('div','dlgbox howbox popin',null,o);d.style.position='absolute';
@@ -69,13 +69,15 @@ function scrPlay(s,cfg){const mode=cfg.mode;const exam=mode==='exam',soft=mode!=
  const elapsed=()=>base+(Date.now()-t0)/1000;
  const G=GR[cfg.g];
  function saveSusp(){if(!exam||!s.alive)return;SAVE.susp={g:cfg.g,list:list.map(x=>({id:x.st.id,v:x.v})),idx:idx,hearts:hearts,miss:miss,missBy:missBy,elapsed:Math.round(elapsed()),typeLeft:typeLeft};store();}
- const suspend=()=>{ask('しけんを いったん ちゅうだんする？\nつぎに タイトルの「はじめる」を おすと、つづきから できるよ。','ちゅうだんする','つづける',ok=>{if(ok){saveSusp();leaveGuard=null;go(scrHome);}},'normal');};
+ const suspend=()=>{ask('しけんを いったん ちゅうだんする？\nつぎに タイトルの「はじめる」を おすと、つづきから できるよ。','ちゅうだんする','つづける',ok=>{if(ok){saveSusp();leaveGuard=null;go(scrTitle);}},'normal');};
  const askQuit=(fn)=>{ask('れんしゅうを やめて もどる？\nこの ステージは はじめから に なるよ。','もどる','つづける',ok=>{if(ok){leaveGuard=null;fn();}},'normal');};
  const close=()=>{if(mode==='mprac')go(scrSelect,'m',cfg.page||0);else if(!exam)go(scrSelect,list[0].st.g,0);else go(scrHome);};
  const R=winEl(s.el,16,12,1248,636,'',close);const B=R.body;B.style.background='#f7faff';
  if(exam){const sb=el('button','btn sm y',null,null);sb.textContent='ちゅうだん';sb.style.cssText+=';width:130px;height:34px;font-size:16px;border-width:3px;border-radius:8px;box-shadow:none';R.bar.insertBefore(sb,R.bar.children[2]);sb.addEventListener('click',()=>{se('cursor');suspend();});}
  const strip=el('div','tstrip',null,R.W);const ttext=el('div','ttext',null,strip);
+ const rsB=el('button','btn sm','やりなおす',strip);rsB.style.width='150px';
  const howB=el('button','btn sm','やり方を 見る',strip);howB.style.width='170px';
+ rsB.addEventListener('click',()=>{if(!ctx||ctx.fin||ctx.locked)return;se('cursor');load(false);});
  const tprog=el('div','tprog','',strip);
  const hr=el('div','hearts',null,strip);
  const area=el('div',null,null,R.W);area.id='area';

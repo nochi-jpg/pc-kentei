@@ -23,13 +23,13 @@ function words(s){return nsp(s.replace(/　/g,' ')).split(' ').filter(Boolean);}
 /* 11 文字入力 */
 STAGES.push({id:'input',g:2,title:'文字入力',icon:ICO.input,desc:'ひらがな・カタカナ・数字・英字を「半角/全角」キーで切りかえて入力する。',
  how:{keys:[['半角/全角','きりかえ'],['Shift','A','大文字'],['スペース','へんかん'],['Enter','かくてい']],cap:'キーボード',lines:['「半角/全角」キーで 日本語と 英数字を きりかえる','ひらがなは ローマ字で うって Enter で かくてい','カタカナは スペースで へんかん。大文字は Shift']},
- build(a,v){const Q=v==='p'?[['がっこう','k'],['2026','n'],['abc','a']]:v===0?[['さんすう 25ページ','m']]:v===1?[['サッカー','c'],['コンピューター','c']]:[['ABC','a'],['Tokyo','a']];
-  a.task(v==='p'?'お題と 同じに なるように 入力しよう':'お題と 同じに 入力して「けってい」を おそう');
+ build(a,v){const Q=v==='p'?[['がっこう','k'],['2026','n'],['abc','a']]:v===0?[['さんすう25ページ','m']]:v===1?[['サッカー','c'],['コンピューター','c']]:[['ABC','a'],['Tokyo','a']];
+  a.task((v==='p'?'お題と 同じに なるように 入力しよう':'お題と 同じに 入力して「けってい」を おそう')+'（数字は 半角に してね）');
   let n=0;a.prog(0,Q.length);const rows=[],marks=[],ok=[];const y0=v==='p'?24:60;
   Q.forEach((q,i)=>{const r=pos(el('div','abs',null,a.area),120,y0+i*112,980,70);r.style.cssText+=';display:flex;align-items:center;gap:24px';
    const qb=el('div','qbox',null,r);qb.textContent=q[0];qb.style.width='340px';el('div','lbl','→',r);
    const ip=el('input','inp'+(a.exam?'':' allowctx'),null,r);ip.style.width='400px';ip.setAttribute('autocomplete','off');ip.setAttribute('spellcheck','false');ip.setAttribute('aria-label','お題 '+(i+1));
-   const mk=el('div','mark','まだ',r);rows.push(ip);marks.push(mk);ok.push(false);
+   const mk=el('div','mark','まだ',r);if(v!=='p')mk.style.visibility='hidden';rows.push(ip);marks.push(mk);ok.push(false);
    const norm=s=>s.replace(/　/g,' ').replace(/\s+/g,' ').trim();
    if(v==='p'){let comp=false;const chk=()=>{if(ok[i]||comp)return;const val=ip.value;
      if(val===q[0]){ok[i]=true;mk.textContent='OK';mk.classList.add('ok');ip.readOnly=true;n++;a.prog(n,Q.length);if(n>=Q.length)a.done();else{a.good('OK！ つぎへ');rows[i+1].focus();}return;}
@@ -38,12 +38,11 @@ STAGES.push({id:'input',g:2,title:'文字入力',icon:ICO.input,desc:'ひらが�
      if(q[1]!=='k'&&/[ぁ-ん]/.test(val)){a.info('ひらがなに なったよ。「半角/全角」キーで「A」に しよう');return;}
      if(q[1]==='k'&&/[一-龠ァ-ヶ]/.test(val))a.info('へんかん しないで、ひらがなの まま Enter');};
     a.on(ip,'compositionstart',()=>{comp=true;});a.on(ip,'compositionend',()=>{comp=false;setTimeout(chk,0);});a.on(ip,'input',chk);}
-   else a.on(ip,'input',()=>{mk.textContent=ip.value?'入力中':'まだ';mk.classList.remove('ok');});
    ip._norm=norm;});
   if(v!=='p'){const b=pos(el('button','btn y abs','けってい',a.area),540,y0+Q.length*112+10,400,56);
    a.on(b,'click',()=>{if(rows.some(r=>!r.value.trim())){a.info('ぜんぶ 入力しよう');return;}
     const bad=Q.findIndex((q,i)=>rows[i]._norm(rows[i].value)!==q[0]);
-    if(bad>=0){a.miss('お題と ちがう ところが あるよ');return;}Q.forEach((q,i)=>{marks[i].textContent='OK';marks[i].classList.add('ok');});a.prog(Q.length,Q.length);a.done();});}
+    if(bad>=0){a.miss('お題と ちがう ところが あるよ');return;}Q.forEach((q,i)=>{marks[i].textContent='OK';marks[i].classList.add('ok');marks[i].style.visibility='';});a.prog(Q.length,Q.length);a.done();});}
   a.start=()=>rows[0].focus();}});
 
 /* 12 文字をえらぶ */
@@ -134,7 +133,7 @@ STAGES.push({id:'cut',g:2,title:'切り取り＆はりつけ',icon:ICO.cut,desc:
 
 /* 15 元に戻す */
 STAGES.push({id:'undo',g:2,title:'元に戻す',icon:ICO.undo,desc:'まちがえたときは Ctrl+Z でひとつ前に戻す。Ctrl+Y でやり直し。',
- how:{keys:[['Ctrl','Z','元に戻す'],['Ctrl','Y','やり直し']],cap:'ボタンでも できる（しけんは キーだけ）',lines:['まちがえて けしても あわてない','Ctrl + Z で ひとつ前に もどる','くりかえし おすと、どんどん もどる']},
+ how:{keys:[['Ctrl','Z','元に戻す'],['Ctrl','Y','やり直し']],cap:'Ctrl を おしたまま Z',lines:['まちがえて けしても あわてない','Ctrl を おしたまま Z で ひとつ前に もどる','くりかえし おすと、どんどん もどる。もどしすぎたら Ctrl + Y']},
  build(a,v){const A=a.area;
   if(v===2){a.prog(0,1);a.task('文が けされちゃった！ Ctrl + Z で もどそう');const W=sw(A,212,8,800,420,'さくぶん - ワープロ');
    const S2=['はじめて キャンプに 行きました。','よるは ほしが たくさん 見えました。','また 行きたいです。'];
@@ -145,7 +144,7 @@ STAGES.push({id:'undo',g:2,title:'元に戻す',icon:ICO.undo,desc:'まちがえ
     else if(e.ctrlKey&&e.code==='KeyY'){e.preventDefault();}});
    return;}
   const W=sw(A,v===1?60:312,8,600,420,'ブロック');const B=W.body;
-  let bu=null,br=null;if(!a.exam){const bar=pos(el('div','abs',null,B),12,8,560,40);bar.style.cssText+=';display:flex;gap:10px';bu=el('button','tb',IC.undo+'元に戻す',bar);br=el('button','tb',IC.redo+'やり直し',bar);}
+  let bu=null,br=null;
   const cols=['#ff6b6b','#ff9f43','#ffd23f','#36c96f','#3fa9ff','#9b6bff'];const BK=[];
   for(let i=0;i<15;i++){const b=pos(el('div','blk',null,B),46+(i%5)*100,62+Math.floor(i/5)*100);b.style.background=cols[(i+Math.floor(i/5))%6];BK.push(b);}
   const del=shuffle([...Array(15).keys()]).slice(0,3);const stack=[],red=[];let ready=false;
@@ -162,7 +161,7 @@ STAGES.push({id:'undo',g:2,title:'元に戻す',icon:ICO.undo,desc:'まちがえ
    return;}
   a.prog(0,3);a.task('あっ、ブロックが けされた！ 元に戻すで ぜんぶ もどそう');
   const cnt=()=>a.prog(3-stack.length,3);
-  a.start=()=>{del.forEach((k,j)=>a.later(()=>{stack.push(k);apply();if(j===2){ready=true;a.info(a.exam?'':'Ctrl + Z か「元に戻す」ボタンで もどそう');}},500+j*600));};
+  a.start=()=>{del.forEach((k,j)=>a.later(()=>{stack.push(k);apply();if(j===2){ready=true;a.info('Ctrl + Z で もどそう');}},500+j*600));};
   const undo=()=>{if(!ready){a.info('まだ けされて いるよ。ちょっと まってね');return;}if(!stack.length){a.miss('もう もどすものは ないよ');return;}
    red.push(stack.pop());apply();cnt();if(!stack.length)a.done();else a.good('もどった！ あと '+stack.length+'こ');};
   const redo=()=>{if(!red.length){a.info('やり直す ものは ないよ');return;}stack.push(red.pop());apply();cnt();a.info('やり直しで また けしたよ。元に戻そう');};
@@ -204,7 +203,7 @@ STAGES.push({id:'folder',g:2,title:'フォルダーに せいり',icon:ICO.folde
 STAGES.push({id:'save',g:2,title:'名前を付けて保存',icon:ICO.save,desc:'わかりやすい名前をつけて、決められた場所に保存する（Ctrl+S）。',
  how:{keys:[['Ctrl','S','保存']],cap:'メニューでも できる（しけんは キーだけ）',lines:['Ctrl + S か「ファイル」→「名前を付けて保存」','左の 一らんで 保存する ばしょを えらぶ','ファイル名を 入力して「保存」']},
  build(a,v){const A=a.area;const want=v===1?{f:'4年',name:'しょくぶつのかんさつ',path:'りか ＞ 4年'}:v===2?{f:'しゃかい',name:'ごみのゆくえ2'}:{f:'しゃかい',name:'ごみのゆくえ'};
-  a.task(v===1?'「りか」の 中の「4年」フォルダーに「しょくぶつのかんさつ」で 保存しよう':v===2?'「しゃかい」に 同じ 名前が もう あるよ。上書き しないで、名前の うしろに「2」を つけて 保存しよう':'「しゃかい」フォルダーに「ごみのゆくえ」という 名前で 保存しよう');
+  a.task(v===1?'「りか」の 中の「4年」フォルダーに「しょくぶつのかんさつ」で 保存しよう':v===2?'「しゃかい」に 同じ 名前が もう あるよ。上書き しないで、名前の うしろに「2」を つけて 保存しよう（数字は 半角に してね）':'「しゃかい」フォルダーに「ごみのゆくえ」という 名前で 保存しよう');
   const W=sw(A,112,4,1000,428,'ワープロ ー 無題');const bar=W.bar;
   let fb=null;if(!a.exam){fb=el('button','tb','ファイル',bar);bar.insertBefore(fb,bar.firstChild);}
   const body=pos(el('div','abs doc',null,W.body),20,10,940);
@@ -249,15 +248,15 @@ STAGES.push({id:'search2',g:2,title:'2つの ことばで 検索',icon:ICO.searc
    0:{main:'ねこ',need:[['ねこ'],['しいく']],ok:'ねこの しいくの しかた',many:['ねこの しゃしん','ねこの まんが','ねこの なきごえ']},
    1:{main:'かぶとむし',need:[['かぶとむし'],['そだてかた','そだて方','育てかた','育て方']],ok:'かぶとむしの そだてかた',many:['かぶとむしの ずかん','かぶとむし ゲーム','かぶとむしの しゃしん']},
    2:{main:'ごみ',need:[['ごみ'],['りさいくる'],['ほうほう','方法']],ok:'ごみの リサイクルの ほうほう',many:['ごみの 日','ごみばこの えらびかた','ごみ しゅうしゅう車']}}[v];
-  a.task(v==='p'?'まず「いぬ」で 検索してみよう':v===0?'「ねこ」と「しいく」の 2つの ことばで 検索して、あう けっかを えらぼう':v===1?'かぶとむしの そだてかたを しらべよう。ことばを たして しぼりこもう':'「ごみ」「リサイクル」「ほうほう」の 3つの ことばで 検索して、あう けっかを えらぼう');
+  a.task(v==='p'?'まず「いぬ」で 検索してみよう（ローマ字で 入力してね）':v===0?'「ねこ」と「しいく」の 2つの ことばで 検索して、あう けっかを えらぼう（スペースは 半角に してね）':v===1?'かぶとむしの そだてかたを しらべよう。ことばを たして しぼりこもう（スペースは 半角に してね）':'「ごみ」「リサイクル」「ほうほう」の 3つの ことばで 検索して、あう けっかを えらぼう（スペースは 半角に してね）');
   a.prog(0,v==='p'?3:2);let ph=0;
-  const B=browser(a,120,4,984,428);const rt=el('button','sbtn2',null,B.top);rt.textContent='ローマ字ひょう';a.on(rt,'click',()=>{se('cursor');romajiTable(()=>B.ip.focus());});
+  const B=browser(a,120,4,984,428);const rt=el('button','btn rtbtn',null,B.top);rt.textContent='ローマ字ひょう';a.on(rt,'click',()=>{se('cursor');romajiTable(()=>B.ip.focus());});
   const match=ws=>D.need.length===ws.length&&D.need.every(alts=>ws.some(w=>alts.map(x=>toHira(x)).includes(w)));
   const run=()=>{const ws=words(toHira(B.ip.value));B.res.innerHTML='';if(!ws.length){a.info('ことばを 入れてから 検索しよう');return;}
    const head=el('div',null,null,B.res);head.style.cssText='font-size:15px;color:#4d6290;padding:0 14px 2px';
    let L;if(match(ws)){L=shuffle([[D.ok,1]].concat(D.many.slice(0,2).map(x=>[x,0])));head.textContent='「'+B.ip.value+'」の けっか　やく 120けん';if(v==='p'){ph=2;a.prog(2,3);}else a.prog(1,2);}
    else if(ws.includes(toHira(D.main))){L=D.many.map(x=>[x,0]);head.textContent='「'+B.ip.value+'」の けっか　やく 1,240,000けん';
-    if(v==='p'&&ph===0){ph=1;a.prog(1,3);a.good('けっかが 多すぎるね');a.task('「いぬ さんぽ」のように スペースで くぎって、ことばを たそう');}
+    if(v==='p'&&ph===0){ph=1;a.prog(1,3);a.good('けっかが 多すぎるね');a.task('「いぬ さんぽ」のように スペースで くぎって、ことばを たそう（スペースは 半角に してね）');}
     else a.info('けっかが 多すぎるね。ことばを たして しぼりこもう');}
    else{head.textContent='「'+B.ip.value+'」の けっかは 見つかりませんでした';a.info('ことばを たしかめよう');return;}
    L.slice(0,4).forEach(r=>{const b=el('button','res','<div class="rt">'+r[0]+'</div><div class="rd">'+(r[1]?'しらべたい ことが のっている ページ':'しらべたい ことと ちょっと ちがう ページ')+'</div>',B.res);

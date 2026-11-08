@@ -4,8 +4,9 @@ from pw import *
 only = sys.argv[1:]
 SAVE = {'name':'テスト','method':'roma','clear':{},'mclear':{},'certs':[],'sound':False}
 JS_HELP = r"""
-window.T=(txt,sel)=>{const A=document.getElementById('app');const L=[...A.querySelectorAll(sel||'*')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(e.textContent||'').trim()===txt;});return L[L.length-1]||null;};
-window.TC=(txt,sel)=>{const A=document.getElementById('app');const L=[...A.querySelectorAll(sel||'*')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&(e.textContent||'').includes(txt);});return L[L.length-1]||null;};
+window.TX=e=>{const c=e.cloneNode(true);c.querySelectorAll("rt").forEach(r=>r.remove());return c.textContent;};
+window.T=(txt,sel)=>{const A=document.getElementById('app');const L=[...A.querySelectorAll(sel||'*')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&TX(e).trim()===txt;});return L[L.length-1]||null;};
+window.TC=(txt,sel)=>{const A=document.getElementById('app');const L=[...A.querySelectorAll(sel||'*')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&TX(e).includes(txt);});return L[L.length-1]||null;};
 """
 class Bot:
     def __init__(s, pg): s.pg = pg; s.issues = []
@@ -33,7 +34,7 @@ class Bot:
         if r: s.issues.append((tag, r))
     def wait(s, ms): s.pg.wait_for_timeout(ms)
     def sel_input(s, e, a, b): e.evaluate("(e,[a,b])=>{e.focus();e.setSelectionRange(a,b)}", [a,b])
-    def task(s): return s.ev("document.querySelector('.ttext').textContent")
+    def task(s): return s.ev("TX(document.querySelector('.ttext'))")
 
 def solve(B, sid, v):
     pg = B.pg
@@ -83,7 +84,7 @@ def solve(B, sid, v):
             tgt = 'ひまわり' if v==2 else None
             for i in range(40):
                 if tgt:
-                    ok = B.ev("()=>{const r=[...document.querySelectorAll('#area .srow')].find(r=>r.textContent==='ひまわり');const b=r.getBoundingClientRect(),w=document.querySelector('#area .swbody').getBoundingClientRect();return b.top>w.top+5&&b.bottom<w.bottom-5}")
+                    ok = B.ev("()=>{const r=[...document.querySelectorAll('#area .srow')].find(r=>TX(r)==='ひまわり');const b=r.getBoundingClientRect(),w=document.querySelector('#area .swbody').getBoundingClientRect();return b.top>w.top+5&&b.bottom<w.bottom-5}")
                     if ok: break
                 else:
                     ok = B.ev("()=>{const r=document.querySelector('#area .srow.goal');const b=r.getBoundingClientRect(),w=document.querySelector('#area .swbody').getBoundingClientRect();return b.top>w.top+5&&b.bottom<w.bottom-5}")
@@ -109,7 +110,7 @@ def solve(B, sid, v):
     elif sid=='stamp':
         def send(m, k):
             b = B.textc(m, '.cbub'); x,y = B.c(b); pg.mouse.move(x,y); B.wait(150); B.chk('hover')
-            B.click(B.h("([m,k])=>[...document.querySelectorAll('#area .cbub')].find(b=>b.querySelector('.nm').textContent===m).querySelector('.rbar button[aria-label=\"'+k+'\"]')", [m,k]))
+            B.click(B.h("([m,k])=>[...document.querySelectorAll('#area .cbub')].find(b=>TX(b.querySelector('.nm'))===m).querySelector('.rbar button[aria-label=\"'+k+'\"]')", [m,k]))
         RN = {'like':'いいね','heartR':'ハート','smile':'にこにこ','wow':'びっくり'}
         t = B.task()
         if v==2:
@@ -139,7 +140,7 @@ def solve(B, sid, v):
         t = B.task(); f = re.findall(r'「(えにっき[^」]*)」', t)[-1]
         B.dbl(B.text(f,'.ico')); B.wait(300); B.chk('doc')
     elif sid=='input':
-        Q = {'p':['がっこう','2026','abc'],0:['さんすう 25ページ'],1:['サッカー','コンピューター'],2:['ABC','Tokyo']}[v]
+        Q = {'p':['がっこう','2026','abc'],0:['さんすう25ページ'],1:['サッカー','コンピューター'],2:['ABC','Tokyo']}[v]
         ins = pg.query_selector_all('#area input')
         for i,q in enumerate(Q): B.click(ins[i]); B.ins(q)
         if v!='p': B.click(B.text('けってい','button'))
@@ -184,9 +185,9 @@ def solve(B, sid, v):
         if v==2: B.key('Control+z')
     elif sid=='folder':
         if v==1: B.dbl(B.text('4年1組','.ico')); B.wait(400); B.chk('opened')
-        files = B.ev("[...document.querySelectorAll('#area .ico.drg')].map(d=>[d.querySelector('.in').textContent,+d.dataset.k])")
+        files = B.ev("[...document.querySelectorAll('#area .ico.drg')].map(d=>[TX(d.querySelector('.in')),+d.dataset.k])")
         for n,k in files:
-            B.dragto(B.text(n,'.ico'), B.h("([k])=>[...document.querySelectorAll('#area .ico:not(.drg)')].filter(x=>x.querySelector('.in').textContent.includes('こ'))[k]", [k]))
+            B.dragto(B.text(n,'.ico'), B.h("([k])=>[...document.querySelectorAll('#area .ico:not(.drg)')].filter(x=>TX(x.querySelector('.in')).includes('こ'))[k]", [k]))
     elif sid=='save':
         if v=='p': B.click(B.text('ファイル','button')); B.chk('menu'); B.click(B.textc('名前を付けて保存','.cmenu button'))
         else: B.key('Control+s')
@@ -214,7 +215,7 @@ def solve(B, sid, v):
         if v==1:
             b = img.bounding_box(); B.drag(img, b['x']+b['width']/2+(fr['x']-b['x']), b['y']+b['height']/2+(fr['y']-b['y']))
     elif sid=='typing':
-        B.wait(2600); T = B.ev("document.querySelector('#area .sw .abs').textContent")
+        B.wait(2600); T = B.ev("TX(document.querySelector('#area .sw .abs'))")
         B.click(B.h("document.querySelector('#area textarea')")); B.ins(T); B.click(B.text('送信','button'))
     elif sid=='kanji':
         M = {'がっこう':'学校','こうえん':'公園','あつい おちゃ':'熱い','あつい 本':'厚い','あつい 夏':'暑い','時間を はかる':'計る','長さを はかる':'測る','重さを はかる':'量る','大きな きかい':'機械','いい きかい（チャンス）':'機会'}
@@ -224,7 +225,7 @@ def solve(B, sid, v):
     elif sid=='short':
         K = {'ぜんぶ えらぶ':'a','コピー':'c','はりつけ':'v','切り取り':'x','元に戻す':'z','やり直し':'y','保存':'s','検索':'f'}
         for i in range(20):
-            n = B.ev("()=>{const e=document.querySelector('#area .sn');return e?e.textContent:''}")
+            n = B.ev("()=>{const e=document.querySelector('#area .sn');return e?TX(e):''}")
             if not n or B.ev("!!document.querySelector('#area .okstamp')"): break
             for part in n.split(' → '):
                 p2 = {'ぜんぶ えらんで':'ぜんぶ えらぶ','切り取って':'切り取り','元に戻して':'元に戻す','コピーして':'コピー','検索して':'検索'}.get(part, part)
@@ -240,7 +241,7 @@ def solve(B, sid, v):
         if v==0: panel('h','たろう','じろう'); B.click(B.text('すべて置換','button'))
         if v==1: panel('h','すいか','メロン'); B.click(B.text('すべて置換','button')); panel('h','あかい','みどりの'); B.click(B.text('すべて置換','button'))
         if v==2:
-            panel('h','さくら','もみじ'); B.click(B.text('つぎを さがす','button')); B.click(B.text('つぎを さがす','button')); B.click(B.text('置換','button')); B.click(B.text('置換','button'))
+            panel('h','さくらが','もみじが'); B.click(B.text('すべて置換','button')); panel('h','さくらの','もみじの'); B.click(B.text('すべて置換','button'))
     elif sid=='comment':
         def cm(i, how):
             s2 = pg.query_selector_all('#area .sent')[i]
@@ -260,13 +261,13 @@ def solve(B, sid, v):
     elif sid=='share':
         def add(n, p):
             if not B.ev("([n])=>[...document.querySelectorAll('#area .pn2')].some(e=>e.textContent===n)", [n]): B.click(B.textc(n,'.pbtn'))
-            B.click(B.h("([n,p])=>[...document.querySelectorAll('#area .prow')].find(r=>r.querySelector('.pn2').textContent===n).querySelectorAll('.tg')[p]", [n,p]))
+            B.click(B.h("([n,p])=>[...document.querySelectorAll('#area .prow')].find(r=>TX(r.querySelector('.pn2'))===n).querySelectorAll('.tg')[p]", [n,p]))
         if v=='p': add('たなか',0); add('先生',0)
         if v==0: add('たなか',0); add('先生',0); add('やまだ',1)
         if v==1:
             for n in ['たなか','すずき','こばやし','先生']: add(n,0)
         if v==2:
-            B.click(B.h("[...document.querySelectorAll('#area .prow')].find(r=>r.querySelector('.pn2').textContent==='やまだ').querySelector('.xb')")); add('先生',0)
+            B.click(B.h("[...document.querySelectorAll('#area .prow')].find(r=>TX(r.querySelector('.pn2'))==='やまだ').querySelector('.xb')")); add('先生',0)
         B.chk('list'); B.click(B.text('送信','button'))
     elif sid=='history':
         B.click(B.textc('変更履歴','.tb')); B.wait(200); B.chk('panel')
@@ -276,10 +277,10 @@ def solve(B, sid, v):
         if v==1: t='ゆい'
         if v==2:
             for r in rows:
-                B.click(r); doc = B.ev("document.querySelector('#area .doc').textContent")
+                B.click(r); doc = B.ev("TX(document.querySelector('#area .doc'))")
                 if all(k in doc for k in ['はじめ','なか','まとめ']): break
         else:
-            r = [r for r in rows if t in r.text_content()][0]; B.click(r)
+            r = [r for r in rows if t in r.evaluate('e=>TX(e)')][0]; B.click(r)
         B.click(B.text('この版に もどす','button'))
 
 fails = []
@@ -305,7 +306,7 @@ with sync_playwright() as p:
                     if pg.evaluate("!!document.querySelector('#area .okstamp')||(SCR&&SCR.name==='scrResult')"): ok = True; break
                     pg.wait_for_timeout(100)
                 lost = pg.evaluate("document.querySelectorAll('.hearts svg path[fill=\"#dfe5ee\"]').length")
-                msg = pg.evaluate("document.querySelector('.mtext')?document.querySelector('.mtext').textContent:''")
+                msg = pg.evaluate("document.querySelector('.mtext')?TX(document.querySelector('.mtext')):''")
                 st = 'CLEAR' if ok else 'FAIL'
                 if lost: st += ' (ハート-%d)' % lost
                 print('%-9s %-2s %s %s' % (sid, v, st, '' if ok else msg))

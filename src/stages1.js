@@ -4,7 +4,7 @@
 /* 20 タイピング */
 STAGES.push({id:'typing',g:1,title:'タイピング',icon:ICO.typing,desc:'見本の文を正確に写して入力する（コピー・はりつけは使えない）。',
  how:{keys:[['スペース','へんかん'],['Enter','かくてい'],['Backspace','1文字 けす']],cap:'見本を よく 見て うつ',lines:['見本の 文を よく 見る（コピーは できないよ）','ローマ字で うって、かん字は スペースで へんかん','ぜんぶ うてたら「送信」']},
- build(a,v){const T=v==='p'?'あさごはんに、パンを たべました。':['きのうの夜、家族でカレーライスを作りました。にんじんを切るのがむずかしかったです。','わたしの好きなスポーツは、バスケットボールです。シュートが入ると、とてもうれしいです。','図書室で、宇宙についての本を読みました。ロケットは、とても速いスピードで飛ぶそうです。'][v];
+ build(a,v){const T=v==='p'?'あさごはんに、パンをたべました。':['きのうの夜、家族でカレーライスを作りました。にんじんを切るのがむずかしかったです。','わたしの好きなスポーツは、バスケットボールです。シュートが入ると、とてもうれしいです。','図書室で、宇宙についての本を読みました。ロケットは、とても速いスピードで飛ぶそうです。'][v];
   const A=a.area;a.prog(0,1);a.task(v==='p'?'見本と 同じ 文を 入力して「送信」しよう':'見本と 同じ 文を 90びょう いないに 入力して「送信」しよう');
   const L=pos(el('div','sw',null,A),30,40,560,300);el('div','swbar','見本',L);const tx=pos(el('div','abs',null,L),20,60,512);tx.style.cssText+=';font-size:24px;line-height:1.8;word-break:normal;overflow-wrap:anywhere';tx.textContent=T;
   const ta=pos(el('textarea','inp abs',null,A),630,40,560,240);ta.style.fontSize='24px';ta.setAttribute('spellcheck','false');ta.setAttribute('aria-label','入力らん');ta.disabled=true;
@@ -16,7 +16,7 @@ STAGES.push({id:'typing',g:1,title:'タイピング',icon:ICO.typing,desc:'見�
   const LIM=a.resumeLeft!=null?Math.max(5,a.resumeLeft):90;if(v!=='p')tm.textContent='のこり '+LIM+'びょう';
   if(v!=='p')a.every(()=>{if(!run)return;const left=LIM-Math.floor((Date.now()-t0)/1000);tm.textContent='のこり '+Math.max(0,left)+'びょう';a.typeTick(Math.max(0,left));if(left<=0){run=false;a.miss('時間ぎれ');}},250);
   a.on(sb,'click',()=>{if(!run)return;const val=ta.value.replace(/\n/g,'');const want=T;
-   const norm=s=>v==='p'?s.replace(/[\s　]+/g,' ').trim():s.trim();
+   const norm=s=>s.trim();
    if(!val.trim()){a.info('入力してから 送信しよう');return;}
    if(norm(val)===norm(want)){run=false;a.prog(1,1);a.done();return;}
    const nv=norm(val),nw=norm(want);let i=0;while(i<nv.length&&nv[i]===nw[i])i++;
@@ -29,20 +29,20 @@ STAGES.push({id:'kanji',g:1,title:'漢字に 変換',icon:ICO.kanji,desc:'ひら
    :v===0?[['あつい','熱い','あつい おちゃ','おちゃ'],['あつい','厚い','あつい 本','ほん'],['あつい','暑い','あつい 夏','なつ']]
    :v===1?[['はかる','計る','時間を はかる','とけい'],['はかる','測る','長さを はかる','ものさし'],['はかる','量る','重さを はかる','はかり']]
    :[['きかい','機械','大きな きかい','きかい'],['きかい','機会','いい きかい（チャンス）','チャンス']];
-  a.task(v==='p'?'ひらがなの ことばを 入力して、正しい かん字に へんかんしよう':'それぞれの 文に あう かん字に へんかんして「けってい」を おそう');
+  a.task(v==='p'?'ひらがなの ことばを 入力して、正しい かん字に へんかんしよう':'線の ことばを、文に あう かん字に へんかんして「けってい」を おそう');
   let n=0;a.prog(0,Q.length);const rows=[],ok=[],marks=[];const y0=v==='p'?40:6,dy=v==='p'?130:112;
   Q.forEach((q,i)=>{const r=pos(el('div','abs',null,a.area),70,y0+i*dy,1100,100);r.style.cssText+=';display:flex;align-items:center;gap:20px';
    const pc=el('div',null,ART[q[3]],r);pc.style.cssText='width:92px;height:92px;flex:none;border:3px solid #c3d4f0;border-radius:14px;background:#fff;padding:6px';pc.firstChild.style.cssText='width:100%;height:100%';
    const qb=el('div','qbox',null,r);qb.style.width='330px';qb.innerHTML=esc(q[2]).replace(q[0],'<u>'+q[0]+'</u>');el('div','lbl','→',r);
    const ip=el('input','inp'+(a.exam?'':' allowctx'),null,r);ip.style.width='300px';ip.setAttribute('autocomplete','off');ip.setAttribute('spellcheck','false');ip.setAttribute('aria-label',q[2]);
-   const mk=el('div','mark','まだ',r);rows.push(ip);ok.push(false);marks.push(mk);
+   const mk=el('div','mark','まだ',r);if(v!=='p')mk.style.visibility='hidden';rows.push(ip);ok.push(false);marks.push(mk);
    if(v==='p'){let comp=false;const chk=()=>{if(ok[i]||comp)return;const val=ip.value.trim();if(!val)return;
-     if(val===q[1]){ok[i]=true;mk.textContent='OK';mk.classList.add('ok');ip.readOnly=true;n++;a.prog(n,Q.length);if(n>=Q.length)a.done();else{a.good('OK！ つぎへ');rows[i+1].focus();}return;}
+     if(nosp(val).startsWith(q[1])){ok[i]=true;mk.textContent='OK';mk.classList.add('ok');ip.readOnly=true;n++;a.prog(n,Q.length);if(n>=Q.length)a.done();else{a.good('OK！ つぎへ');rows[i+1].focus();}return;}
      if(/^[ぁ-ん]+$/.test(val))a.info('スペースで かん字に へんかんしよう');else if(/[一-龠]/.test(val))a.miss('ちがう かん字だよ。スペースで こうほを えらびなおそう');};
     a.on(ip,'compositionstart',()=>{comp=true;});a.on(ip,'compositionend',()=>{comp=false;setTimeout(chk,0);});a.on(ip,'input',chk);}});
   if(v!=='p'){const b=pos(el('button','btn y abs','けってい',a.area),890,Q.length===3?380:260,300,52);
-   a.on(b,'click',()=>{if(rows.some(r=>!r.value.trim())){a.info('ぜんぶ 入力しよう');return;}if(Q.some((q,i)=>rows[i].value.trim()!==q[1])){a.miss('ちがう かん字が あるよ');return;}
-    marks.forEach(m=>{m.textContent='OK';m.classList.add('ok');});a.prog(Q.length,Q.length);a.done();});}
+   a.on(b,'click',()=>{if(rows.some(r=>!r.value.trim())){a.info('ぜんぶ 入力しよう');return;}if(Q.some((q,i)=>!nosp(rows[i].value).startsWith(q[1]))){a.miss('ちがう かん字が あるよ');return;}
+    marks.forEach(m=>{m.textContent='OK';m.classList.add('ok');m.style.visibility='';});a.prog(Q.length,Q.length);a.done();});}
   a.start=()=>rows[0].focus();}});
 
 /* 22 ショートカットキー */
@@ -61,16 +61,14 @@ STAGES.push({id:'short',g:1,title:'ショートカットキー',icon:ICO.short,d
    else a.miss(/^[A-Z]$/.test(k)?'それは Ctrl + '+k+'。もう一度':'ちがう キーだよ');});}});
 
 /* 23 検索と置換 */
-STAGES.push({id:'replace',g:1,title:'検索と置換',icon:ICO.replace,desc:'Ctrl+Fでことばを探し、Ctrl+Hで置換（まとめて／1件ずつ書きかえ）。',
- how:{keys:[['Ctrl','F','検索'],['Ctrl','H','置換']],cap:'ボタンでも ひらける（しけんは キーだけ）',lines:['Ctrl + F で ことばを さがす','Ctrl + H で 置換（書きかえ）','「すべて置換」で まとめて、「置換」で 1つずつ 書きかえる']},
+STAGES.push({id:'replace',g:1,title:'検索と置換',icon:ICO.replace,desc:'Ctrl+Fでことばを探し、Ctrl+Hですべて置換（書きかえ）。',
+ how:{keys:[['Ctrl','F','検索'],['Ctrl','H','置換']],cap:'ボタンでも ひらける（しけんは キーだけ）',lines:['Ctrl + F で ことばを さがす','Ctrl + H で 置換（書きかえ）','「すべて置換」で まとめて 書きかえる']},
  build(a,v){const A=a.area;let T0,ok,task;
   if(v==='p'||v===0){T0='たろうくんは サッカーが とくいです。きのうの しあいでも、たろうくんは 2点 きめました。みんな たろうくんを おうえん しています。';const F=T0.split('たろう').join('じろう');ok=t=>t===T0?0:t===F?2:-1;}
   if(v===1){T0='なつに すいかを たべました。あかい すいかは あまくて おいしかったです。また あかい すいかを たべたいです。';const s1=T0.split('すいか').join('メロン'),s2=T0.split('あかい').join('みどりの'),F=s1.split('あかい').join('みどりの');ok=t=>t===T0?0:(t===s1||t===s2)?1:t===F?2:-1;}
   if(v===2){T0='さくらさんと こうえんへ 行きました。さくらが とても きれいでした。さくらの 木の 下で おべんとうを たべました。';
-   const pos2=[];let k=-1;while((k=T0.indexOf('さくら',k+1))>=0)pos2.push(k);const fl=pos2.filter(p=>T0[p+3]!=='さ');
-   const mk=sub=>{let t=T0;sub.slice().sort((x,y)=>y-x).forEach(p=>{t=t.slice(0,p)+'もみじ'+t.slice(p+3);});return t;};
-   const states={};[[],[fl[0]],[fl[1]],fl].forEach((s,i)=>{states[mk(s)]=s.length===2?2:1;});states[T0]=0;ok=t=>t in states?states[t]:-1;}
-  task=v==='p'?'名前を まちがえた！ まず 検索で「たろう」が いくつ あるか しらべよう':v===0?'「たろう」を ぜんぶ「じろう」に 置きかえよう':v===1?'「すいか」を「メロン」に、「あかい」を「みどりの」に 置きかえよう':'花の「さくら」だけを「もみじ」に しよう。人の 名前の「さくらさん」は そのまま（1つずつ 置換）';
+   const A1=T0.replace('さくらが','もみじが'),A2=T0.replace('さくらの','もみじの'),F=A1.replace('さくらの','もみじの');ok=t=>t===T0?0:(t===A1||t===A2)?1:t===F?2:-1;}
+  task=v==='p'?'名前を まちがえた！ まず 検索で「たろう」が いくつ あるか しらべよう':v===0?'「たろう」を ぜんぶ「じろう」に 置きかえよう':v===1?'「すいか」を「メロン」に、「あかい」を「みどりの」に 置きかえよう':'花の「さくら」だけを「もみじ」に しよう。人の 名前の「さくらさん」は そのまま（さがす ことばを くふうしよう）';
   a.task(task);let text=T0,ph=v==='p'?0:1,mode='',q='',cur=-1;a.prog(0,v==='p'?2:1);
   const W=sw(A,16,4,720,428,'ワープロ ー ともだちの さくぶん');let bf=null,bh=null;
   if(!a.exam){bf=el('button','tb',IC.find+'検索',W.bar);bh=el('button','tb',IC.rep+'置換',W.bar);}
@@ -88,12 +86,8 @@ STAGES.push({id:'replace',g:1,title:'検索と置換',icon:ICO.replace,desc:'Ctr
      [2,3,4].forEach(n=>{const b=el('button','btn',n+'こ',r3);b.style.width='120px';a.on(b,'click',()=>{if(ph!==0)return;if(n===3){ph=1;a.prog(1,2);a.good('せいかい！ 3こ あったね');a.task('こんどは Ctrl + H で「たろう」を ぜんぶ「じろう」に 置きかえよう');FP.style.display='none';mode='';q='';render();}else a.miss('もう一度 かぞえよう。検索すると 色が つくよ');});});}}
    else{lb('置きかえる ことば');const i2=el('input','inp'+(a.exam?'':' allowctx'),null,FB);i2.style.width='400px';i2.setAttribute('autocomplete','off');
     const up=()=>{q=i1.value;cur=-1;render();};a.on(i1,'input',up);a.on(i1,'compositionend',()=>setTimeout(up,0));
-    const r=el('div',null,null,FB);r.style.cssText='display:flex;flex-wrap:wrap;gap:12px;margin-top:20px;width:400px';
-    const bn=el('button','btn sm','つぎを さがす',r),br=el('button','btn sm','置換',r),ba=el('button','btn sm y','すべて置換',r);bn.style.width='194px';br.style.width='194px';ba.style.width='400px';
-    const next=()=>{if(!i1.value){a.info('検索する ことばを 入れよう');return false;}q=i1.value;let p=text.indexOf(q,cur+1);if(p<0)p=text.indexOf(q);cur=p;render();if(p<0){a.info('見つからないよ');return false;}return true;};
-    a.on(bn,'click',next);
-    a.on(br,'click',()=>{if(!i1.value){a.info('検索する ことばを 入れよう');return;}if(cur<0||text.substr(cur,i1.value.length)!==i1.value){next();a.info('色の こい ところが 書きかわるよ。もう一度「置換」');return;}
-     text=text.slice(0,cur)+i2.value+text.slice(cur+i1.value.length);const c0=cur+i2.value.length-1;cur=c0;next();after();});
+    const r=el('div',null,null,FB);r.style.cssText='display:flex;gap:12px;margin-top:20px;width:400px';
+    const ba=el('button','btn sm y','すべて置換',r);ba.style.width='400px';
     a.on(ba,'click',()=>{if(!i1.value){a.info('検索する ことばを 入れよう');return;}text=text.split(i1.value).join(i2.value);q='';cur=-1;render();after();});}
    setTimeout(()=>i1.focus(),0);};
   if(bf){a.on(bf,'click',()=>open('find'));a.on(bh,'click',()=>open('rep'));}

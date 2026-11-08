@@ -141,7 +141,7 @@ button{font-family:inherit;color:inherit}
 .sbtn:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--navy)}
 .sbtn .sic{width:96px;height:96px;flex:none}
 .sbtn .sic svg{width:96px;height:96px}
-.sbtn .snm{font-size:19px;font-weight:700;line-height:1.25;text-align:center;height:48px;display:flex;align-items:center;word-break:keep-all}
+.sbtn .snm{font-size:17px;font-weight:700;line-height:1.45;text-align:center;height:64px;width:200px;display:flex;align-items:center;justify-content:center;word-break:keep-all;overflow-wrap:anywhere}
 .sbtn .sno{position:absolute;left:10px;top:8px;font-size:15px;font-weight:700;color:var(--sub)}
 .sbtn .clr{position:absolute;right:8px;top:8px;width:40px;height:40px}
 .sbtn.done{background:#e9fbef}.sbtn.done:hover{background:#d3f5de}
@@ -180,8 +180,8 @@ button{font-family:inherit;color:inherit}
 .howlines div{display:flex;gap:12px;font-size:19px;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
 .howlines b{flex:none;width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px}
 .keyrow{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:700}
-.key{min-width:64px;height:58px;padding:0 12px;border:3px solid var(--navy);border-radius:10px;background:#fff;box-shadow:0 5px 0 var(--navy);display:inline-flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;white-space:nowrap}
-.keyfig{display:flex;flex-direction:column;gap:22px;align-items:flex-start}
+.key{min-width:60px;height:50px;padding:0 12px;border:3px solid var(--navy);border-radius:10px;background:#fff;box-shadow:0 5px 0 var(--navy);display:inline-flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;white-space:nowrap}
+.keyfig{display:flex;flex-direction:column;gap:16px;align-items:flex-start}
 .keyfig .kl{font-size:18px;color:var(--sub);margin-left:6px}
 /* トラックパッド */
 .pad .pd{fill:#d5dcea;stroke:var(--navy);stroke-width:4}
@@ -392,3 +392,13 @@ mark.cur{background:#ff9f43}
 .rtab div{border:2px solid #c3d4f0;border-radius:8px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
 .rtab div b{font-size:20px}.rtab div span{font-size:15px;color:#1a4fb3;font-weight:700}
 .rtab div.e{visibility:hidden}
+
+/* ふりがな */
+ruby{ruby-position:over}
+rt{font-size:.36em;font-weight:700;-webkit-text-stroke:0;text-shadow:none;letter-spacing:0;line-height:1;user-select:none;-webkit-user-select:none}
+.outline rt,.wtitle rt,.badge rt,.logo rt,.hello rt,.c-ok rt,.btn.g rt,.btn.r rt{-webkit-text-stroke:0;color:#fff}
+.btn.rtbtn{margin-left:auto;width:240px;height:64px;font-size:24px;background:#3f86ec;color:#fff;-webkit-text-stroke:4px var(--navy);paint-order:stroke fill}
+.btn.rtbtn:hover{background:#62a9ff}
+.mtrk{position:absolute;border-radius:11px;background:#dfe9fb;border:3px solid var(--navy)}
+.mthm{position:absolute;left:2px;width:12px;border-radius:6px;background:var(--blue);cursor:grab}
+.mthm:hover{background:#3f86ec}

@@ -106,13 +106,13 @@ STAGES.push({id:'login',g:3,title:'ログイン・ログアウト',icon:ICO.logi
     el('div','swbar','メッセージ',m);const mb=pos(el('div','abs',null,m),24,62,490);mb.style.cssText+=';font-size:22px;line-height:1.6';
     mb.innerHTML='<b>だれか</b>：「きみの パスワード おしえて！<br>かわりに ログイン してあげるよ」';
     const y=pos(el('button','btn abs','おしえる',m),40,176,210,56),n=pos(el('button','btn abs','おしえない',m),282,176,210,56);
-    a.on(y,'click',()=>a.miss('パスワードは だれにも おしえないよ'));a.on(n,'click',()=>{m.remove();se('decide');a.good('そうだね。パスワードは ひみつ！');a.task('カードの ID と パスワードで ログインしよう');});}
+    a.on(y,'click',()=>a.miss('パスワードは だれにも おしえないよ'));a.on(n,'click',()=>{m.remove();se('decide');a.good('そうだね。パスワードは ひみつ！');a.task('カードの ID と パスワードで ログインしよう（数字は 半角に してね）');});}
    if(v===1)a.later(()=>{i2.focus();i2.select();},500);};
   const desk=(lo)=>{B.innerHTML='';B.style.background='linear-gradient(160deg,#2a63c9,#62a9ff)';
    const w=pos(el('div','abs',null,B),0,90,752);w.style.cssText+=';text-align:center;font-size:30px;font-weight:700;color:#fff;-webkit-text-stroke:5px #10264d;paint-order:stroke fill';w.textContent='ようこそ、'+SAVE.name+' さん';
    if(lo){const b=pos(el('button','btn abs','ログアウト',B),556,10,180,52);a.on(b,'click',()=>{se('decide');ph++;a.prog(ph,steps);B.innerHTML='';B.style.background='#10264d';
      const t=pos(el('div','abs',null,B),0,150,752);t.style.cssText+=';text-align:center;font-size:26px;font-weight:700;color:#fff';t.textContent='ログアウト しました';a.done();});}};
-  a.task(v===1?'パスワードが ちがっていた！ けして、カードの パスワードを 入れなおそう':v===2?'メッセージが きたよ。よく 考えて えらぼう':(v===0||v==='p')?'カードの ID と パスワードで ログインして、ログアウトまで しよう':'カードの ID と パスワードで ログインしよう');
+  a.task((v===1?'パスワードが ちがっていた！ けして、カードの パスワードを 入れなおそう':v===2?'メッセージが きたよ。よく 考えて えらぼう':(v===0||v==='p')?'カードの ID と パスワードで ログインして、ログアウトまで しよう':'カードの ID と パスワードで ログインしよう')+'（数字は 半角に してね）');
   form();}});
 
 /* 2 クリック */
@@ -235,7 +235,7 @@ STAGES.push({id:'scroll',g:3,title:'スクロール',icon:ICO.scroll,desc:'2本�
    let off=0;const max=3600-1092;const upd=()=>{C.style.transform='translateX('+(-off)+'px)';th.style.left=(off/max*(1076-120))+'px';};upd();
    a.on(W.W,'wheel',e=>{e.preventDefault();if(e.ctrlKey)return;const m=e.deltaMode===1?32:1;const d=(Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY)*m;off=Math.max(0,Math.min(max,off+d));upd();},{passive:false});
    a.on(g,'click',()=>{a.prog(1,1);a.done();});return;}
-  const W=sw(A,292,8,640,420,v==='p'?'はなの リスト':'はなの リスト（ながい）');const VB=W.body;VB.dataset.clip='1';
+  const W=sw(A,292,8,640,420,v==='p'?'はなの リスト':'はなの リスト（ながい）');const VB=W.body;VB.dataset.clip='1';VB.style.overflow='hidden';
   const C=el('div','slist',null,VB);
   let rows;if(v==='p')rows=['スタート'].concat(FLOWERS.slice(0,12).map(f=>f[0]),['ゴール！ ここを クリック','なのはな','うめ']);
   else if(v===0)rows=FLOWERS.slice(0,24).map(f=>f[0]).concat(['ゴール！ ここを クリック','ポピー']);
@@ -277,11 +277,11 @@ STAGES.push({id:'zoom',g:3,title:'ズーム',icon:ICO.zoom,desc:'2本指を広�
    const sun=pos(el('div','abs',null,P),640,30,60,60);sun.style.cssText+=';border-radius:50%;background:#ffd23f';
    for(let i=0;i<5;i++){const f=pos(el('div','abs',null,P),100+i*130,300,10,10);f.style.cssText+=';border-radius:50%;background:'+pick(['#ff6b6b','#ffd23f','#ff8fd0'])+'';}}
   let tgt=null;
-  if(v!==1){const spotsL=v==='p'?[[42,296]]:[[30,300],[690,290],[40,226],[700,232],[660,120]];const sp=pick(spotsL);
+  if(v!==1){const sp=[Math.round(vw/2-15),Math.round(vh/2-9)];
    const sg=pos(el('div','abs',null,P),sp[0],sp[1],30,18);sg.style.cssText+=';background:#fff;border:1px solid #a0703a;border-radius:2px;text-align:center;line-height:1.05;padding-top:2px;color:#10264d';
    sg.innerHTML='<div style="font-size:2.6px">ひみつの ことば</div><div style="font-size:5px;font-weight:700">'+ans+'</div>';
    const pole=pos(el('div','abs',null,P),sp[0]+14,sp[1]+18,2,10);pole.style.background='#a0703a';}
-  else{const an=[['ねこ',1],['いぬ',0],['うさぎ',0],['いぬ',0],['ねずみ',0],['うさぎ',0]];const sp=spots(an.length,14,14,vw-60,vh-60,40);
+  else{const an=[['ねこ',1],['いぬ',0],['うさぎ',0],['いぬ',0],['ねずみ',0],['うさぎ',0]];const sp=[{x:vw/2-35,y:vh/2-35},{x:60,y:40},{x:vw-140,y:50},{x:90,y:vh-110},{x:vw-160,y:vh-100},{x:vw/2-200,y:60}];
    an.forEach((x,i)=>{const d=pos(el('div','abs',ART[x[0]],P),sp[i].x+30,sp[i].y+30,10,10);d.firstChild.style.cssText='width:10px;height:10px';d.style.cursor='pointer';
     a.on(d,'click',e=>{e.stopPropagation();if(x[1]){a.prog(1,1);a.done();}else a.miss('それは ねこでは ないよ');});});}
   const sd=pos(el('div','abs',null,A),800,8,410,420);
@@ -291,10 +291,10 @@ STAGES.push({id:'zoom',g:3,title:'ズーム',icon:ICO.zoom,desc:'2本指を広�
   const upd=()=>{P.style.transform='translate('+tx+'px,'+ty+'px) scale('+s+')';zl.textContent='いまの 大きさ：'+s.toFixed(1)+'ばい';
    BB.forEach(b=>{b.disabled=!(s>=4&&ph===0);});};
   const clampT=()=>{tx=Math.min(0,Math.max(vw-vw*s,tx));ty=Math.min(0,Math.max(vh-vh*s,ty));};
-  if(v===1){msg.textContent='地図の どこかに 小さな ねこが いるよ。大きくして さがして クリックしよう。';a.prog(0,1);a.task('地図を 大きくして、かくれた「ねこ」を さがして クリックしよう');
+  if(v===1){msg.textContent='地図の まん中に 小さな ねこが いるよ。大きくして クリックしよう。';a.prog(0,1);a.task('地図を 大きくして、まん中の「ねこ」を クリックしよう');
    const pic=el('div',null,ART.ねこ,sd);pic.style.cssText='width:120px;height:120px;margin:20px 0 0 140px';pic.firstChild.style.cssText='width:120px;height:120px';}
   else{msg.textContent='大きくして よめたら、こたえを えらぼう';a.prog(0,(v==='p'||v===2)?2:1);
-   a.task(v==='p'||v===2?'2本ゆびを ひろげて 大きくし、ひみつの ことばを よもう':'遠くの 小さな かんばんの ことばを よんで えらぼう');
+   a.task(v==='p'||v===2?'2本ゆびを ひろげて 大きくし、ひみつの ことばを よもう':'まん中の 小さな かんばんを 大きくして、ことばを よんで えらぼう');
    const ch=shuffle(shuffle(words.filter(w=>w!==ans)).slice(0,2).concat([ans]));
    ch.forEach((w,i)=>{const b=el('button','btn',w,sd);b.style.cssText+=';width:300px;margin:0 0 16px 50px';b.disabled=true;BB.push(b);
     a.on(b,'click',()=>{if(ph!==0)return;if(w===ans){if(v===0){a.prog(1,1);a.done();return;}ph=1;a.prog(1,2);a.good('せいかい！');msg.textContent='せいかい！ こんどは もとの 大きさに もどそう';a.task('2本ゆびを ちぢめて、もとの 大きさに もどそう');upd();}
@@ -348,15 +348,33 @@ function browser(a,x,y,w,h){const W=sw(a.area,x,y,w,h,'ブラウザ');W.W.classL
  const res=pos(el('div','abs',null,W.body),20,130,w-48,h-42-8-140);
  return{W,ip,sb,res,top};}
 function hiraNorm(s){return toHira(nosp(s));}
+/* 半角の ローマ字を ひらがなに なおす（3級の 検索用） */
+const RK={a:'あ',i:'い',u:'う',e:'え',o:'お'};
+(function(){const C={k:'かきくけこ',s:'さしすせそ',t:'たちつてと',n:'なにぬねの',h:'はひふへほ',m:'まみむめも',r:'らりるれろ',g:'がぎぐげご',z:'ざじずぜぞ',d:'だぢづでど',b:'ばびぶべぼ',p:'ぱぴぷぺぽ'};
+ for(const c in C)'aiueo'.split('').forEach((v,i)=>{RK[c+v]=C[c][i];});
+ Object.assign(RK,{ya:'や',yu:'ゆ',yo:'よ',wa:'わ',wo:'を',shi:'し',chi:'ち',tsu:'つ',fu:'ふ',ji:'じ',si:'し',ti:'ち',tu:'つ',hu:'ふ',zi:'じ',di:'ぢ',du:'づ',
+  sha:'しゃ',shu:'しゅ',sho:'しょ',cha:'ちゃ',chu:'ちゅ',cho:'ちょ',ja:'じゃ',ju:'じゅ',jo:'じょ',nn:'ん',xtu:'っ',ltu:'っ','-':'ー'});
+ ['k','g','s','z','t','d','n','h','b','p','m','r'].forEach(c=>{const b=RK[c+'i'];RK[c+'ya']=b+'ゃ';RK[c+'yu']=b+'ゅ';RK[c+'yo']=b+'ょ';});})();
+function romaToKana(s){let out='',i=0;s=s.toLowerCase();
+ while(i<s.length){const c=s[i];if(!/[a-z\-]/.test(c)){out+=c;i++;continue;}
+  if(c!=='n'&&c===s[i+1]&&/[bcdfghjkmpqrstvwxyz]/.test(c)){out+='っ';i++;continue;}
+  if(c==='n'&&s[i+1]&&!/[aiueoyn]/.test(s[i+1])){out+='ん';i++;continue;}
+  let hit=null;for(let l=3;l>=1;l--){const k=s.substr(i,l);if(k.length===l&&RK[k]){hit=k;break;}}
+  if(hit){out+=RK[hit];i+=hit.length;continue;}
+  out+=s.slice(i);break;}
+ return out;}
+function kanaInput(a,ip){let comp=false;a.on(ip,'compositionstart',()=>{comp=true;});a.on(ip,'compositionend',()=>{comp=false;});
+ a.on(ip,'input',()=>{if(comp)return;const v=ip.value;if(!/[a-zA-Z\-]/.test(v))return;const nv=romaToKana(v);if(nv!==v){ip.value=nv;ip.setSelectionRange(nv.length,nv.length);}});}
+
 STAGES.push({id:'search',g:3,title:'キーワードで 検索',icon:ICO.search,desc:'検索らんにローマ字でことばを入れて検索し、結果からあうページを選ぶ。',
  how:{keys:[['Enter','けんさく']],cap:'ローマ字で うって Enter',lines:['検索らんを クリックする','ローマ字で ことばを うつ（「ローマ字ひょう」が 見られるよ）','Enter か「検索」を おして、けっかを クリック']},
  build(a,v){const D={p:{q:['いぬ'],R:[['いぬの しゅるい','いろいろな いぬの なかまを しょうかい',1],['いぬの かいかた','いぬを かうときに たいせつな こと',0],['いぬの まんが','いぬが 出てくる おはなし',0]],t:'「いぬ」を 検索して「いぬの しゅるい」を クリックしよう'},
    0:{q:['さくら'],R:[['さくらごう（でんしゃ）','まちを はしる でんしゃの なまえ',0],['さくらの はな','はるに さく ピンクの 花',1],['さくら こうえん','あそびばの ある こうえん',0],['さくらさん（ひと）','クラスの さくらさんの はっぴょう',0]],t:'「さくら」を 検索して、花の ページを えらぼう'},
    1:{q:['かぶとむし'],R:[['かぶと（むかしの よろい）','むかしの 人が かぶった もの',0],['かぶとむしの ずかん','つのが ある むしの なかま',1],['むしとり あみ','むしを とる どうぐ',0]],t:'左の 絵の むしの なまえを 考えて 検索し、あう ページを えらぼう'},
    2:{q:['あさがお'],R:[['あさがお まつり','なつの おまつりの おしらせ',0],['あさがおの はな','なつの あさに さく 花',1],['あさがおの えほん','としょしつの 本',0]],t:'検索らんの ことばを けして、「あさがお」で 検索しなおそう。花の ページを えらぼう'}}[v];
-  a.task(D.t);a.prog(0,2);const x0=v===1?200:120;
+  a.task(D.t+'（ローマ字で 入力してね）');a.prog(0,2);const x0=v===1?200:120;
   const B=browser(a,x0,4,1224-x0-20-(a.exam&&false?0:0),428);
-  const rt=el('button','sbtn2',null,B.top);rt.textContent='ローマ字ひょう';a.on(rt,'click',()=>{se('cursor');romajiTable(()=>B.ip.focus());});
+  const rt=el('button','btn rtbtn',null,B.top);rt.textContent='ローマ字ひょう';a.on(rt,'click',()=>{se('cursor');romajiTable(()=>B.ip.focus());});kanaInput(a,B.ip);
   if(v===1){const c=pos(el('div','sw',null,a.area),16,60,160,200);c.innerHTML=ART.かぶとむし;c.firstChild.style.cssText='width:130px;height:130px;margin:12px';const l=el('div',null,'この むしは？',c);l.style.cssText='text-align:center;font-size:18px;font-weight:700';}
   if(v===2)B.ip.value='いぬ';
   const run=()=>{const q=hiraNorm(B.ip.value);B.res.innerHTML='';if(!q){a.info('ことばを 入れてから 検索しよう');return;}
