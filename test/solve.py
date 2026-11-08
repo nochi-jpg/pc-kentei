@@ -269,6 +269,28 @@ def solve(B, sid, v):
         if v==2:
             B.click(B.h("[...document.querySelectorAll('#area .prow')].find(r=>TX(r.querySelector('.pn2'))==='やまだ').querySelector('.xb')")); add('先生',0)
         B.chk('list'); B.click(B.text('送信','button'))
+    elif sid=='privacy':
+        cards = B.ev("[...document.querySelectorAll('#area .tcard')].map(d=>TX(d))")
+        for n in cards:
+            k = B.ev("([n])=>{const st=stageById('privacy');return null}", [n])
+        for i in range(6):
+            n = B.ev("()=>{const d=[...document.querySelectorAll('#area .tcard')].find(d=>!d.dataset.lock);return d?TX(d):null}")
+            if not n: break
+            ng = n in ['住所','電話番号','パスワード','本名（フルネーム）','学校の 名前','自分の パスワード','友だちの 住所','友だちの 悪口']
+            e = B.h("([n])=>[...document.querySelectorAll('#area .tcard')].find(d=>TX(d)===n)", [n])
+            z = B.h("([k])=>document.querySelectorAll('#area .zone')[k]", [1 if ng else 0])
+            B.dragto(e, z)
+    elif sid=='trust':
+        ok = {'p':'ふじさんの 高さ',0:'ふじさんの 高さ',1:'台風の いまの いち',2:'よう虫の そだて方'}[v]
+        B.click(B.h("([t])=>[...document.querySelectorAll('#area .pres')].find(b=>TX(b.querySelector('.pt1'))===t)", [ok])); B.chk('sel')
+        B.click(B.text('この ページで しらべる','button'))
+    elif sid=='quote':
+        tx = B.h("document.querySelector('#area textarea')"); val = tx.input_value()
+        w = val.split('\n')[1 if v in ('p',0) else 0]; i = val.index(w)
+        B.sel_input(tx, i, i+len(w)); B.key('Control+c')
+        B.click(B.h("document.querySelector('#area input[aria-label=\"引用\"]')")); B.key('Control+v'); B.wait(150)
+        B.click(B.h("[...document.querySelectorAll('#area .sbtn2')].find(b=>/「|『|2026年/.test(b.textContent)&&b.textContent.length>8)")); B.chk('chosen')
+        B.click(B.text('かんせい','button'))
     elif sid=='history':
         B.click(B.textc('変更履歴','.tb')); B.wait(200); B.chk('panel')
         rows = pg.query_selector_all('#area .vrow')

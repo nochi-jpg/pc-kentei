@@ -84,7 +84,7 @@ function scrName(s,opt){opt=opt||{};let name=opt.fromSettings?'':'';
 
 /* ---------- タイトル ---------- */
 function scrTitle(s){const lg=el('div','logo',null,s.el);
- lg.innerHTML='<div class="l1">小学校</div><div class="l2">パソコンスキルマスター</div><div class="l3">トラックパッドと キーボードの 名人を めざそう</div><div class="l4">ひだりうえの「はじめる」の アイコンを<br>ダブルクリック（2かい クリック）してね！</div>';
+ lg.innerHTML='<div class="l1 noruby">小学校</div><div class="l2">パソコンスキルマスター</div><div class="l3">トラックパッドと キーボードの 名人を めざそう</div><div class="l4">ひだりうえの「はじめる」の アイコンを<br>ダブルクリック（2かい クリック）してね！</div>';
  stag(Array.from(lg.children));
  const ic=el('button','dicon popin',null,s.el);ic.setAttribute('aria-label','はじめる');const im=el('img',null,null,ic);im.src=ASSET.pasota.normal;im.alt='';el('span','lbl','はじめる',ic);
  let hint=null,ht=null,face='normal';
@@ -205,7 +205,7 @@ function showCert(c,onClose){const o=overlay();se('chime');const G=GR[c.g];
  body.textContent=c.g===3?'小学校パソコンスキルマスター ３きゅうに ごうかくしたことを ここに みとめます。':'小学校パソコンスキルマスター '+G.label+'に 合格したことを ここに みとめます。';
  const cl=el('div','cl',null,p);
  if(c.g==='m'){const d=el('div',null,IC.check+'<span>3級・2級・1級の そうさ ぜんぶ（'+STAGES.length+'こ）</span>',cl);d.style.gridColumn='1 / 3';}
- else stagesOf(c.g).forEach(st=>{el('div',null,IC.check+'<span>'+st.title+'</span>',cl);});
+ else stagesOf(c.g).forEach(st=>{el('div',null,IC.check+'<span>'+st.title.replace('（情報モラル）','')+'</span>',cl);});
  el('div','cd',(c.g===3?'ごうかくした日':'合格日')+'：'+jdate(c.date)+'<br>きろく：ミス '+c.miss+'かい　タイム '+fmtTime(c.time),p);
  const im=el('img','cp',null,p);im.src=ASSET.pasota.happy;im.alt='';
  el('div','ci','はっこう：ぱそた',p);

@@ -13,6 +13,7 @@ function furiSplit(t){const out=[];let i=0,buf='';
   if(num!=null&&ch==='本'){const n1=num%10;push('本',[1,6,8,0].includes(n1)?'ぽん':n1===3?'ぼん':'ほん');i++;continue;}
   if(num!=null&&ch==='分'){const n1=num%10;push('分',[1,3,4,6,8,0].includes(n1)?'ぷん':'ふん');i++;continue;}
   if(num!=null&&ch==='行'){push('行','ぎょう');i++;continue;}
+  if(num!=null&&ch==='音'){push('音','おん');i++;continue;}
   let hit=null;for(const k of FKEYS){if(t.startsWith(k,i)){hit=k;break;}}
   if(hit&&FURI_CTX[hit]){const c=FURI_CTX[hit];push(c[0],c[1]);i+=c[0].length;continue;}
   if(hit){push(hit,FURI[hit]);i+=hit.length;continue;}

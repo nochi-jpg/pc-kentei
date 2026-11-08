@@ -208,3 +208,53 @@ STAGES.push({id:'history',g:1,title:'変更履歴',icon:ICO.history,desc:'「変
    const rb=el('button','btn y',null,PB);rb.textContent='この版に もどす';rb.style.cssText+=';width:420px;margin-top:16px';
    a.on(rb,'click',()=>{if(selI<0){a.info('さきに 版を えらぼう');return;}if(selI===0){a.info('それは いまの 版だよ');return;}
     if(selI!==want){a.miss('その 版では ないよ');return;}a.prog(2,2);info.textContent='「'+V[selI][0]+'」の 版に もどしました';a.done();});});}});
+
+/* 28 この 情報、しんじて いい？（情報モラル：情報の確かさ） */
+ICO.trust=svg('<circle cx="42" cy="42" r="26" fill="#e3eeff" '+SW+'/><path d="M62 62l24 24" stroke="#10264d" stroke-width="10" stroke-linecap="round"/><path d="M30 42l9 9 16-18" fill="none" stroke="#36c96f" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>');
+STAGES.push({id:'trust',g:1,title:'この 情報、しんじて いい？（情報モラル）',icon:ICO.trust,desc:'調べ学習で、だれが・いつ・なんのために書いたかを確かめて、信頼できるページを選ぶ。',
+ how:{g:'tap1',cap:'3つを たしかめて えらぶ',lines:['だれが 書いた？（国や 市、専門の 人か）','いつ 書いた？（新しい 情報か）','なんの ため？（売るため・広告・うわさでは ないか）']},
+ build(a,v){const A=a.area;
+  const D=[{q:'日本で いちばん 高い 山の 高さ',r:[['ふじさんの 高さ','国の 地図を つくる 役所','2025年','正しい 地図を つたえる',''],['山すき たろうの ブログ','山が すきな 人（ひとり）','2012年','しゅみの 日記','ひとりの 人が むかしに 書いた 日記だよ'],['すごい山ランキング！','書いた人 わからない','わからない','広告が 多い','だれが いつ 書いたか わからないね'],['クイズゲームの こたえ集','ゲームの ファン','2019年','ゲームの こうりゃく','ゲームの ための ページだよ']]},
+   {q:'台風が いま どこに いるか',r:[['台風の いまの いち','天気を しらべる 国の 役所','きょう','ぼうさいの ため',''],['去年の 台風ニュース','ニュース会社','1年前','むかしの ニュース','1年前の 台風の ことだよ'],['「台風 来るらしい！」','SNSの 書きこみ（だれか わからない）','きょう','うわさ','だれが 書いたか わからない うわさだよ'],['お天気 まとめブログ','書いた人 わからない','わからない','広告が 多い','だれが いつ 書いたか わからないね']]},
+   {q:'カブトムシの よう虫が 食べる もの',r:[['よう虫の そだて方','みどり市 昆虫館','2024年','しらべた ことを つたえる',''],['カブトムシの えさ 大セール！','お店','2026年','ものを 売る','ものを 売る ための ページだよ'],['だれでも 書ける しつもん広場','書いた人 わからない','わからない','しつもんと こたえ','だれが 書いたか わからないね'],['むしの ページ（こうしん なし）','ひとりの 人','2016年','しゅみ','10年 近く 前から こうしん されていないよ']]}][v==='p'?0:v];
+  a.task('「'+D.q+'」を しらべるよ。いちばん しんらい できる ページを えらぼう');a.prog(0,1);
+  const W=sw(A,40,4,1144,428,'けんさく けっか');const B=W.body;let sel=-1;
+  const L=shuffle(D.r.map((r,i)=>[r,i]));const rows=L.map(([r,i],k)=>{const b=pos(el('button','pres',null,B),20,8+k*76,1096,70);
+   b.innerHTML='<div class="pt1"></div><div class="pt2"><span class="pm">書いた人：<b></b></span><span class="pm">日付：<b></b></span><span class="pm">なんの ため：<b></b></span></div>';
+   b.querySelector('.pt1').textContent=r[0];const bs=b.querySelectorAll('.pm b');bs[0].textContent=r[1];bs[1].textContent=r[2];bs[2].textContent=r[3];
+   a.on(b,'click',()=>{sel=k;rows.forEach((x,j)=>x.classList.toggle('on',j===k));se('cursor');a.info('だれが・いつ・なんの ため を たしかめたら「この ページで しらべる」');});return b;});
+  const go2=pos(el('button','btn y abs','この ページで しらべる',B),412,318,320,52);
+  a.on(go2,'click',()=>{if(sel<0){a.info('ページを クリックして えらぼう');return;}const r=L[sel][0];
+   if(L[sel][1]!==0){a.miss(r[4]);return;}a.prog(1,1);a.done();});}});
+
+/* 29 引用の ルール（情報モラル：著作権） */
+ICO.quote=svg('<rect x="12" y="16" width="76" height="68" rx="8" fill="#fff" '+SW+'/><text x="22" y="58" font-size="40" font-weight="700" fill="#2a63c9">「</text><text x="52" y="78" font-size="40" font-weight="700" fill="#2a63c9">」</text>');
+STAGES.push({id:'quote',g:1,title:'引用の ルール（情報モラル）',icon:ICO.quote,desc:'人の文を使うときは、そのまま「」でくくって引用し、出典（どこからとったか）を書く。',
+ how:{keys:[['Ctrl','C','コピー'],['Ctrl','V','はりつけ']],cap:'そのまま うつして、出典を 書く',lines:['つかいたい 文を そのまま コピーする（書きかえない）','レポートの「　」の 中に はりつける','どこから とったか（出典）を かならず えらぶ']},
+ build(a,v){const A=a.area;
+  const D=[{t:'ごみの リサイクル',p:'みどり市 かんきょう課',x:'みどりしでは、しげんごみを まいしゅう すいようびに あつめています。\nペットボトルは あらって つぶしてから だします。\nかんと びんは べつの ふくろに いれます。',w:'ペットボトルは あらって つぶしてから だします。',o:[['みどり市 かんきょう課「ごみの リサイクル」',1],['インターネット',0],['みどり市',0]]},
+   {t:'しらべる 日本の れきし',p:'ひかり出版　24ページ',x:'むかしの ひとは、こめを ぜいとして おさめました。\nむらでは みんなで たんぼの しごとを しました。\nまつりで ゆたかな みのりを いのりました。',w:'むかしの ひとは、こめを ぜいとして おさめました。',o:[['ひかり出版『しらべる 日本の れきし』24ページ',1],['本',0],['図書室',0]]},
+   {t:'みどり子ども新聞',p:'2026年10月5日',x:'しの プールは らいねん あたらしく なります。\nこうじは ふゆから はじまります。\nなつやすみまでに おわる よていです。',w:'しの プールは らいねん あたらしく なります。',o:[['みどり子ども新聞 2026年10月5日',1],['新聞',0],['きのうの ニュース',0]]}][v==='p'?0:v];
+  a.task('「'+D.w+'」を レポートに 引用して、出典を えらび「かんせい」を おそう');a.prog(0,2);
+  const Lw=sw(A,16,4,560,428,'もとの 文');const LB=Lw.body;
+  const t1=pos(el('div','abs',null,LB),20,10,512);t1.style.cssText+=';font-size:22px;font-weight:700';t1.textContent=D.t;
+  const t2=pos(el('div','abs note',null,LB),20,46,512);t2.textContent=D.p;
+  const tx=pos(el('textarea','inp abs'+(a.exam?'':' allowctx'),null,LB),20,84,512,276);tx.readOnly=true;tx.value=D.x;tx.style.fontSize='20px';tx.setAttribute('aria-label','もとの 文');
+  const Rw=sw(A,596,4,612,428,'レポート');const RB=Rw.body;
+  pos(el('div','abs lbl','引用',RB),20,10);
+  const row=pos(el('div','abs',null,RB),20,40,572,52);row.style.cssText+=';display:flex;align-items:center;gap:6px';
+  el('span','lbl','「',row).style.fontSize='26px';const ip=el('input','inp'+(a.exam?'':' allowctx'),null,row);ip.style.cssText+=';width:500px;font-size:17px';ip.setAttribute('autocomplete','off');ip.setAttribute('aria-label','引用');el('span','lbl','」',row).style.fontSize='26px';
+  pos(el('div','abs lbl','出典（どこから とったか）',RB),20,106);
+  let src=-1;const ob=shuffle(D.o.slice()).map((o,i)=>{const b=pos(el('button','sbtn2 abs',null,RB),20,140+i*52,572,44);b.textContent=o[0];b.style.textAlign='left';
+   a.on(b,'click',()=>{src=i;ob.forEach((x,j)=>x.classList.toggle('on',j===i));se('cursor');a.prog((ok()?1:0)+1,2);});return b;});
+  const opts=ob.map((b,i)=>null);void opts;const OO=shuffle;void OO;
+  const order=ob.map(b=>D.o.find(o=>o[0]===b.textContent));
+  const ok=()=>ip.value.trim()===D.w;let pasted=false;
+  guardInput(a,ip,{typed:()=>a.info('うたないで、コピーと はりつけで そのまま うつそう'),del:()=>true,paste:()=>{pasted=true;},change:()=>{if(!pasted)return;pasted=false;
+   if(ok()){a.prog(src>=0?2:1,2);a.good('そのまま うつせたね。つぎは 出典を えらぼう');}else a.info('つかう 文 だけを ぴったり えらんで コピーしよう');}});
+  const fin=pos(el('button','btn y abs','かんせい',RB),156,302,300,52);
+  a.on(fin,'click',()=>{if(!ip.value.trim()){a.info('引用する 文を はりつけよう');return;}
+   if(!ok()){a.miss('引用は、つかう 文を そのまま ぜんぶ うつすよ');return;}
+   if(src<0){a.miss('出典を かならず 書こう');return;}
+   if(!order[src][1]){a.miss('出典が ちがうよ。どこの だれが 書いたか わかるように しよう');return;}
+   a.prog(2,2);a.done();});}});

@@ -311,3 +311,24 @@ STAGES.push({id:'image',g:2,title:'画像を入れて 大きさを 変える',ic
   if(v===2){place(pick(['ひまわり','ちょうちょ']),620,40,240);
    a.key(e=>{if((e.key==='Delete'||e.key==='Backspace')&&img&&sel){e.preventDefault();img.remove();img=null;a.prog(1,2);a.good('けせた！ つぎは「挿入」→「画像」');}});}
  }});
+
+/* 20 これ、のせて いい？（情報モラル：個人情報） */
+ICO.privacy=svg('<rect x="16" y="20" width="54" height="64" rx="8" fill="#fff" '+SW+'/><path d="M26 38h34M26 50h34M26 62h20" stroke="#7f95bf" stroke-width="4" stroke-linecap="round"/><path d="M64 46l22 8v14c0 12-10 20-22 24-12-4-22-12-22-24V54z" fill="#36c96f" '+SW+'/><path d="M55 70l7 7 13-14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>');
+STAGES.push({id:'privacy',g:2,title:'これ、のせて いい？（情報モラル）',icon:ICO.privacy,desc:'個人情報：住所・電話番号・パスワードはどこにものせない。だれでも見られる場所では本名・学校の名前・顔写真ものせない。',
+ how:{g:'drag',cap:'左下を おしこんだまま なぞる',lines:['どこに のせるのか、上の 場面を よく 読む','カードを「のせて いい」か「のせない」の 箱へ ドラッグ','住所・電話番号・パスワードは どこにも のせない']},
+ build(a,v){const A=a.area;
+  const D=[{s:'学級新聞（クラスと おうちの 人が 読む）',ok:['クラスで つかう 名前','すきな 食べもの','がんばった こと'],ng:[['住所','家の 場所が わかって しまうよ'],['電話番号','しらない 人から 電話が くるかも しれないよ'],['パスワード','パスワードは だれにも おしえないよ']]},
+   {s:'ゲームの プロフィール（しらない 人も 見る）',ok:['ニックネーム','すきな 食べもの','すきな 色'],ng:[['本名（フルネーム）','だれなのか わかって しまうよ'],['学校の 名前','どこに いるのか わかって しまうよ'],['住所','家の 場所が わかって しまうよ']]},
+   {s:'クラスの チャット（クラスの みんなが 見る）',ok:['宿題の しつもん','発表の 感想','あしたの もちもの'],ng:[['自分の パスワード','パスワードは だれにも おしえないよ'],['友だちの 住所','友だちの ことを かってに 広げては いけないよ'],['友だちの 悪口','相手を きずつけて しまうよ']]}][v==='p'?0:v];
+  a.task('この 場面に のせて いい ものと、のせない ものに わけよう');
+  const sc=pos(el('div','abs',null,A),40,6,1144,40);sc.style.cssText+=';display:flex;align-items:center;gap:12px;font-size:21px;font-weight:700';
+  el('span','chip c-ready','場面',sc);el('span',null,null,sc).textContent=D.s;
+  const Z=[pos(el('div','zone',null,A),60,180,520,250),pos(el('div','zone',null,A),644,180,520,250)];
+  el('div','zl','のせて いい',Z[0]);el('div','zl','のせない',Z[1]);Z[0].style.background='rgba(54,201,111,.12)';Z[1].style.background='rgba(255,107,107,.12)';
+  const cards=shuffle(D.ok.map(t=>[t,0,'']).concat(D.ng.map(x=>[x[0],1,x[1]])));let n=0;const cn=[0,0];a.prog(0,6);
+  cards.forEach((c,i)=>{const d=pos(el('div','tcard',null,A),36+i*192,64,176,92);d.textContent=c[0];
+   dragify(a,d,{hover:p=>Z.forEach(z=>z.classList.toggle('hot',!!p&&hitEl(p,z))),drop:(p,moved,back)=>{const k=Z.findIndex(z=>hitEl(p,z));
+    if(k<0){back();a.info(moved?'箱の 上で はなそう':'おしたまま うごかそう');return;}
+    if(k!==c[1]){back();a.miss(c[1]?'それは のせないよ。'+c[2]:'それは のせても だいじょうぶ');return;}
+    d.dataset.lock='1';d.dataset.ovok='1';d.style.pointerEvents='none';const j=cn[k]++;pos(d,Z[k].offsetLeft+16+(j%3)*168,Z[k].offsetTop+50+Math.floor(j/3)*100);d.style.width='156px';
+    n++;a.prog(n,6);se('cursor');if(n>=6)a.done();else a.good(c[1]?'そうだね。'+c[2]:'のせて だいじょうぶ！');}});});}});

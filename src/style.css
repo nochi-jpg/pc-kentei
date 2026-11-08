@@ -383,8 +383,8 @@ mark.cur{background:#ff9f43}
 .srow2 .btn:active{box-shadow:0 1px 0 var(--navy)}
 .tpage{position:absolute;left:24px;top:16px;width:1192px;height:470px;background:#fff;border:4px solid var(--navy);border-radius:18px;padding:18px 26px;font-size:18px;line-height:1.65;overflow:hidden}
 .tpage h3{margin:0 0 10px;font-size:24px}
-.tpage table{border-collapse:collapse;width:100%;font-size:16px}
-.tpage td,.tpage th{border:2px solid #c3d4f0;padding:4px 8px;text-align:left;vertical-align:top;line-height:1.4}
+.tpage table{border-collapse:collapse;width:100%;font-size:14px}
+.tpage td,.tpage th{border:2px solid #c3d4f0;padding:3px 8px;text-align:left;vertical-align:top;line-height:1.55}
 .tpage th{background:var(--pale)}
 .tpage ul{margin:0;padding-left:24px}
 /* ローマ字表 */
@@ -402,3 +402,10 @@ rt{display:block;position:absolute;left:50%;bottom:calc(100% - .12em);transform:
 .mtrk{position:absolute;border-radius:11px;background:#dfe9fb;border:3px solid var(--navy)}
 .mthm{position:absolute;left:2px;width:12px;border-radius:6px;background:var(--blue);cursor:grab}
 .mthm:hover{background:#3f86ec}
+.tcard{position:absolute;height:92px;border:3px solid var(--navy);border-radius:14px;background:#fff;box-shadow:3px 3px 0 var(--navy);display:flex;align-items:center;justify-content:center;text-align:center;padding:0 8px;font-size:18px;font-weight:700;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere}
+.pres{position:absolute;border:3px solid #c3d4f0;border-radius:12px;background:#fff;text-align:left;padding:6px 16px;cursor:pointer;transition:background-color .15s}
+.pres:hover{background:var(--sky)}
+.pres.on{border-color:var(--navy);background:#fff4c2}
+.pres .pt1{font-size:21px;font-weight:700;color:#1a4fb3;line-height:1.6}
+.pres .pt2{display:flex;gap:26px;font-size:15px;color:var(--sub);line-height:1.6}
+.pres .pt2 b{color:var(--navy)}
