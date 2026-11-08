@@ -20,7 +20,7 @@ function furiSplit(t){const out=[];let i=0,buf='';
  if(buf)out.push(buf);return out;}
 function furiNode(n){const p=n.parentNode;if(!p||p.closest&&p.closest('ruby,input,textarea,script,style,svg,.noruby,.sel-box'))return;
  const t=n.nodeValue;if(!KJR.test(t))return;const parts=furiSplit(t);if(parts.length===1&&typeof parts[0]==='string')return;
- const f=document.createDocumentFragment();parts.forEach(x=>{if(typeof x==='string')f.appendChild(document.createTextNode(x));else{const r=document.createElement('ruby');r.appendChild(document.createTextNode(x[0]));const rt=document.createElement('rt');rt.textContent=x[1];r.appendChild(rt);f.appendChild(r);}});
+ const f=document.createElement('span');f.className='fr';parts.forEach(x=>{if(typeof x==='string')f.appendChild(document.createTextNode(x));else{const r=document.createElement('ruby');r.appendChild(document.createTextNode(x[0]));const rt=document.createElement('rt');rt.textContent=x[1];r.appendChild(rt);f.appendChild(r);}});
  p.replaceChild(f,n);}
 function furiAll(root){if(root.nodeType===3){furiNode(root);return;}if(root.nodeType!==1)return;if(root.closest&&root.closest('ruby,input,textarea,svg,.noruby,.sel-box'))return;
  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);const L=[];let n;while(n=w.nextNode())L.push(n);L.forEach(furiNode);}

@@ -108,7 +108,7 @@ function scrPlay(s,cfg){const mode=cfg.mode;const exam=mode==='exam',soft=mode!=
    every(fn,ms){const id=setInterval(()=>{if(c.alive)fn();},ms);c.offs.push(()=>clearInterval(id));return id;},
    key(fn){c.keys.push(fn);},
    rel(e){const r=area.getBoundingClientRect();return{x:(e.clientX-r.left)/S,y:(e.clientY-r.top)/S};},
-   task(t){ttext.textContent=t;ttext.style.fontSize='21px';let f=21;while(ttext.scrollHeight>ttext.clientHeight+2&&f>15){f--;ttext.style.fontSize=f+'px';}},
+   task(t){ttext.innerHTML='';const sp=el('span',null,null,ttext);sp.textContent=t;const fit=()=>{let f=21;ttext.style.fontSize=f+'px';while(sp.offsetHeight>54&&f>13){f--;ttext.style.fontSize=f+'px';}};fit();requestAnimationFrame(fit);},
    prog(n,t){if(!exam)tprog.textContent=n+' / '+t;},
    info(t){if(soft&&c.alive&&!c.fin)say(t,'info');},
    good(t){if(!c.alive||c.fin)return;say(soft?t:'OK！','ok');se('decide');face('happy',900);},

@@ -188,7 +188,7 @@ function scrResult(s,r){const G=GR[r.g];
    const d=pos(el('div','abs',null,B),380,150,560,60);d.style.cssText+=';font-size:20px;line-height:1.5;word-break:keep-all';d.textContent='ミスが おおかった ステージを れんしゅうしてから、また ちょうせんしよう！';
    const ks=Object.keys(r.missBy).sort((a,b)=>r.missBy[b]-r.missBy[a]).slice(0,3);
    const rows=ks.map((id,i)=>{const st=stageById(id);const row=pos(el('div','abs',null,B),380,226+i*68,560,58);row.style.cssText+=';display:flex;align-items:center;gap:12px;background:#fff;border:3px solid #10264d;border-radius:14px;padding:0 8px 0 16px';
-    const nm=el('div',null,null,row);nm.style.cssText='flex:1;font-size:20px;font-weight:700;white-space:nowrap;overflow:hidden';nm.textContent=st.title+'（ミス '+r.missBy[id]+'）';
+    const nm=el('div',null,null,row);nm.style.cssText='flex:1;font-size:20px;line-height:1.9;font-weight:700;white-space:nowrap;overflow:hidden';nm.textContent=st.title+'（ミス '+r.missBy[id]+'）';
     const b=el('button','btn sm','このステージを れんしゅう',row);b.style.width='250px';b.addEventListener('click',()=>{se('decide');go(scrPlay,{mode:'prac',g:st.g,list:[{st:st,v:'p'}]});});return row;});
    const b2=pos(el('button','btn y abs','もういちど しけん',B),380,450,270,60),b3=pos(el('button','btn abs','ホームへ',B),670,450,270,60);
    b2.addEventListener('click',()=>{se('decide');go(scrExamIntro,r.g);});b3.addEventListener('click',()=>{se('cursor');go(scrHome);});

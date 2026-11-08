@@ -47,6 +47,11 @@ for(const c of app.querySelectorAll('[data-clip]')){if(!vis(c))continue;const cs
 // 8) ふりがな が 入れものや 画面から 出ていないか（rt）
 for(const rt of app.querySelectorAll('rt')){if(!vis(rt)||rt.closest('[data-clip]'))continue;const r=rt.getBoundingClientRect();if(r.top<AR.top-1){out.push('ふりがな 切れ: '+name(rt.parentNode));continue;}
  let p=rt.parentNode.parentElement;while(p&&p!==app){const cs=getComputedStyle(p);if(cs.overflow==='hidden'||cs.overflowY==='hidden'){const R=p.getBoundingClientRect();if(r.top<R.top-1||r.bottom>R.bottom+1){if(!p.closest('[data-clip]'))out.push('ふりがな はみでる: '+name(rt.parentNode)+' in '+name(p).slice(0,30));}break;}p=p.parentElement;}}
+// 9) ふりがなが ボタンや わくから 出ていないか
+for(const rt of app.querySelectorAll('rt')){if(!vis(rt)||rt.closest('[data-clip]'))continue;const r=rt.getBoundingClientRect();
+ const box=rt.closest('button,.chip,.tab,.qbox,.mark,.tprog,.ttext,.mtext,.bubble,.card,.srow2,.mrow,.sw,.dlgbox,.panel,.cbub,.res,.vrow,.pbtn,.sbtn,.cbtn,.win,.tstrip,.key,.toast,.ibub,.l3,.namebox,.prow,.zone');
+ if(!box)continue;const R=box.getBoundingClientRect();const bw=parseFloat(getComputedStyle(box).borderTopWidth)||0;
+ if(r.top<R.top+bw-0.5||r.left<R.left-0.5||r.right>R.right+0.5)out.push('ふりがな はみでる: '+name(rt.parentNode)+' in '+name(box).slice(0,30));}
 return [...new Set(out)];
 })()
 """
