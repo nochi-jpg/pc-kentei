@@ -117,7 +117,7 @@ STAGES.push({id:'login',g:3,title:'ログイン・ログアウト',icon:ICO.logi
 
 /* 2 クリック */
 STAGES.push({id:'click',g:3,title:'クリック',icon:ICO.click,desc:'1本指でトン（左下をカチッ）。ものを選ぶ・ボタンを押す基本の操作。',
- how:{g:'tap1',cap:'1本の ゆびで トン',lines:['1本の ゆびで パッドを かるく「トン」','または パッドの 左下を「カチッ」と おす','やじるしを まとに あわせてから おそう']},
+ how:{g:'tap1',cap:'左下を カチッ（または トン）',lines:['パッドの 左下を「カチッ」と おしこむ','または 1本の ゆびで パッドを かるく「トン」','やじるしを まとに あわせてから おそう']},
  build(a,v){const N=5;let n=0;a.prog(0,N);const W=1224,H=436;
   const size=v===0?38:v===1?64:76;
   a.task(v===0?'小さい まとを 5かい クリックしよう':v===1?'うごく まとを 5かい クリックしよう':v===2?'赤い まとだけを 5かい クリックしよう。青い まとは さわらない':'あらわれる まとを クリックしよう');
@@ -125,22 +125,22 @@ STAGES.push({id:'click',g:3,title:'クリック',icon:ICO.click,desc:'1本指で
   const mk=(c)=>{const t=el('button','tgt',tgtSvg(c),a.area);t.style.width=t.style.height=size+'px';t.setAttribute('aria-label','まと');tg.push(t);return t;};
   const round=()=>{clear();
    if(v===2){const sp=spots(4,size,size,W-40,H-40,30);sp.forEach((p,i)=>{const t=mk(i===0?'r':'b');pos(t,p.x+20,p.y+20);
-     a.on(t,'click',()=>{if(i===0)hit();else a.miss('青い まとは さわらないよ');});a.on(t,'contextmenu',()=>a.miss('それは 右クリック。1本ゆびで トン しよう'));});return;}
+     a.on(t,'click',()=>{if(i===0)hit();else a.miss('青い まとは さわらないよ');});a.on(t,'contextmenu',()=>a.miss('それは 右クリック。左下を カチッと おそう'));});return;}
    const t=mk('r');const p={x:40+Math.random()*(W-80-size),y:20+Math.random()*(H-40-size)};pos(t,p.x,p.y);
-   a.on(t,'click',hit);a.on(t,'contextmenu',()=>a.miss('それは 右クリック。1本ゆびで トン しよう'));
+   a.on(t,'click',hit);a.on(t,'contextmenu',()=>a.miss('それは 右クリック。左下を カチッと おそう'));
    if(v===1){let dx=(Math.random()<.5?-1:1)*1.3,dy=(Math.random()<.5?-1:1)*1.0;t._mv=a.every(()=>{p.x+=dx;p.y+=dy;if(p.x<10||p.x>W-size-10)dx=-dx;if(p.y<10||p.y>H-size-10)dy=-dy;pos(t,p.x,p.y);},30);}};
   const hit=()=>{n++;a.prog(n,N);if(n>=N){a.done();return;}a.good('いいね！ つぎの まとへ');round();};
   round();}});
 
 /* 3 ダブルクリック */
 STAGES.push({id:'dbl',g:3,title:'ダブルクリック',icon:ICO.dbl,desc:'1本指でトントン。フォルダーやアプリを開く。',
- how:{g:'dbl',cap:'1本の ゆびで トントン',lines:['1本の ゆびで「トントン」と 2かい つづけて','ゆっくりだと 1かいの クリックに なるよ','左下を「カチカチッ」と おしても できる']},
+ how:{g:'dbl',cap:'左下を カチカチッ（または トントン）',lines:['パッドの 左下を「カチカチッ」と 2かい つづけて おしこむ','または 1本の ゆびで「トントン」','ゆっくりだと 1かいの クリックに なるよ']},
  build(a,v){const A=a.area;let n=0;
   const single=(d,tm)=>{A.querySelectorAll('.ico').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');};
   const bindIco=(d,onOpen)=>{let tm=null;
-   a.on(d,'click',e=>{single(d);if(e.detail===1){clearTimeout(tm);tm=a.later(()=>a.info('いまのは 1かいの クリック。もっと はやく トントン'),600);}});
+   a.on(d,'click',e=>{single(d);if(e.detail===1){clearTimeout(tm);tm=a.later(()=>a.info('いまのは 1かいの クリック。もっと はやく カチカチッ'),600);}});
    a.on(d,'dblclick',()=>{clearTimeout(tm);onOpen();});
-   a.on(d,'contextmenu',()=>a.miss('それは 右クリック。1本ゆびで トントン'));};
+   a.on(d,'contextmenu',()=>a.miss('それは 右クリック。左下を カチカチッ'));};
   if(v==='p'){const names=['こくご','さんすう','せいかつ'];a.prog(0,3);a.task('フォルダーを ダブルクリックして ぜんぶ ひらこう');
    names.forEach((nm,i)=>{const d=icoEl(A,250+i*300,140,svgFolder(false),nm);let op=false;
     bindIco(d,()=>{if(op)return;op=true;d.querySelector('svg').outerHTML=svgFolder(true);n++;a.prog(n,3);if(n>=3)a.done();else a.good('ひらいた！');});});}
@@ -160,7 +160,7 @@ STAGES.push({id:'dbl',g:3,title:'ダブルクリック',icon:ICO.dbl,desc:'1本�
 
 /* 4 右クリック */
 STAGES.push({id:'rclick',g:3,title:'右クリック',icon:ICO.rclick,desc:'2本指でトン（右下をカチッ）。メニューを出していいね・コピー・さくじょなどを選ぶ。',
- how:{g:'tap2',cap:'2本の ゆびで トン',lines:['2本の ゆびを そろえて「トン」','または パッドの 右下を「カチッ」と おす','メニューが 出たら 1本ゆびで えらぶ']},
+ how:{g:'tap2',cap:'右下を カチッ（または 2本ゆびで トン）',lines:['パッドの 右下を「カチッ」と おしこむ','または 2本の ゆびを そろえて「トン」','メニューが 出たら 左クリックで えらぶ']},
  build(a,v){const A=a.area;
   let P=[['たいようの絵','たいようの え'],['やまの絵','やまの え'],['おうちの絵','おうちの え']];
   if(v===1)P=[['たいようの絵','たいようの え']];
@@ -183,12 +183,12 @@ STAGES.push({id:'rclick',g:3,title:'右クリック',icon:ICO.rclick,desc:'2本�
    const del=()=>{if(v===2&&p[0]==='らくがき'){gone=true;c.style.transition='opacity .3s,transform .3s';c.style.opacity='0';c.style.transform='scale(.7)';a.later(()=>c.remove(),320);n++;a.prog(n,need);if(n>=need)a.done();else a.good('さくじょ できた！');return;}
      a.miss(v==='p'?'けしちゃ だめ。「いいね」を えらぼう':'その 絵は けさないよ');};
    a.on(c,'contextmenu',e=>{e.preventDefault();if(gone)return;a.menu(e,[{t:'コピー',ic:'copy',fn:copy},{t:'いいね',ic:'heartR',fn:like},{t:'さくじょ',ic:'trash',fn:del}]);});
-   a.on(c,'click',()=>{if(!a.menuOpen()&&!gone)a.miss('それは 左クリック。2本ゆびで トン しよう');});});
+   a.on(c,'click',()=>{if(!a.menuOpen()&&!gone)a.miss('それは 左クリック。右下を カチッと おそう');});});
  }});
 
 /* 5 ドラッグ＆ドロップ */
 STAGES.push({id:'drag',g:3,title:'ドラッグ＆ドロップ',icon:ICO.drag,desc:'おしたまま動かしてはなす。ものを動かす・しわける操作。',
- how:{g:'drag',cap:'おしたまま うごかす',lines:['うごかしたい ものに やじるしを あわせる','左下を おしたまま、べつの ゆびで なぞる（または トントンの 2かいめを おしたまま なぞる）','かごの 上で ゆびを はなす']},
+ how:{g:'drag',cap:'左下を おしこんだまま なぞる',lines:['うごかしたい ものに やじるしを あわせる','左下を おしこんだまま、べつの ゆびで パッドを なぞる','かごの 上で 左下の ゆびを はなす']},
  build(a,v){const A=a.area;
   const card=(nm,x,y)=>{const d=pos(el('div','card2',null,A),x,y);d.innerHTML=ART[nm]+'<span>'+nm+'</span>';return d;};
   const zone=(x,y,w,h,label)=>{const z=pos(el('div','zone',null,A),x,y,w,h);el('div','zl',label,z);return z;};
@@ -369,21 +369,23 @@ STAGES.push({id:'search',g:3,title:'キーワードで 検索',icon:ICO.search,d
   a.start=()=>B.ip.focus();}});
 
 /* 10 ファイルを開く */
-STAGES.push({id:'fileopen',g:3,title:'ファイルを 開く',icon:ICO.fileopen,desc:'フォルダーをダブルクリックで開き、中のファイルを開いて、×で閉じる。',
- how:{g:'dbl',cap:'ダブルクリックで ひらく',lines:['フォルダーを ダブルクリックして ひらく','中の ファイルを ダブルクリックして ひらく','おわったら 右上の × で とじる']},
+STAGES.push({id:'fileopen',g:3,title:'ファイルを 開く',icon:ICO.fileopen,desc:'フォルダーをダブルクリックで開き、中のファイルを開く。',
+ how:{g:'dbl',cap:'左下を カチカチッ（または トントン）',lines:['フォルダーを ダブルクリックして ひらく','中の ファイルを ダブルクリックして ひらく','ちがう ファイルを ひらかないよう 名前を よく 見る']},
  build(a,v){const A=a.area;const month=pick(['10がつ','11がつ']);
   const files=v===1?['えにっき 10がつ','えにっき 11がつ','さくぶん']:['えにっき','さくぶん','しゅくだい'];
-  const want=v===1?'えにっき '+month:'えにっき';
-  const needClose=v==='p'||v===2;const steps=needClose?3:2;a.prog(0,steps);
-  a.task(v===1?'「ドキュメント」を ひらいて、「'+want+'」を 開こう':needClose?'「ドキュメント」の「えにっき」を 開いて、× で とじよう':'「ドキュメント」を ひらいて、「えにっき」を 開こう');
-  const E=sw(A,16,8,560,420,'エクスプローラー');const Bd=E.body;let doc=null,ph=0;
-  const bind=(d,fn)=>{a.on(d,'click',()=>{Bd.querySelectorAll('.ico').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');});a.on(d,'dblclick',fn);a.on(d,'contextmenu',()=>a.miss('それは 右クリック。トントンで ひらこう'));};
+  const want=v===1?'えにっき '+month:'えにっき';const deep=v===2;
+  const steps=deep?3:2;a.prog(0,steps);
+  a.task(v===1?'「ドキュメント」を ひらいて、「'+want+'」を 開こう':deep?'「ドキュメント」の 中の「がっこう」フォルダーを ひらいて、「えにっき」を 開こう':'「ドキュメント」を ひらいて、「えにっき」を 開こう');
+  const E=sw(A,16,8,560,420,'エクスプローラー');const Bd=E.body;let doc=null;
+  const bind=(d,fn)=>{a.on(d,'click',()=>{Bd.querySelectorAll('.ico').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');});a.on(d,'dblclick',fn);a.on(d,'contextmenu',()=>a.miss('それは 右クリック。左下を カチカチッで ひらこう'));};
   const root=()=>{Bd.innerHTML='';E.title.textContent='エクスプローラー';['ドキュメント','ピクチャ','ミュージック'].forEach((nm,i)=>{const d=icoEl(Bd,30+i*170,60,svgFolder(false),nm);
-    bind(d,()=>{if(nm!=='ドキュメント'){a.miss('ちがう フォルダーだよ');return;}ph=1;a.prog(1,steps);se('cursor');a.good('ひらいた！ つぎは ファイル');inside();});});};
-  const inside=()=>{Bd.innerHTML='';E.title.textContent='ドキュメント';
+    bind(d,()=>{if(nm!=='ドキュメント'){a.miss('ちがう フォルダーだよ');return;}a.prog(1,steps);se('cursor');a.good('ひらいた！');if(deep)mid();else inside();});});};
+  const mid=()=>{Bd.innerHTML='';E.title.textContent='ドキュメント';['がっこう','いえ','あそび'].forEach((nm,i)=>{const d=icoEl(Bd,30+i*170,60,svgFolder(false),nm);
+    bind(d,()=>{if(nm!=='がっこう'){a.miss('ちがう フォルダーだよ');return;}a.prog(2,steps);se('cursor');a.good('ひらいた！ つぎは ファイル');inside();});});};
+  const inside=()=>{Bd.innerHTML='';E.title.textContent=deep?'ドキュメント ＞ がっこう':'ドキュメント';
    files.forEach((nm,i)=>{const d=icoEl(Bd,16+i*176,60,svgFile('#fff'),nm);d.style.width='164px';
-    bind(d,()=>{if(doc)return;if(nm!==want){a.miss('ちがう ファイルだよ');return;}ph=2;a.prog(2,steps);se('cursor');
-     doc=sw(A,604,40,600,380,want+' - メモちょう',()=>{if(!needClose)return;doc.W.remove();a.prog(3,steps);a.done();});
+    bind(d,()=>{if(doc)return;if(nm!==want){a.miss('ちがう ファイルだよ');return;}a.prog(steps,steps);se('cursor');
+     doc=sw(A,604,40,600,380,want+' - メモちょう');
      const t=el('div','doc',null,doc.body);t.innerHTML=want.includes('10')?'10がつ 3にち<br>きょうは うんどうかいの れんしゅうを しました。':want.includes('11')?'11がつ 8にち<br>きょうは おちばを ひろいました。':'きょうは こうえんで あそびました。<br>すべりだいが たのしかったです。';
-     if(needClose)a.good('ひらけた！ さいごに × で とじよう');else a.done();});});};
+     a.done();});});};
   root();}});

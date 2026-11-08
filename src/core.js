@@ -21,7 +21,7 @@ function fmtTime(sec){sec=Math.round(sec);const m=Math.floor(sec/60),s=sec%60;re
 
 /* ---------- 保存 ---------- */
 const SKEY='pcskillmaster_v1';
-function defSave(){return{name:'',method:'',clear:{},mclear:{},certs:[],sound:true};}
+function defSave(){return{name:'',method:'',clear:{},mclear:{},certs:[],sound:true,susp:null};}
 let SAVE=defSave();
 try{const s=JSON.parse(localStorage.getItem(SKEY));if(s&&typeof s==='object')SAVE=Object.assign(defSave(),s);}catch(e){}
 function store(){try{localStorage.setItem(SKEY,JSON.stringify(SAVE));}catch(e){}}
@@ -94,20 +94,19 @@ function makePasota(scr,parent,x,y,w,opt){opt=opt||{};const h=Math.round(w*380/4
  return P;}
 
 /* 吹き出し（2行まで・長いときは「つぎへ」） */
-function makeBubble(parent,x,y,w,h,cls){const b=pos(el('div','bubble '+(cls||''),null,parent),x,y,w,h);const t=el('div','bt',null,b);let pages=[],pi=0,nb=null;
- const show=()=>{t.textContent=pages[pi]||'';if(nb){nb.remove();nb=null;}if(pi<pages.length-1){nb=el('button','bnext','つぎへ',b);nb.addEventListener('click',e=>{e.stopPropagation();se('cursor');pi++;show();});}};
- return{el:b,set(s){pages=String(s).split('|');pi=0;show();}};}
+function makeBubble(parent,x,y,w,h,cls){const b=pos(el('div','bubble '+(cls||''),null,parent),x,y,w,h);const t=el('div','bt',null,b);
+ return{el:b,set(s){t.textContent=String(s).replace(/\|/g,'\n');}};}
 
 /* ---------- 画面の切りかえ ---------- */
 const ROOT=document.getElementById('scr');
-let SCR=null,leaveGuard=null;
+let SCR=null,leaveGuard=null,BACK=null;
 function newScr(name){const s={name:name,el:el('div','screen',null,ROOT),offs:[],alive:true,
   after(ms,fn){const id=setTimeout(()=>{if(s.alive)fn();},ms);s.offs.push(()=>clearTimeout(id));return id;},
   every(ms,fn){const id=setInterval(()=>{if(s.alive)fn();},ms);s.offs.push(()=>clearInterval(id));return id;},
   on(t,ty,fn,o){t.addEventListener(ty,fn,o);s.offs.push(()=>t.removeEventListener(ty,fn,o));}};return s;}
 function killScr(s){if(!s)return;s.alive=false;s.offs.forEach(f=>{try{f();}catch(e){}});s.el.remove();}
 /* go(画面をつくる関数, 引数...) */
-function go(fn,...args){leaveGuard=null;closeOverlay();const old=SCR;SCR=null;lockFor(700);
+function go(fn,...args){leaveGuard=null;BACK=null;closeOverlay();const old=SCR;SCR=null;lockFor(700);
  const build=()=>{killScr(old);const s=newScr(fn.name);SCR=s;fn(s,...args);updTask();
   const n=s.el.querySelectorAll('.enter,.enterR,.openwin,.popin').length;lockFor(Math.min(1200,450+n*60));};
  if(old){old.el.classList.add('out');setTimeout(build,220);}else build();}
@@ -119,12 +118,12 @@ function stag(list){list.forEach((e,i)=>{e.classList.add('enter');e.style.setPro
 let OV=null;
 function closeOverlay(){if(OV){OV.remove();OV=null;}}
 function overlay(){closeOverlay();OV=el('div','ov',null,APP);lockFor(350);return OV;}
-function ask(text,yes,no,cb,face){const o=overlay();const d=pos(el('div','dlgbox popin',null,o),340,170,600,330);
- const P=el('img',null,null,d);pos(P,40,34,150,119);P.className='abs';P.src=ASSET.pasota[face||'trouble'];P.alt='';
- const t=pos(el('div','abs',null,d),214,40,350,130);t.style.cssText+=';font-size:24px;font-weight:700;line-height:1.6;display:flex;align-items:center;word-break:keep-all;white-space:pre-line';t.textContent=text;
- const by=pos(el('button','btn y abs',yes,d),88,226,200,56),bn=pos(el('button','btn abs',no,d),312,226,200,56);
+function ask(text,yes,no,cb,face){const o=overlay();const d=pos(el('div','dlgbox popin',null,o),250,150,780,380);
+ const P=el('img',null,null,d);pos(P,36,40,170,135);P.className='abs';P.src=ASSET.pasota[face||'trouble'];P.alt='';
+ const t=pos(el('div','abs',null,d),236,30,510,210);t.style.cssText+=';font-size:24px;font-weight:700;line-height:1.55;display:flex;align-items:center;word-break:keep-all;overflow-wrap:anywhere;white-space:pre-line';t.textContent=text;
+ let f=24;while(t.scrollHeight>t.clientHeight+1&&f>16){f--;t.style.fontSize=f+'px';}
+ const by=pos(el('button','btn y abs',yes,d),120,270,250,60),bn=pos(el('button','btn abs',no,d),402,270,250,60);
  by.addEventListener('click',()=>{se('decide');closeOverlay();cb(true);});bn.addEventListener('click',()=>{se('cursor');closeOverlay();cb(false);});}
-
 /* ---------- 紙吹雪 ---------- */
 function confetti(){const c=el('div','conf',null,APP);const cols=['#ff5a6e','#ffd23f','#36c96f','#3fa9ff','#9b6bff','#ff9f43','#ffffff'];
  for(let i=0;i<110;i++){const p=el('i',null,null,c);p.style.left=(Math.random()*1280)+'px';p.style.background=cols[i%cols.length];
@@ -151,13 +150,16 @@ function canExam(g){if(g==='m')return masterOpen();const pv=prevG(g);if(pv&&!pas
 
 /* ---------- タスクバー ---------- */
 const TASK=document.getElementById('task');
-TASK.innerHTML='<button class="startbtn" id="tStart" aria-label="タイトルへ"><span></span><span></span><span></span><span></span></button><button class="tbtn" id="tSet">せってい</button><div id="prog"></div>';
+TASK.innerHTML='<button class="startbtn" id="tStart" aria-label="タイトルへ"><span></span><span></span><span></span><span></span></button><button class="tbtn tback" id="tBack">⇠ まえの がめんに もどる</button><div id="prog"></div><button class="tbtn" id="tSet">せってい</button>';
 function progText(){return [3,2,1,'m'].map(g=>GR[g].label+'（'+clearedCount(g)+'/'+totalOf(g)+'）'+(passed(g)?GR[g].medal:'')).join('　');}
 function updTask(){document.getElementById('prog').textContent=progText();
- const nm=SCR?SCR.name:'';document.getElementById('tSet').classList.toggle('hide',nm==='scrTitle'||nm==='scrName'||!SAVE.name);
- document.getElementById('tStart').classList.toggle('hide',nm==='scrName'&&!SAVE.name);}
+ const nm=SCR?SCR.name:'';document.getElementById('tSet').classList.toggle('hide',nm==='scrTitle'||nm==='scrName'||!SAVE.name||nm==='scrSettings');
+ document.getElementById('tStart').classList.toggle('hide',(nm==='scrName'&&!SAVE.name)||nm==='scrTitle');
+ document.getElementById('tBack').classList.toggle('hide',!BACK);}
+function setBack(fn){BACK=fn;updTask();}
 function guarded(fn){if(leaveGuard){leaveGuard(fn);}else fn();}
 document.getElementById('tStart').addEventListener('click',()=>{se('cursor');guarded(()=>go(scrTitle));});
+document.getElementById('tBack').addEventListener('click',()=>{se('cursor');if(BACK)guarded(BACK);});
 document.getElementById('tSet').addEventListener('click',()=>{se('cursor');guarded(()=>go(scrSettings));});
 
 /* ---------- 全体のキー・右クリック・ズームの制御 ---------- */

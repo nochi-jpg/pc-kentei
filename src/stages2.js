@@ -79,7 +79,7 @@ STAGES.push({id:'select',g:2,title:'文字を えらぶ',icon:ICO.select,desc:'�
 
 /* 13 コピー＆はりつけ */
 STAGES.push({id:'copy',g:2,title:'コピー＆はりつけ',icon:ICO.copy,desc:'文字を選んでコピーし、べつの場所にはりつける（Ctrl+C／Ctrl+V）。',
- how:{keys:[['Ctrl','C','コピー'],['Ctrl','V','はりつけ']],cap:'右クリックメニューでも できる（しけんは キーだけ）',lines:['うつしたい 文字を えらぶ（なぞる・Shift + クリック）','Ctrl + C で コピー','はりつけたい らんを クリックして Ctrl + V']},
+ how:{keys:[['Ctrl','C','コピー'],['Ctrl','V','はりつけ']],cap:'メニューでも できる（しけんは キーだけ）',lines:['うつしたい 文字を えらぶ（なぞる・Shift + クリック）','Ctrl + C で コピー','はりつけたい らんを クリックして Ctrl + V']},
  build(a,v){const A=a.area;const mkSrc=(y,t)=>{pos(el('div','abs lbl','もとの 文',A),160,y);const s=pos(el('input','inp abs'+(a.exam?'':' allowctx'),null,A),160,y+36,900);s.readOnly=true;s.value=t;s.style.fontSize='26px';return s;};
   const field=(x,y,w,label,after)=>{const r=pos(el('div','abs',null,A),x,y,1000,60);r.style.cssText+=';display:flex;align-items:center;gap:14px';
    if(label){const l=el('div','lbl',label,r);l.style.cssText+=';width:220px;text-align:right';}
@@ -104,7 +104,7 @@ STAGES.push({id:'copy',g:2,title:'コピー＆はりつけ',icon:ICO.copy,desc:'
 
 /* 14 切り取り＆はりつけ */
 STAGES.push({id:'cut',g:2,title:'切り取り＆はりつけ',icon:ICO.cut,desc:'文字を切り取って、べつの場所へ動かす（Ctrl+X／Ctrl+V）。',
- how:{keys:[['Ctrl','X','切り取り'],['Ctrl','V','はりつけ']],cap:'右クリックメニューでも できる（しけんは キーだけ）',lines:['うごかしたい 文字を えらぶ','Ctrl + X で 切り取り（もとの ばしょから きえる）','うつしたい ばしょを クリックして Ctrl + V']},
+ how:{keys:[['Ctrl','X','切り取り'],['Ctrl','V','はりつけ']],cap:'メニューでも できる（しけんは キーだけ）',lines:['うごかしたい 文字を えらぶ','Ctrl + X で 切り取り（もとの ばしょから きえる）','うつしたい ばしょを クリックして Ctrl + V']},
  build(a,v){const A=a.area;
   const box=(y,label,val)=>{pos(el('div','abs lbl',label,A),160,y);const ip=pos(el('input','inp abs'+(a.exam?'':' allowctx'),null,A),160,y+36,900);ip.style.fontSize='26px';ip.value=val;ip.setAttribute('autocomplete','off');ip.setAttribute('spellcheck','false');return ip;};
   const typed=()=>a.info('うたないで、切り取りと はりつけで やってみよう');
@@ -171,7 +171,7 @@ STAGES.push({id:'undo',g:2,title:'元に戻す',icon:ICO.undo,desc:'まちがえ
 
 /* 16 フォルダーにせいり */
 STAGES.push({id:'folder',g:2,title:'フォルダーに せいり',icon:ICO.folder,desc:'ファイル名から判断して、あうフォルダーへドラッグして整理する。',
- how:{g:'drag',cap:'おしたまま うごかす',lines:['ファイルの 名前を よく 見る','あう フォルダーの 上まで ドラッグ','フォルダーが 光ったら はなす']},
+ how:{g:'drag',cap:'左下を おしこんだまま なぞる',lines:['ファイルの 名前を よく 見る','あう フォルダーの 上まで ドラッグ','フォルダーが 光ったら はなす']},
  build(a,v){const A=a.area;const COL=['#ff9f9f','#9fd0ff','#a8e6a0'];
   let FD=['こくご','さんすう','しゃかい'],FL;
   if(v==='p')FL=[['かん字テスト',0],['音読カード',0],['かけ算ドリル',1],['グラフづくり',1],['ごみのゆくえ',2],['地図の きごう',2]];
@@ -202,7 +202,7 @@ STAGES.push({id:'folder',g:2,title:'フォルダーに せいり',icon:ICO.folde
 
 /* 17 名前を付けて保存 */
 STAGES.push({id:'save',g:2,title:'名前を付けて保存',icon:ICO.save,desc:'わかりやすい名前をつけて、決められた場所に保存する（Ctrl+S）。',
- how:{keys:[['Ctrl','S','保存']],cap:'「ファイル」メニューからも できる（しけんは キーだけ）',lines:['Ctrl + S か「ファイル」→「名前を付けて保存」','左の 一らんで 保存する ばしょを えらぶ','ファイル名を 入力して「保存」']},
+ how:{keys:[['Ctrl','S','保存']],cap:'メニューでも できる（しけんは キーだけ）',lines:['Ctrl + S か「ファイル」→「名前を付けて保存」','左の 一らんで 保存する ばしょを えらぶ','ファイル名を 入力して「保存」']},
  build(a,v){const A=a.area;const want=v===1?{f:'4年',name:'しょくぶつのかんさつ',path:'りか ＞ 4年'}:v===2?{f:'しゃかい',name:'ごみのゆくえ2'}:{f:'しゃかい',name:'ごみのゆくえ'};
   a.task(v===1?'「りか」の 中の「4年」フォルダーに「しょくぶつのかんさつ」で 保存しよう':v===2?'「しゃかい」に 同じ 名前が もう あるよ。上書き しないで、名前の うしろに「2」を つけて 保存しよう':'「しゃかい」フォルダーに「ごみのゆくえ」という 名前で 保存しよう');
   const W=sw(A,112,4,1000,428,'ワープロ ー 無題');const bar=W.bar;
@@ -212,7 +212,7 @@ STAGES.push({id:'save',g:2,title:'名前を付けて保存',icon:ICO.save,desc:'
   a.prog(0,2);let dd=null,dl=null,folder='ドキュメント',expand=false;
   const closeDD=()=>{if(dd){dd.remove();dd=null;}};
   const openDlg=()=>{closeDD();if(dl)return;a.prog(1,2);a.good('保存する ばしょと 名前を きめよう');
-   dl=sw(A,182,8,860,420,'名前を付けて保存',()=>{dl.W.remove();dl=null;a.prog(0,2);});dl.W.style.zIndex='10';dl.W.dataset.ovok='1';
+   dl=sw(A,182,8,860,420,'名前を付けて保存');dl.W.style.zIndex='10';dl.W.dataset.ovok='1';
    const fl=pos(el('div','abs',null,dl.body),14,14,250,350);fl.style.cssText+=';display:flex;flex-direction:column;gap:4px;border-right:3px solid #c3d4f0;padding-right:12px';
    const where=pos(el('div','abs lbl',null,dl.body),290,18,540);
    const ex=pos(el('div','abs',null,dl.body),290,58,540,100);ex.style.cssText+=';border:2px solid #c3d4f0;border-radius:10px;background:#f7faff;padding:6px 12px;font-size:17px;line-height:1.6;color:#4d6290';
@@ -297,9 +297,9 @@ STAGES.push({id:'image',g:2,title:'画像を入れて 大きさを 変える',ic
    if(Math.abs(x-FR.x)<=14&&Math.abs(y-FR.y)<=14&&Math.abs(w-FR.w)<=14){pos(img,FR.x,FR.y,FR.w,FR.w*0.75);img.classList.remove('on');a.prog(steps,steps);a.done();}};
   a.on(page,'pointerdown',e=>{if(img&&!img.contains(e.target)){sel=false;img.classList.remove('on');}});
   const showIns=()=>{tools.innerHTML='';const b1=el('button','tb',ICO.image.replace('<svg','<svg width="20" height="20"')+'画像',tools);el('button','tb','図形',tools).addEventListener('click',()=>a.info('いまは「画像」だよ'));el('button','tb','表',tools).addEventListener('click',()=>a.info('いまは「画像」だよ'));
-   a.on(b1,'click',()=>{if(A.querySelector('.pick'))return;const P=sw(A,320,40,600,370,'画像を えらぶ',()=>P.W.remove());P.W.classList.add('pick');P.W.style.zIndex='10';P.W.dataset.ovok='1';let ch=null;
+   a.on(b1,'click',()=>{if(A.querySelector('.pick'))return;const P=sw(A,320,40,600,370,'画像を えらぶ');P.W.classList.add('pick');P.W.style.zIndex='10';P.W.dataset.ovok='1';let ch=null;
     IMGS.forEach((nm,i)=>{const d=icoEl(P.body,30+i*185,30,IA[nm],nm);d.style.width='170px';a.on(d,'click',()=>{P.body.querySelectorAll('.ico').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');ch=nm;});a.on(d,'dblclick',()=>{ch=nm;ins();});});
-    const ok=pos(el('button','btn y abs','挿入',P.body),190,236,200,56);
+    const ok=pos(el('button','btn y abs','挿入',P.body),70,236,210,56),cn=pos(el('button','btn abs','キャンセル',P.body),310,236,210,56);a.on(cn,'click',()=>P.W.remove());
     const ins=()=>{if(!ch){a.info('画像を クリックして えらぼう');return;}if(ch!==want){a.miss('ちがう 画像だよ');return;}P.W.remove();
      if(v===2&&img){a.info('まちがえた 画像を けしてから 入れよう');return;}
      place(ch,(v==='p'||v===0)?FR.x:300,(v==='p'||v===0)?FR.y:60,(v==='p'||v===0)?120:300);img.classList.add('on');sel=true;ph=1;a.prog(1,steps);

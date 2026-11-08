@@ -3,16 +3,17 @@
    ========================================================= */
 function padSVG(g){
  const f=(x,y,c)=>'<g class="'+c+'"><circle cx="'+x+'" cy="'+y+'" r="22" class="fg"/></g>';
- let fs='';
- if(g==='tap1')fs=f(210,120,'a-tap');
- else if(g==='dbl')fs=f(210,120,'a-dbl');
- else if(g==='tap2')fs=f(184,120,'a-tap')+f(238,120,'a-tap');
- else if(g==='drag')fs='<g class="a-press">'+f(110,236,'')+'</g>'+'<g class="a-drag">'+f(210,120,'')+'</g>';
+ const L=[62,247],Rr=[252,247];let fs='',hl='';
+ const zone=(x)=>'<rect x="'+x+'" y="214" width="190" height="66" fill="#ffd23f" opacity=".55" clip-path="url(#pclip)"/>';
+ if(g==='tap1'){hl=zone(20);fs=f(L[0],L[1],'a-tap');}
+ else if(g==='dbl'){hl=zone(20);fs=f(L[0],L[1],'a-dbl');}
+ else if(g==='tap2'){hl=zone(210);fs=f(Rr[0],Rr[1],'a-tap');}
+ else if(g==='drag'){hl=zone(20);fs='<g class="a-press">'+f(L[0],L[1],'')+'</g>'+'<g class="a-drag">'+f(220,120,'')+'</g>';}
  else if(g==='hover')fs='<g class="a-hover">'+f(210,120,'')+'</g>';
- else if(g==='scroll')fs='<g class="a-scroll">'+f(184,140,'')+f(238,140,'')+'</g>';
- else if(g==='scrollx')fs='<g class="a-scrollx">'+f(184,130,'')+f(238,130,'')+'</g>';
- else if(g==='pinch')fs='<g class="a-pinL">'+f(186,140,'')+'</g><g class="a-pinR">'+f(234,110,'')+'</g>';
- return '<svg class="pad" viewBox="0 0 420 300" width="400" height="286"><rect x="20" y="20" width="380" height="260" rx="22" class="pd"/><line x1="20" y1="214" x2="400" y2="214" class="pl"/><line x1="210" y1="214" x2="210" y2="280" class="pl"/><text x="115" y="256" class="pt">左</text><text x="305" y="256" class="pt">右</text>'+fs+'</svg>';}
+ else if(g==='scroll')fs='<g class="a-scroll">'+f(184,120,'')+f(238,120,'')+'</g>';
+ else if(g==='scrollx')fs='<g class="a-scrollx">'+f(184,120,'')+f(238,120,'')+'</g>';
+ else if(g==='pinch')fs='<g class="a-pinL">'+f(186,130,'')+'</g><g class="a-pinR">'+f(234,100,'')+'</g>';
+ return '<svg class="pad" viewBox="0 0 420 300" width="400" height="286"><defs><clipPath id="pclip"><rect x="20" y="20" width="380" height="260" rx="22"/></clipPath></defs><rect x="20" y="20" width="380" height="260" rx="22" class="pd"/>'+hl+'<line x1="20" y1="214" x2="400" y2="214" class="pl"/><line x1="210" y1="214" x2="210" y2="280" class="pl"/><text x="145" y="254" class="pt">左クリック</text><text x="335" y="254" class="pt">右クリック</text>'+fs+'</svg>';}
 function keysFig(rows){return '<div class="keyfig">'+rows.map(r=>{const k=r.slice(0,-1),l=r[r.length-1];return '<div class="keyrow">'+k.map(x=>'<span class="key">'+x+'</span>').join('<span>+</span>')+'<span class="kl">'+l+'</span></div>';}).join('')+'</div>';}
 
 function showHow(st,first,cb){const o=overlay();const h=st.how;const d=el('div','dlgbox howbox popin',null,o);d.style.position='absolute';
@@ -63,11 +64,16 @@ function icoEl(parent,x,y,svg,name){const d=pos(el('div','ico',null,parent),x,y)
 
 /* ---------- プレイ画面 ---------- */
 function scrPlay(s,cfg){const mode=cfg.mode;const exam=mode==='exam',soft=mode!=='exam';
- const list=cfg.list;let idx=0,hearts=3,miss=0;const missBy={};const t0=Date.now();let ctx=null;
+ const list=cfg.list;const R0=cfg.resume||null;let idx=R0?R0.idx:0,hearts=R0?R0.hearts:3,miss=R0?R0.miss:0;const missBy=R0?Object.assign({},R0.missBy):{};
+ const base=R0?R0.elapsed:0;const t0=Date.now();let ctx=null;let resumeLeft=R0&&R0.typeLeft!=null?R0.typeLeft:null,typeLeft=null;
+ const elapsed=()=>base+(Date.now()-t0)/1000;
  const G=GR[cfg.g];
- const close=()=>{if(exam){ask('しけんを やめて いい？\nきろくは のこらないよ。','やめる','つづける',ok=>{if(ok){leaveGuard=null;go(scrHome);}});}
-  else if(mode==='mprac')go(scrSelect,'m',cfg.page||0);else go(scrSelect,list[0].st.g,0);};
+ function saveSusp(){if(!exam||!s.alive)return;SAVE.susp={g:cfg.g,list:list.map(x=>({id:x.st.id,v:x.v})),idx:idx,hearts:hearts,miss:miss,missBy:missBy,elapsed:Math.round(elapsed()),typeLeft:typeLeft};store();}
+ const suspend=()=>{ask('しけんを いったん ちゅうだんする？\nつぎに タイトルの「はじめる」を おすと、つづきから できるよ。','ちゅうだんする','つづける',ok=>{if(ok){saveSusp();leaveGuard=null;go(scrHome);}},'normal');};
+ const askQuit=(fn)=>{ask('れんしゅうを やめて もどる？\nこの ステージは はじめから に なるよ。','もどる','つづける',ok=>{if(ok){leaveGuard=null;fn();}},'normal');};
+ const close=()=>{if(mode==='mprac')go(scrSelect,'m',cfg.page||0);else if(!exam)go(scrSelect,list[0].st.g,0);else go(scrHome);};
  const R=winEl(s.el,16,12,1248,636,'',close);const B=R.body;B.style.background='#f7faff';
+ if(exam){const sb=el('button','btn sm y',null,null);sb.textContent='ちゅうだん';sb.style.cssText+=';width:130px;height:34px;font-size:16px;border-width:3px;border-radius:8px;box-shadow:none';R.bar.insertBefore(sb,R.bar.children[2]);sb.addEventListener('click',()=>{se('cursor');suspend();});}
  const strip=el('div','tstrip',null,R.W);const ttext=el('div','ttext',null,strip);
  const howB=el('button','btn sm','やり方を 見る',strip);howB.style.width='170px';
  const tprog=el('div','tprog','',strip);
@@ -81,7 +87,8 @@ function scrPlay(s,cfg){const mode=cfg.mode;const exam=mode==='exam',soft=mode!=
  const drawHearts=(lostI)=>{hr.innerHTML='';for(let i=0;i<3;i++){const w=el('span',null,i<hearts?IC.heart:IC.heart0,hr);if(i===lostI)w.firstChild.classList.add('lost');}};
  if(!exam)hr.classList.add('hide');else drawHearts(-1);
  if(exam)howB.classList.add('hide');
- if(exam)leaveGuard=(fn)=>{ask('しけんを やめて いい？\nきろくは のこらないよ。','やめる','つづける',ok=>{if(ok){leaveGuard=null;fn();}});};
+ leaveGuard=exam?()=>suspend():(fn)=>askQuit(fn);
+ if(exam){s.every(2000,saveSusp);const ph=()=>saveSusp();addEventListener('pagehide',ph);s.offs.push(()=>removeEventListener('pagehide',ph));}
  howB.addEventListener('click',()=>{se('cursor');const st=list[idx].st;showHow(st,false);});
  KEYH=e=>{if(!ctx||!ctx.alive||OV)return;ctx.keys.forEach(f=>f(e));};s.offs.push(()=>{KEYH=null;if(ctx)cleanCtx();});
  function cleanCtx(){if(!ctx)return;ctx.alive=false;ctx.offs.forEach(f=>{try{f();}catch(e){}});ctx=null;area.innerHTML='';area.style.pointerEvents='';}
@@ -91,7 +98,9 @@ function scrPlay(s,cfg){const mode=cfg.mode;const exam=mode==='exam',soft=mode!=
   const c={alive:true,offs:[],keys:[],fin:false,locked:false};ctx=c;
   if(exam)tprog.textContent=(idx+1)+' / '+list.length;else tprog.textContent='';
   let menuEl=null;
-  const a={area:area,v:it.v,prac:it.v==='p',exam:it.v!=='p',soft:soft,
+  if(exam){typeLeft=null;saveSusp();}
+  const a={area:area,v:it.v,prac:it.v==='p',exam:it.v!=='p',soft:soft,resumeLeft:resumeLeft,
+   typeTick(n){typeLeft=n;},
    on(t,ty,fn,o){t.addEventListener(ty,fn,o);c.offs.push(()=>t.removeEventListener(ty,fn,o));},
    later(fn,ms){const id=setTimeout(()=>{if(c.alive)fn();},ms);c.offs.push(()=>clearTimeout(id));return id;},
    every(fn,ms){const id=setInterval(()=>{if(c.alive)fn();},ms);c.offs.push(()=>clearInterval(id));return id;},
@@ -105,10 +114,10 @@ function scrPlay(s,cfg){const mode=cfg.mode;const exam=mode==='exam',soft=mode!=
    alive(){return c.alive&&!c.fin&&!c.locked;},
    miss(t){if(!c.alive||c.fin||c.locked)return;se('wrong');const fl=el('div','ngflash',null,area);setTimeout(()=>fl.remove(),700);face('trouble',1400);
     if(!exam){say(t||'ちがうよ。もう一度','ng');return;}
-    c.locked=true;hearts--;miss++;missBy[it.st.id]=(missBy[it.st.id]||0)+1;drawHearts(hearts);
+    c.locked=true;hearts--;miss++;missBy[it.st.id]=(missBy[it.st.id]||0)+1;drawHearts(hearts);typeLeft=null;saveSusp();
     say(hearts>0?'ミス！ この もんだいを はじめから やりなおそう':'ハートが なくなった…','ng');area.style.pointerEvents='none';
     setTimeout(()=>{if(SCR!==s)return;if(hearts<=0){endExam(false);}else load(false);},1200);},
-   done(){if(!c.alive||c.fin||c.locked)return;c.fin=true;closeMenu();area.style.pointerEvents='none';
+   done(){if(!c.alive||c.fin||c.locked)return;c.fin=true;typeLeft=null;closeMenu();area.style.pointerEvents='none';
     el('div','okstamp',IC.ok,area);se('correct');face('happy');say(soft?'できた！':'せいかい！','ok');
     setTimeout(()=>{if(SCR!==s||ctx!==c)return;afterDone(it);},1500);},
    menu(e,items){closeMenu();const p=a.rel(e);const m=el('div','cmenu',null,area);
@@ -120,15 +129,16 @@ function scrPlay(s,cfg){const mode=cfg.mode;const exam=mode==='exam',soft=mode!=
    start:null};
   function closeMenu(){if(menuEl){menuEl.remove();menuEl=null;}}
   a.on(area,'pointerdown',e=>{if(menuEl&&!menuEl.contains(e.target))closeMenu();},true);
-  c.api=a;
+  c.api=a;resumeLeft=null;
   try{it.st.build(a,it.v);}catch(err){console.error(err);say('エラー：'+err.message,'ng');}
   const stg=Array.from(area.children);stag(stg);lockFor(500);
   if(mode==='prac'&&first){showHow(it.st,true,()=>{if(a.start&&c.alive)a.start();});}
   else if(a.start)a.later(()=>a.start(),450);}
  function afterDone(it){
+  if(!exam)leaveGuard=null;
   if(mode==='prac'){const was=canExam(it.st.g);SAVE.clear[it.st.id]=true;store();updTask();se('finish');clearDialog(it,!was&&canExam(it.st.g));}
   else if(mode==='mprac'){SAVE.mclear[it.st.id+':'+it.v]=true;store();updTask();se('finish');clearDialog(it,false);}
-  else{idx++;if(idx>=list.length)endExam(true);else load(false);}}
+  else{idx++;if(idx>=list.length)endExam(true);else{typeLeft=null;load(false);}}}
  function clearDialog(it,newExam){const o=overlay();const d=pos(el('div','dlgbox popin',null,o),290,130,700,420);
   const im=pos(el('img','abs',null,d),36,40,240,190);im.src=ASSET.pasota.happy;im.alt='';
   const t=pos(el('div','abs',null,d),300,40,370,190);t.style.cssText+=';display:flex;flex-direction:column;justify-content:center;gap:10px';
@@ -145,7 +155,7 @@ function scrPlay(s,cfg){const mode=cfg.mode;const exam=mode==='exam',soft=mode!=
   b1.addEventListener('click',()=>{se('cursor');closeOverlay();go(scrPlay,cfg);});
   b2.addEventListener('click',()=>{se('decide');closeOverlay();if(mode==='prac')go(scrPlay,{mode:'prac',g:nx.g,list:[{st:nx,v:'p'}]});else go(scrSelect,'m',cfg.page||0);});
   b3.addEventListener('click',()=>{se('cursor');closeOverlay();if(mode==='prac')go(scrSelect,it.st.g,0);else go(scrHome);});}
- function endExam(pass){leaveGuard=null;cleanCtx();const time=(Date.now()-t0)/1000;
+ function endExam(pass){leaveGuard=null;cleanCtx();const time=elapsed();SAVE.susp=null;store();s.alive=false;
   if(pass){SAVE.certs.push({g:cfg.g,date:today(),miss:miss,time:Math.round(time),name:SAVE.name});store();}
   go(scrResult,{g:cfg.g,pass:pass,miss:miss,time:time,missBy:missBy});}
  load(true);}

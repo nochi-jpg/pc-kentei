@@ -6,7 +6,7 @@ function winEl(parent,x,y,w,h,title,onClose,cls){const W=pos(el('div','win '+(cl
  const t=el('div','wtitle',null,bar);t.textContent=title;
  el('span','wctl',IC.min,bar).setAttribute('aria-hidden','true');el('span','wctl',IC.max,bar).setAttribute('aria-hidden','true');
  const x2=el('button','wctl close',IC.x,bar);x2.setAttribute('aria-label','とじる');
- if(onClose)x2.addEventListener('click',()=>{se('cursor');onClose();});else x2.classList.add('hide');
+ if(onClose){x2.addEventListener('click',()=>{se('cursor');guarded(onClose);});setBack(onClose);}else x2.classList.add('hide');
  const body=el('div','wbody',null,W);return{W,bar,title:t,body,x:x2};}
 function fitText(e,max,min){let f=max;e.style.fontSize=f+'px';while(e.scrollWidth>e.clientWidth+1&&f>min){f--;e.style.fontSize=f+'px';}}
 
@@ -42,36 +42,33 @@ function scrName(s,opt){opt=opt||{};let name=opt.fromSettings?'':'';
    ip.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229){e.preventDefault();decide();}});
    stag([ip,note,ok,bk]);setTimeout(()=>ip.focus(),450);
   }
-  if(n==='kana'){P.el.classList.add('hide');bub.el.classList.add('hide');let page=0,kata=false;let cur=Array.from(name);
-   const box=pos(el('div','namebox abs step',null,B),40,24,600,72);
+  if(n==='kana'){P.el.classList.add('hide');bub.el.classList.add('hide');let kata=false;let cur=Array.from(name);
+   const box=pos(el('div','namebox abs step',null,B),40,20,600,72);
    const show=()=>{box.innerHTML='';const t=el('span',null,null,box);t.textContent=cur.join('');el('span','cur',null,box);};
-   const grid=pos(el('div','kgrid step',null,B),40,118);
-   const rows=()=>{grid.innerHTML='';KANA[page].forEach(r=>{Array.from(r).forEach(c=>{const b=el('button','kbtn'+(c==='　'?' blank':''),null,grid);
-     b.textContent=kata?toKata(c):c;if(c!=='　')b.addEventListener('click',()=>{se('cursor');if(cur.length>=8){P2face();return;}cur.push(kata?toKata(c):c);show();});});});};
-   const P2face=()=>{tip.textContent='8文字までだよ';};
-   const mb=pos(el('div','mbtns step',null,B),440,118);
-   const bP1=el('button','btn','あ〜な',mb),bP2=el('button','btn','は〜ん',mb);
+   const grid=pos(el('div','kgrid step',null,B),40,110);grid.style.gridTemplateColumns='repeat(10,64px)';grid.style.gridTemplateRows='repeat(5,64px)';grid.style.gap='8px 6px';
+   const tip=pos(el('div','abs step',null,B),40,476,700);tip.style.cssText+=';height:30px;font-size:18px;font-weight:700;color:#d23b3b';
+   const rows=()=>{grid.innerHTML='';KANA[0].concat(KANA[1]).forEach((r,ci)=>{Array.from(r).forEach((c,ri)=>{const b=el('button','kbtn'+(c==='　'?' blank':''),null,grid);
+     b.style.gridColumn=String(10-ci);b.style.gridRow=String(ri+1);
+     b.textContent=kata?toKata(c):c;if(c!=='　')b.addEventListener('click',()=>{se('cursor');if(cur.length>=8){tip.textContent='8文字までだよ';return;}cur.push(kata?toKata(c):c);show();});});});};
+   const mb=pos(el('div','mbtns step',null,B),790,110);mb.style.gridTemplateColumns='repeat(2,170px)';mb.style.gap='12px 12px';
    const bH=el('button','btn','ひらがな',mb),bK=el('button','btn','カタカナ',mb);
    const bD=el('button','btn','゛ てんてん',mb),bHD=el('button','btn','゜ まる',mb);
    const bS=el('button','btn','小さい字',mb),bL=el('button','btn','ー',mb);
-   const upd=()=>{bP1.classList.toggle('y',page===0);bP2.classList.toggle('y',page===1);bH.classList.toggle('y',!kata);bK.classList.toggle('y',kata);rows();};
-   bP1.addEventListener('click',()=>{se('cursor');page=0;upd();});bP2.addEventListener('click',()=>{se('cursor');page=1;upd();});
+   const b1=el('button','btn','1もじ けす',mb),b2=el('button','btn','ぜんぶ けす',mb);
+   const b3=el('button','btn y','けってい',mb),b4=el('button','btn','入力を えらぶ',mb);
+   [bH,bK,bD,bHD,bS,bL,b1,b2,b3,b4].forEach(b=>{b.style.width='170px';b.style.fontSize='18px';});
+   const upd=()=>{bH.classList.toggle('y',!kata);bK.classList.toggle('y',kata);rows();};
    bH.addEventListener('click',()=>{se('cursor');kata=false;upd();});bK.addEventListener('click',()=>{se('cursor');kata=true;upd();});
    const mod=(m)=>{if(!cur.length)return;const last=cur[cur.length-1];const isK=/[ァ-ヶ]/.test(last);const h=toHira(last);
     let r=m[h]||flipMap(m,h);if(!r)return;if(isK)r=toKata(r);cur[cur.length-1]=r;se('cursor');show();};
    bD.addEventListener('click',()=>mod(DK));bHD.addEventListener('click',()=>mod(HD));bS.addEventListener('click',()=>mod(SM));
-   bL.addEventListener('click',()=>{se('cursor');if(cur.length>=8){P2face();return;}cur.push('ー');show();});
-   const ec=pos(el('div','abs step',null,B),800,118,350,400);ec.style.cssText+=';display:flex;flex-direction:column;gap:14px';
-   const b1=el('button','btn',null,ec),b2=el('button','btn',null,ec),b3=el('button','btn y',null,ec),b4=el('button','btn',null,ec);
-   b1.textContent='1もじ けす';b2.textContent='ぜんぶ けす';b3.textContent='けってい';b4.textContent='入力の しかたを えらぶ';
-   [b1,b2,b3,b4].forEach(b=>b.style.width='350px');
-   const tip=el('div','note',null,ec);tip.style.cssText+=';height:30px;font-size:18px;font-weight:700;color:#d23b3b';
+   bL.addEventListener('click',()=>{se('cursor');if(cur.length>=8){tip.textContent='8文字までだよ';return;}cur.push('ー');show();});
    b1.addEventListener('click',()=>{se('cursor');cur.pop();tip.textContent='';show();});
    b2.addEventListener('click',()=>{se('cursor');cur=[];tip.textContent='';show();});
    b3.addEventListener('click',()=>{if(!cur.length){tip.textContent='なまえを 入れてね';return;}name=cur.join('');se('decide');step('confirm');});
    b4.addEventListener('click',()=>{se('cursor');step('hello');});
-   const mp=makePasota(s,B,870,400,150,{still:true});mp.el.classList.add('step');
-   upd();show();stag([box,grid,mb,ec]);
+   const mp=makePasota(s,B,900,432,140,{still:true});mp.el.classList.add('step');
+   upd();show();stag([box,grid,mb]);
   }
   if(n==='confirm'){P.el.classList.remove('hide');bub.el.classList.remove('hide');P.face('happy');
    bub.set(name+' さん で いいかな？');
@@ -87,22 +84,29 @@ function scrName(s,opt){opt=opt||{};let name=opt.fromSettings?'':'';
 
 /* ---------- タイトル ---------- */
 function scrTitle(s){const lg=el('div','logo',null,s.el);
- lg.innerHTML='<div class="l1">小学校</div><div class="l2">パソコンスキルマスター</div><div class="l3">トラックパッドと キーボードの 名人を めざそう</div>';
+ lg.innerHTML='<div class="l1">小学校</div><div class="l2">パソコンスキルマスター</div><div class="l3">トラックパッドと キーボードの 名人を めざそう</div><div class="l4">ひだりうえの「はじめる」の アイコンを<br>ダブルクリック（2かい クリック）してね！</div>';
  stag(Array.from(lg.children));
  const ic=el('button','dicon popin',null,s.el);ic.setAttribute('aria-label','はじめる');const im=el('img',null,null,ic);im.src=ASSET.pasota.normal;im.alt='';el('span','lbl','はじめる',ic);
  let hint=null,ht=null,face='normal';
  s.every(8000,()=>{if(face!=='normal')return;im.src=ASSET.pasota.blink;s.after(160,()=>{im.src=ASSET.pasota.normal;});});
  s.on(ic,'click',e=>{clearTimeout(ht);ic.classList.add('sel');if(hint){hint.remove();hint=null;}if(e.detail>=2)return;
    ht=s.after(2000,()=>{if(!hint){hint=el('div','ibub',null,s.el);hint.textContent='ぼくを ダブルクリック\n（２かい クリック）してね';}});});
- s.on(ic,'dblclick',()=>{clearTimeout(ht);if(hint){hint.remove();hint=null;}se('decide');face='happy';im.src=ASSET.pasota.happy;go(scrHome);});
+ s.on(ic,'dblclick',()=>{clearTimeout(ht);if(hint){hint.remove();hint=null;}se('decide');if(SAVE.susp){resumeAsk();return;}face='happy';im.src=ASSET.pasota.happy;go(scrHome);});
  s.on(s.el,'pointerdown',e=>{if(!ic.contains(e.target)){ic.classList.remove('sel');}});}
+
+/* ---------- しけんの ちゅうだん ---------- */
+function resumeAsk(){const G=GR[SAVE.susp.g];
+ ask(G.label+'の しけんの とちゅうだよ。\nつづきから やりなおす？','つづきから やる','やりなおさない',ok=>{
+  if(ok){const S2=SAVE.susp;const list=S2.list.map(x=>({st:stageById(x.id),v:x.v}));go(scrPlay,{mode:'exam',g:S2.g,list:list,resume:S2});return;}
+  ask(G.label+'の しけんの「とちゅう」だけ なくなるよ。\nれんしゅうの クリアや にんていしょうは そのまま のこるから だいじょうぶ。\nこの しけんは、また さいしょから うけられるよ。','いい（ホームへ）','よくない',ok2=>{
+   if(ok2){SAVE.susp=null;store();go(scrHome);}else resumeAsk();},'normal');},'cheer');}
 
 /* ---------- ホーム ---------- */
 function scrHome(s){
  const hello=pos(el('div','hello enter',null,s.el),852,52,412);hello.textContent=SAVE.name+' さん、きょうも がんばろう';
- const bub=makeBubble(s.el,856,100,400,156,'down enter');bub.el.style.setProperty('--i',2);
+ const bub=makeBubble(s.el,856,96,400,180,'down enter');bub.el.style.setProperty('--i',2);
  const P=makePasota(s,s.el,898,316,300,{onClick:(p)=>{bub.set(nextTip());p.face('happy',1600);}});P.el.classList.add('enter');P.el.style.setProperty('--i',3);
- bub.set(tipFirstShown?nextTip():nextTip());
+ bub.set(SAVE.susp?GR[SAVE.susp.g].label+'の しけんを ちゅうだん しているよ。|つづきは タイトルの「はじめる」から できるよ。':nextTip());
  const R=winEl(s.el,24,24,800,616,'小学校パソコンスキルマスター',()=>go(scrTitle));
  const cards=el('div','cards',null,R.body);const list=[3,2,1];if(masterOpen())list.push('m');
  const cs=list.map(g=>{const G=GR[g],c=el('div','card',null,cards);
@@ -114,8 +118,9 @@ function scrHome(s){
   const chip=st==='ok'?['c-ok','合格']:st==='ready'?['c-ready','しけんを うけられるよ']:st==='lock'?['c-lock',GR[pv].label+'に 合格すると しけん']:['c-wait','あと'+(tt-cl)+'ステージで しけん'];
   el('div','chip '+chip[0],chip[1],inf);
   const bs=el('div','cbtns',null,c);const bp=el('button','btn','れんしゅう',bs);const be=el('button','btn '+(canExam(g)?'y':'lockb'),'しけん',bs);
-  bp.addEventListener('click',()=>{se('decide');go(scrSelect,g,0);});
-  be.addEventListener('click',()=>{if(!canExam(g)){P.face('normal');bub.set(st==='lock'?'さきに '+GR[pv].label+'の しけんに|合格しようね。':'れんしゅうを ぜんぶ クリアすると|しけんを うけられるよ。あと '+(tt-cl)+'ステージ！');P.jump();return;}se('decide');go(scrExamIntro,g);});
+  if(SAVE.susp){bp.className='btn lockb';be.className='btn lockb';}
+  bp.addEventListener('click',()=>{if(SAVE.susp){P.jump();bub.set(GR[SAVE.susp.g].label+'の しけんを ちゅうだん しているよ。|つづきは タイトルの「はじめる」から できるよ。');return;}se('decide');go(scrSelect,g,0);});
+  be.addEventListener('click',()=>{if(SAVE.susp){P.jump();bub.set(GR[SAVE.susp.g].label+'の しけんを ちゅうだん しているよ。|つづきは タイトルの「はじめる」から できるよ。');return;}if(!canExam(g)){P.face('normal');bub.set(st==='lock'?'さきに '+GR[pv].label+'の しけんに|合格しようね。':'れんしゅうを ぜんぶ クリアすると|しけんを うけられるよ。あと '+(tt-cl)+'ステージ！');P.jump();return;}se('decide');go(scrExamIntro,g);});
   return c;});
  stag(cs);s.after(10,()=>fitText(hello,22,15));}
 
@@ -163,7 +168,7 @@ function startExam(g){let list;
 
 /* ---------- けっか ---------- */
 function scrResult(s,r){const G=GR[r.g];
- const R=winEl(s.el,150,24,980,616,G.label+'　しけんの けっか',null);const B=R.body;
+ const R=winEl(s.el,150,24,980,616,G.label+'　しけんの けっか',null);const B=R.body;setBack(()=>go(scrHome));
  const P=makePasota(s,B,50,90,300,{still:true});
  const big=pos(el('div','abs',null,B),380,60,560,90);big.style.cssText+=';font-size:46px;font-weight:700;display:flex;align-items:center';big.textContent='けっか はっぴょう…';
  se('drum');lockFor(2200);

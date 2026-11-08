@@ -135,9 +135,9 @@ def solve(B, sid, v):
         B.click(B.text(ok,'.rt'))
     elif sid=='fileopen':
         B.dbl(B.text('ドキュメント','.ico')); B.wait(200)
-        t = B.task(); f = re.search(r'「(えにっき[^」]*)」', t).group(1)
+        if v==2: B.dbl(B.text('がっこう','.ico')); B.wait(200)
+        t = B.task(); f = re.findall(r'「(えにっき[^」]*)」', t)[-1]
         B.dbl(B.text(f,'.ico')); B.wait(300); B.chk('doc')
-        if v in ('p',2): B.click(B.h("[...document.querySelectorAll('#area .swx')].pop()"))
     elif sid=='input':
         Q = {'p':['がっこう','2026','abc'],0:['さんすう 25ページ'],1:['サッカー','コンピューター'],2:['ABC','Tokyo']}[v]
         ins = pg.query_selector_all('#area input')

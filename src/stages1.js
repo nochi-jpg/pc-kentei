@@ -13,7 +13,8 @@ STAGES.push({id:'typing',g:1,title:'タイピング',icon:ICO.typing,desc:'見�
   a.on(ta,'paste',e=>{e.preventDefault();a.info('はりつけは つかえないよ。見て うとう');});a.on(ta,'drop',e=>e.preventDefault());
   let t0=0,run=false;
   a.start=()=>{let n=3;cd.textContent=n;const iv=a.every(()=>{n--;if(n>0)cd.textContent=n;else{clearInterval(iv);cd.textContent='';ta.disabled=false;ta.focus();t0=Date.now();run=true;}},700);};
-  if(v!=='p')a.every(()=>{if(!run)return;const left=90-Math.floor((Date.now()-t0)/1000);tm.textContent='のこり '+Math.max(0,left)+'びょう';if(left<=0){run=false;a.miss('時間ぎれ');}},250);
+  const LIM=a.resumeLeft!=null?Math.max(5,a.resumeLeft):90;if(v!=='p')tm.textContent='のこり '+LIM+'びょう';
+  if(v!=='p')a.every(()=>{if(!run)return;const left=LIM-Math.floor((Date.now()-t0)/1000);tm.textContent='のこり '+Math.max(0,left)+'びょう';a.typeTick(Math.max(0,left));if(left<=0){run=false;a.miss('時間ぎれ');}},250);
   a.on(sb,'click',()=>{if(!run)return;const val=ta.value.replace(/\n/g,'');const want=T;
    const norm=s=>v==='p'?s.replace(/[\s　]+/g,' ').trim():s.trim();
    if(!val.trim()){a.info('入力してから 送信しよう');return;}
@@ -100,7 +101,7 @@ STAGES.push({id:'replace',g:1,title:'検索と置換',icon:ICO.replace,desc:'Ctr
 
 /* 24 コメント */
 STAGES.push({id:'comment',g:1,title:'コメントを 書く',icon:ICO.comment,desc:'友だちの作品の文を選んで、よいところやアドバイスをコメントする・返信する。',
- how:{g:'tap2',cap:'右クリック →「コメントを追加」',lines:['コメントしたい 文を 右クリック（または 文を えらんで「コメント」）','「コメントを追加」を えらぶ','あいてが うれしくなる ことばで 書いて 送信']},
+ how:{g:'tap2',cap:'右下を カチッ →「コメントを追加」',lines:['コメントしたい 文を 右クリック（または 文を えらんで「コメント」）','「コメントを追加」を えらぶ','あいてが うれしくなる ことばで 書いて 送信']},
  build(a,v){const A=a.area;const SN=['わたしは 夏休みに 海へ 行きました。','海の 水は つめたくて、なみの 音が 大きく ひびいていました。','また 来年も 行きたいです。'];
   const need=v==='p'?[1]:v===0?[2]:v===1?[0,2]:[];
   a.task(v==='p'?'2つ目の 文を えらんで、よいところを コメントで つたえよう':v===0?'3つ目の 文に、よいところを コメントしよう':v===1?'1つ目の 文に よいところを、3つ目の 文に「こうすると もっと よくなる」を コメントしよう':'はるとさんの コメントに 返信しよう');
@@ -148,10 +149,10 @@ STAGES.push({id:'attach',g:1,title:'ファイルを 添付',icon:ICO.attach,desc
   const ip=el('input','inp'+(a.exam?'':' allowctx'),null,row);ip.style.width='600px';ip.placeholder='メッセージを 入力';ip.setAttribute('autocomplete','off');
   const sb=el('button','btn y sm',null,row);sb.innerHTML=IC.send+'送信';sb.style.width='130px';
   const att=[];const draw=()=>{chips.innerHTML='';att.forEach(f=>{const c=el('div','fchip',svgFile('#fff').replace('<svg','<svg class="fi"')+'<span></span>',chips);c.querySelector('span').textContent=f;const x=el('button','xb',IC.x,c);x.style.cssText+=';width:28px;height:28px';x.setAttribute('aria-label','はずす');a.on(x,'click',()=>{att.splice(att.indexOf(f),1);draw();});});a.prog(att.length?1:0,2);};
-  a.on(clip,'click',()=>{if(A.querySelector('.pick'))return;const P=sw(A,330,20,560,396,'ファイルを えらぶ',()=>P.W.remove());P.W.classList.add('pick');P.W.style.zIndex='10';P.W.dataset.ovok='1';let ch=null;
+  a.on(clip,'click',()=>{if(A.querySelector('.pick'))return;const P=sw(A,330,20,560,396,'ファイルを えらぶ');P.W.classList.add('pick');P.W.style.zIndex='10';P.W.dataset.ovok='1';let ch=null;
    FILES.forEach((f,i)=>{const d=icoEl(P.body,20+(i%2)*260,10+Math.floor(i/2)*140,svgFile(f.includes('しゃしん')?'#bfe3ff':'#fff'),f);d.style.width='250px';
     a.on(d,'click',()=>{P.body.querySelectorAll('.ico').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');ch=f;});a.on(d,'dblclick',()=>{ch=f;opn();});});
-   const ob=pos(el('button','btn y abs','ひらく',P.body),160,292,220,52);
+   const ob=pos(el('button','btn y abs','ひらく',P.body),50,292,210,52),cn=pos(el('button','btn abs','キャンセル',P.body),286,292,210,52);a.on(cn,'click',()=>P.W.remove());
    const opn=()=>{if(!ch){a.info('ファイルを クリックして えらぼう');return;}P.W.remove();if(att.includes(ch)){a.info('もう ついているよ');return;}att.push(ch);draw();se('cursor');a.good('ファイルが ついたよ');};
    a.on(ob,'click',opn);});
   a.on(sb,'click',()=>{if(!att.length){a.miss('ファイルが ついていないよ。クリップから 添付しよう');return;}
