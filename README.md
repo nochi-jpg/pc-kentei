@@ -32,3 +32,9 @@
 ## 効果音
 
 過去の作品のリポジトリから使っています：kimochi-search（cursor・decide・correct・wrong・finish・fav）、oekaki-relay（drum・clap）、manabi-life-assets（cheer・chime）。不合格の音はアプリ内で合成しています。
+
+## Canva用の1ファイル版
+
+`python3 build.py && python3 tools/build_canva.py <BIZUDPGothic-Regular.ttf と Bold.ttf のあるフォルダ>` で `dist/pc-kentei_canva.html` を作ります。
+index.html に、フォント BIZ UDPゴシック（アプリで使う字だけ）を入れたものです。フォントは Google Fonts（google/fonts の ofl/bizudpgothic）のものを使います。画面やステージを直したら、もう一度動かして作り直してください。
+Canva の中では記録（localStorage）が残らないことがあります。
