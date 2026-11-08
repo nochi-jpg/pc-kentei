@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>E デスクトップ×ポップ（青）</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;800&display=swap">
+<style>
+body{margin:0}
+.root{position:relative;width:1280px;height:720px;overflow:hidden;font-family:"M PLUS Rounded 1c",sans-serif;color:#10264d;background-color:#2f6fd8;background-image:radial-gradient(rgba(255,255,255,.12) 3px,transparent 3px),linear-gradient(160deg,#2a63c9 0%,#3f86ec 60%,#62a9ff 100%);background-size:30px 30px,100% 100%}
+.root *{box-sizing:border-box}
+.prog{position:absolute;right:16px;top:20px;font-size:12px;color:rgba(255,255,255,.3);white-space:nowrap;letter-spacing:.5px}
+/* タスクバー */
+.task{position:absolute;left:0;bottom:0;width:1280px;height:56px;background:#10264d;display:flex;align-items:center;gap:12px;padding:0 14px}
+.startbtn{width:44px;height:40px;border-radius:10px;border:3px solid #fff;background:#ffd23f;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;padding:7px;cursor:pointer;transition:background-color .15s}
+.startbtn:hover{background:#ffe27a}
+.startbtn span{background:#10264d;border-radius:2px}
+.tbtn{height:40px;width:132px;border-radius:10px;border:3px solid #fff;background:transparent;color:#fff;font-family:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:background-color .15s,color .15s}
+.tbtn:hover{background:#fff;color:#10264d}
+.clock{margin-left:auto;color:#fff;text-align:right;line-height:1.2;width:120px}
+.clock b{display:block;font-size:20px;font-weight:800;line-height:26px}
+.clock span{font-size:13px;opacity:.8}
+/* タイトル */
+.logo{position:absolute;left:240px;top:200px;width:800px;text-align:center}
+.logo .l1{font-size:34px;font-weight:800;color:#ffd23f;-webkit-text-stroke:6px #10264d;paint-order:stroke fill;letter-spacing:6px}
+.logo .l2{margin-top:2px;font-size:64px;font-weight:800;color:#fff;-webkit-text-stroke:9px #10264d;paint-order:stroke fill;letter-spacing:3px;text-shadow:0 8px 0 #10264d}
+.logo .l3{margin:28px auto 0;width:520px;height:48px;border-radius:24px;background:#fff;border:4px solid #10264d;box-shadow:5px 5px 0 #10264d;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800}
+.icon{position:absolute;left:28px;top:30px;width:116px;height:118px;border:3px solid transparent;border-radius:10px;background:transparent;padding:6px 0 0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-family:inherit;transition:background-color .15s}
+.icon:hover{background:rgba(255,255,255,.18)}
+.icon.sel{background:rgba(255,255,255,.28);border-color:rgba(255,255,255,.75)}
+.icon img{width:92px;height:73px;transition:transform .25s cubic-bezier(.3,1.8,.5,1)}
+.icon:hover img{transform:translateY(-6px)}
+.icon .lbl{height:26px;padding:0 10px;border-radius:13px;background:#10264d;color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center}
+.ibub{position:absolute;left:160px;top:38px;width:292px;height:92px;background:#fff;border:4px solid #10264d;border-radius:20px;box-shadow:5px 5px 0 #10264d;display:flex;align-items:center;justify-content:center;text-align:center;font-size:18px;font-weight:800;line-height:1.45;white-space:pre-line;animation:pop .25s ease-out}
+.ibub::before{content:"";position:absolute;left:-17px;top:30px;width:22px;height:22px;background:#fff;border-left:4px solid #10264d;border-bottom:4px solid #10264d;transform:rotate(45deg)}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+/* ホーム */
+.hello{position:absolute;left:856px;top:56px;font-size:22px;font-weight:800;color:#fff;-webkit-text-stroke:5px #10264d;paint-order:stroke fill}
+.bubble{position:absolute;left:856px;top:110px;width:384px;height:156px;background:#fff;border:4px solid #10264d;border-radius:24px;box-shadow:6px 6px 0 #10264d;padding:16px 22px;display:flex;align-items:center;font-size:19px;font-weight:500;line-height:1.55;word-break:keep-all}
+.bubble::after{content:"";position:absolute;left:176px;bottom:-17px;width:26px;height:26px;background:#fff;border-right:4px solid #10264d;border-bottom:4px solid #10264d;transform:rotate(45deg)}
+.pasota{position:absolute;left:898px;top:316px;width:300px;height:238px;border:none;background:none;padding:0;cursor:pointer}
+.pfloat{width:300px;height:238px;animation:fuwa 3s ease-in-out infinite}
+.pimg{width:300px;height:238px;display:block;transition:transform .3s cubic-bezier(.3,1.8,.5,1)}
+.pasota:hover .pimg{transform:translateY(-16px) rotate(-2deg)}
+.jumpA{animation:jumpA .5s cubic-bezier(.3,1.6,.5,1)}
+.jumpB{animation:jumpB .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes jumpA{0%{transform:translateY(0)}40%{transform:translateY(-40px) scale(1.04)}100%{transform:translateY(0)}}
+@keyframes jumpB{0%{transform:translateY(0)}40%{transform:translateY(-40px) scale(1.04)}100%{transform:translateY(0)}}
+@keyframes fuwa{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.win{position:absolute;left:24px;top:24px;width:800px;height:616px;background:#eaf2ff;border:4px solid #10264d;border-radius:20px;box-shadow:8px 8px 0 #10264d;overflow:hidden;animation:open .3s cubic-bezier(.3,1.4,.5,1)}
+@keyframes open{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.wbar{height:54px;background:#2a63c9;border-bottom:4px solid #10264d;display:flex;align-items:center;gap:8px;padding:0 10px 0 16px}
+.wbar img{width:44px;height:35px}
+.wtitle{flex:1;color:#fff;font-size:21px;font-weight:800;-webkit-text-stroke:4px #10264d;paint-order:stroke fill}
+.wctl{width:40px;height:34px;border:3px solid #10264d;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center}.wctl svg{width:18px;height:18px;fill:none;stroke:#10264d;stroke-width:3;stroke-linecap:round}.wctl.close{background:#ff6b6b}.wctl.close svg{stroke:#fff}
+.cards{position:absolute;left:20px;top:74px;width:752px;display:flex;flex-direction:column;gap:18px}
+.card{height:160px;background:#fff;border:4px solid #10264d;border-radius:20px;box-shadow:5px 5px 0 #10264d;padding:0 22px;display:flex;align-items:center;gap:20px}
+.badge{width:100px;height:100px;border-radius:50%;border:4px solid #10264d;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#fff;-webkit-text-stroke:5px #10264d;paint-order:stroke fill;box-shadow:inset 0 -8px 0 rgba(0,0,0,.15)}
+.b3{background:#e0874a}.b2{background:#a9b8cf}.b1{background:#ffc928}
+.info{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0}
+.cname{font-size:26px;font-weight:800}
+.csub{font-size:16px;font-weight:500;color:#4d6290}
+.barrow{display:flex;align-items:center;gap:12px}
+.barlbl{width:126px;font-size:16px;font-weight:800;white-space:nowrap}
+.bar{flex:1;height:20px;border-radius:10px;border:3px solid #10264d;background:#dbe7fb;overflow:hidden}
+.fill{height:100%;background:#36c96f;box-shadow:inset 0 -5px 0 rgba(0,0,0,.12)}
+.chip{align-self:flex-start;height:32px;padding:0 14px;border-radius:16px;border:3px solid #10264d;font-size:16px;font-weight:800;display:flex;align-items:center;white-space:nowrap}
+.c-ok{background:#36c96f;color:#fff;-webkit-text-stroke:3px #10264d;paint-order:stroke fill}
+.c-wait{background:#d6e6ff}.c-lock{background:#eef1f6;color:#4d6290}
+.btns{display:flex;flex-direction:column;gap:14px}
+.btn{width:168px;height:52px;border:4px solid #10264d;border-radius:16px;font-family:inherit;font-size:20px;font-weight:800;cursor:pointer;box-shadow:0 5px 0 #10264d;transition:background-color .15s,transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #10264d}
+.prac{background:#fff;color:#10264d}.prac:hover{background:#d6e6ff}
+.exam{background:#ffd23f;color:#10264d}.exam:hover{background:#ffe27a}
+.locked{background:#dfe5ee;color:#7f8ca3;border-color:#7f8ca3;box-shadow:0 5px 0 #7f8ca3;cursor:not-allowed}.locked:hover{background:#dfe5ee}
+</style>
+</helmet>
+<div class="root">
+
+<sc-if value="{{isTitle}}" hint-placeholder-val="{{ true }}">
+<div class="logo">
+<div class="l1">小学校</div>
+<div class="l2">パソコンスキルマスター</div>
+<div class="l3">トラックパッドと キーボードの 名人を めざそう</div>
+</div>
+<button class="{{iconCls}}" onClick="{{iconClick}}" onDoubleClick="{{iconDbl}}" aria-label="はじめる"><img src="{{iconFace}}" alt=""><span class="lbl">はじめる</span></button>
+<sc-if value="{{showHint}}" hint-placeholder-val="{{ false }}">
+<div class="ibub">ぼくをダブルクリック
+（２かいクリック）してね</div>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{isHome}}" hint-placeholder-val="{{ false }}">
+<div class="hello">はると さん、きょうも がんばろう</div>
+<div class="bubble"><p style="margin: 0">{{tip}}</p></div>
+<button class="pasota" onClick="{{next}}" aria-label="ぱそたに 豆知識を きく"><div class="pfloat"><img class="pimg {{jumpCls}}" src="{{face}}" alt="ぱそた"></div></button>
+<div class="win">
+<div class="wbar"><img src="/_blob/2e51d6e36d5583ec487a61028b13d8a8" alt=""><div class="wtitle">小学校パソコンスキルマスター</div><span class="wctl" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M4 14h12"/></svg></span><span class="wctl" aria-hidden="true"><svg viewBox="0 0 20 20"><rect x="4" y="4" width="12" height="12" rx="1"/></svg></span><span class="wctl close" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M5 5l10 10M15 5L5 15"/></svg></span></div>
+<div class="cards">
+<div class="card"><div class="badge b3">3級</div><div class="info"><div class="cname">3級　<span class="csub">1・2年 めやす</span></div><div class="barrow"><span class="barlbl">れんしゅう 7/7</span><div class="bar"><div class="fill" style="width: 100%"></div></div></div><div class="chip c-ok">合格</div></div><div class="btns"><button class="btn prac">れんしゅう</button><button class="btn exam">しけん</button></div></div>
+<div class="card"><div class="badge b2">2級</div><div class="info"><div class="cname">2級　<span class="csub">3・4年 めやす</span></div><div class="barrow"><span class="barlbl">れんしゅう 3/7</span><div class="bar"><div class="fill" style="width: 43%"></div></div></div><div class="chip c-wait">あと4ステージで しけん</div></div><div class="btns"><button class="btn prac">れんしゅう</button><button class="btn locked">しけん</button></div></div>
+<div class="card"><div class="badge b1">1級</div><div class="info"><div class="cname">1級　<span class="csub">5・6年 めやす</span></div><div class="barrow"><span class="barlbl">れんしゅう 0/7</span><div class="bar"><div class="fill" style="width: 0%"></div></div></div><div class="chip c-lock">2級に 合格すると しけん</div></div><div class="btns"><button class="btn prac">れんしゅう</button><button class="btn locked">しけん</button></div></div>
+</div>
+</div>
+</sc-if>
+
+<div class="task">
+<button class="startbtn" onClick="{{toTitle}}" aria-label="タイトルへ"><span></span><span></span><span></span><span></span></button>
+<sc-if value="{{isHome}}" hint-placeholder-val="{{ false }}"><button class="tbtn">せってい</button></sc-if>
+<div class="prog">3級（7/7）🥉　2級（3/7）　1級（0/7）</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+var TIPS = ["ぼくを クリックすると、パソコンの 豆知識を おしえるよ！","せかいで はじめての マウスは、木の 箱で できていたんだって。","キーボードの F と J には 小さな でっぱりが あるよ。ゆびの 場所の めじるしなんだ。","「バグ」という ことばは、コンピューターに 入った 本物の 虫から 広まったと 言われているよ。","まちがえても だいじょうぶ。Ctrl ＋ Z で ひとつ前に もどせるよ。"];
+var IMG = {normal:"/_blob/2e51d6e36d5583ec487a61028b13d8a8",happy:"/_blob/e2b70b07913cc60831e4e55f29e2ef7f",blink:"/_blob/542656a1af85016908922c290f927654"};
+var WD = ["日","月","火","水","木","金","土"];
+class Component extends DCLogic {
+  componentDidMount() {
+    this.setState({ screen: 'title', i: 0, face: 'normal', sel: false, hint: false, jump: 0, now: Date.now() });
+    this._clock = setInterval(() => this.setState({ now: Date.now() }), 1000);
+    this._blink = setInterval(() => {
+      if ((this.state.face || 'normal') !== 'normal') return;
+      this.setState({ face: 'blink' });
+      this._b2 = setTimeout(() => { if (this.state.face === 'blink') this.setState({ face: 'normal' }); }, 160);
+    }, 8000);
+  }
+  componentWillUnmount() { clearInterval(this._clock); clearInterval(this._blink); clearTimeout(this._b2); clearTimeout(this._h); clearTimeout(this._hint); }
+  renderVals() {
+    var s = this.state || {};
+    var screen = s.screen || 'title';
+    var d = new Date(s.now || Date.now());
+    var face = IMG[s.face || 'normal'];
+    return {
+      isTitle: screen === 'title',
+      isHome: screen === 'home',
+      showHint: !!s.hint,
+      iconCls: s.sel ? 'icon sel' : 'icon',
+      iconFace: face,
+      face: face,
+      tip: TIPS[s.i || 0],
+      jumpCls: (s.jump || 0) === 0 ? '' : ((s.jump % 2) ? 'jumpA' : 'jumpB'),
+      time: d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'),
+      date: (d.getMonth() + 1) + '/' + d.getDate() + '（' + WD[d.getDay()] + '）',
+      iconClick: () => {
+        clearTimeout(this._hint);
+        this.setState({ sel: true, hint: false });
+        this._hint = setTimeout(() => { if (this.state.screen === 'title') this.setState({ hint: true }); }, 2000);
+      },
+      iconDbl: () => {
+        clearTimeout(this._hint);
+        this.setState({ screen: 'home', sel: false, hint: false });
+      },
+      toTitle: () => { clearTimeout(this._hint); this.setState({ screen: 'title', sel: false, hint: false }); },
+      next: () => {
+        clearTimeout(this._h);
+        var n = ((this.state && this.state.i) || 0) % (TIPS.length - 1) + 1;
+        this.setState({ i: n, face: 'happy', jump: ((this.state && this.state.jump) || 0) + 1 });
+        this._h = setTimeout(() => this.setState({ face: 'normal' }), 1600);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

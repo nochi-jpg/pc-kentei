@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>パソコンそうさ名人</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#1f2a44;font-family:"BIZ UDPGothic","BIZ UDPゴシック","BIZ UDGothic","Meiryo","Hiragino Kaku Gothic ProN",sans-serif;color:#1f2a44;user-select:none;-webkit-user-select:none}
+button{font-family:inherit}
+#app{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;background:#f4f7fb;overflow:hidden}
+.screen{position:absolute;left:0;top:0;width:1280px;height:720px;display:none}
+.screen.on{display:block}
+.hd{position:absolute;left:0;top:0;width:1280px;height:64px;background:#2b4c7e;color:#fff;display:flex;align-items:center;padding:0 16px;gap:16px}
+.hd .ttl{flex:1;font-size:26px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd .rt{width:200px;height:48px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:bold;background:rgba(255,255,255,.15);border-radius:10px}
+.btn{height:64px;width:240px;border:none;border-radius:14px;font-size:24px;font-weight:bold;background:#3d7be0;color:#fff;cursor:pointer;box-shadow:0 4px 0 #24549f;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #24549f}
+.btn.sub{background:#fff;color:#2b4c7e;box-shadow:0 4px 0 #b8c4d8;border:2px solid #b8c4d8}
+.btn.sm{height:48px;width:160px;font-size:20px}
+.btn.off{background:#c9d1de;box-shadow:0 4px 0 #a9b3c4;color:#fff;cursor:default}
+.btn.go{background:#e8833a;box-shadow:0 4px 0 #b55f1f}
+/* タイトル */
+#title{background:linear-gradient(160deg,#2b4c7e,#3d7be0)}
+#title .big{position:absolute;left:0;top:96px;width:1280px;text-align:center;color:#fff;font-size:72px;font-weight:bold;letter-spacing:4px}
+#title .lead{position:absolute;left:0;top:200px;width:1280px;text-align:center;color:#dfe9ff;font-size:26px}
+#title .tpad{position:absolute;left:430px;top:252px;width:420px;height:280px}
+#title .menu{position:absolute;left:0;top:560px;width:1280px;display:flex;justify-content:center;gap:32px}
+#title .menu .btn{width:300px;height:72px;font-size:28px}
+#title .cr{position:absolute;right:20px;bottom:12px;color:#bcd0f5;font-size:16px}
+/* えらぶ画面 */
+.tabs{position:absolute;left:50px;top:84px;width:1180px;height:72px;display:flex;gap:20px}
+.tab{flex:1;height:72px;border-radius:14px;border:3px solid #b8c4d8;background:#fff;font-size:26px;font-weight:bold;color:#2b4c7e;cursor:pointer}
+.tab.on{color:#fff;border-color:transparent}
+.grid{position:absolute;left:50px;top:180px;width:1180px;height:460px;display:grid;grid-template-columns:repeat(4,280px);grid-template-rows:repeat(2,220px);gap:20px}
+.card{position:relative;width:280px;height:220px;border-radius:16px;background:#fff;border:3px solid #d5dce8;cursor:pointer;padding:18px;overflow:hidden}
+.card:hover{border-color:#3d7be0}
+.card .no{width:48px;height:48px;border-radius:50%;color:#fff;font-size:24px;font-weight:bold;display:flex;align-items:center;justify-content:center}
+.card .ct{margin-top:12px;font-size:24px;line-height:34px;height:34px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .cd{margin-top:8px;font-size:17px;line-height:24px;color:#56627a;height:72px;overflow:hidden}
+.card .bd{position:absolute;right:16px;top:22px;width:96px;height:36px;border-radius:18px;background:#e7f6ea;color:#2f8a4c;font-size:18px;font-weight:bold;display:none;align-items:center;justify-content:center;border:2px solid #2f8a4c}
+.card.clr .bd{display:flex}
+.foot{position:absolute;left:50px;top:656px;width:1180px;height:48px;font-size:20px;color:#56627a;display:flex;align-items:center}
+/* チャレンジ */
+.ccards{position:absolute;left:50px;top:110px;width:1180px;height:470px;display:flex;gap:30px}
+.ccard{flex:1;height:470px;border-radius:20px;background:#fff;border:3px solid #d5dce8;padding:28px;cursor:pointer;position:relative}
+.ccard:hover{border-color:#e8833a}
+.ccard .cs{height:56px;border-radius:12px;color:#fff;font-size:28px;font-weight:bold;display:flex;align-items:center;justify-content:center}
+.ccard .cg{margin-top:20px;text-align:center;font-size:34px;font-weight:bold}
+.ccard .cn{margin-top:10px;text-align:center;font-size:20px;color:#56627a}
+.ccard .cb{position:absolute;left:28px;bottom:28px;width:316px;height:150px;border-radius:14px;background:#f4f7fb;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.ccard .cb .l{font-size:18px;color:#56627a}
+.ccard .cb .v{font-size:30px;font-weight:bold}
+.ccard .cb .v2{font-size:22px;font-weight:bold;color:#e8833a;height:30px}
+/* プレイ画面 */
+.taskbar{position:absolute;left:24px;top:76px;width:1232px;height:64px;display:flex;align-items:center;gap:16px}
+.taskbar .tx{flex:1;height:64px;display:flex;align-items:center;font-size:25px;font-weight:bold;line-height:1.3;overflow:hidden}
+.taskbar .pg{width:120px;height:52px;border-radius:26px;background:#2b4c7e;color:#fff;font-size:24px;font-weight:bold;display:flex;align-items:center;justify-content:center}
+#area{position:absolute;left:24px;top:148px;width:1232px;height:496px;background:#fff;border:2px solid #d5dce8;border-radius:16px;overflow:hidden}
+.pfoot{position:absolute;left:24px;top:652px;width:1232px;height:60px;display:flex;align-items:center;gap:16px}
+.pfoot .btn{height:52px;width:200px;font-size:21px}
+#msg{flex:1;height:52px;border-radius:12px;display:flex;align-items:center;padding:0 20px;font-size:22px;font-weight:bold;background:#eef2f8;color:#56627a;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#msg.ok{background:#e7f6ea;color:#2f8a4c}
+#msg.ng{background:#fdeceb;color:#c4372a}
+#msg.info{background:#fff6e3;color:#a86a10}
+.ov{position:absolute;left:0;top:64px;width:1280px;height:656px;background:rgba(31,42,68,.55);display:none;z-index:100}
+#area{z-index:0}
+.ov.on{display:block}
+.panel{position:absolute;background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#howP{left:140px;top:36px;width:1000px;height:584px}
+#howP .ht{position:absolute;left:0;top:24px;width:1000px;text-align:center;font-size:34px;font-weight:bold}
+#howP .hl{position:absolute;left:40px;top:96px;width:440px;height:330px;border-radius:16px;background:#f4f7fb;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+#howP .hr{position:absolute;left:510px;top:96px;width:450px;height:330px;display:flex;flex-direction:column;justify-content:center;gap:16px}
+#howP .hr .li{display:flex;gap:12px;font-size:23px;line-height:1.4;word-break:keep-all}
+#howP .hr .li b{flex:none;width:36px;height:36px;border-radius:50%;background:#3d7be0;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center}
+#howP .hb{position:absolute;left:0;top:480px;width:1000px;display:flex;justify-content:center}
+#clrP{left:320px;top:128px;width:640px;height:400px;text-align:center}
+#clrP .c1{margin-top:44px;font-size:64px;font-weight:bold;color:#e8833a}
+#clrP .c2{margin-top:12px;font-size:26px;font-weight:bold;height:36px}
+#clrP .c3{margin-top:8px;font-size:24px;color:#56627a;height:64px;line-height:1.35}
+#clrP .cbs{position:absolute;left:0;top:300px;width:640px;display:flex;justify-content:center;gap:16px}
+#clrP .cbs .btn{width:184px;height:60px;font-size:22px}
+.flash{position:absolute;left:440px;top:240px;width:400px;height:140px;border-radius:20px;background:#fff;font-size:56px;font-weight:bold;color:#e8833a;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+/* トラックパッド図 */
+.pad{fill:#dfe5ee;stroke:#8a97ab;stroke-width:3}
+.pl{stroke:#8a97ab;stroke-width:2;stroke-dasharray:6 6}
+.pt{fill:#8a97ab;font-size:20px;font-weight:bold;text-anchor:middle}
+.zone{fill:#3d7be0;animation:zone 1.4s infinite}
+@keyframes zone{0%,30%{opacity:.06}40%{opacity:.4}60%,100%{opacity:.06}}
+.fg{fill:#f2b38a;stroke:#c98358;stroke-width:3}
+.a-tap,.a-dbl{transform-box:fill-box;transform-origin:center}
+.a-tap{animation:tap 1.4s infinite}
+@keyframes tap{0%,30%{transform:scale(1);opacity:.45}40%{transform:scale(.8);opacity:1}55%,100%{transform:scale(1);opacity:.45}}
+.a-dbl{animation:dbl 1.6s infinite}
+@keyframes dbl{0%,20%{transform:scale(1);opacity:.45}27%{transform:scale(.8);opacity:1}34%{transform:scale(1);opacity:.6}41%{transform:scale(.8);opacity:1}50%,100%{transform:scale(1);opacity:.45}}
+.a-drag{animation:drag 2.4s infinite}
+@keyframes drag{0%{transform:translate(0,0);opacity:.45}15%{transform:translate(0,0);opacity:1}70%{transform:translate(160px,-50px);opacity:1}85%,100%{transform:translate(160px,-50px);opacity:.3}}
+.a-hover{animation:hov 2.4s infinite;opacity:.5}
+@keyframes hov{0%,100%{transform:translate(0,0)}50%{transform:translate(160px,-50px)}}
+.a-scroll{animation:scr 1.8s infinite}
+@keyframes scr{0%,100%{transform:translateY(40px)}50%{transform:translateY(-40px)}}
+.a-pinL{animation:pinL 2.2s infinite}
+.a-pinR{animation:pinR 2.2s infinite}
+@keyframes pinL{0%,100%{transform:translateX(0)}50%{transform:translateX(-80px)}}
+@keyframes pinR{0%,100%{transform:translateX(0)}50%{transform:translateX(80px)}}
+.hcap{font-size:20px;color:#56627a;font-weight:bold}
+.keys{display:flex;align-items:center;gap:10px;font-size:26px;font-weight:bold;width:340px}
+.key{display:inline-flex;align-items:center;justify-content:center;height:60px;min-width:64px;padding:0 14px;border:3px solid #8a97ab;border-bottom-width:8px;border-radius:10px;background:#fff;font-size:24px;font-weight:bold;color:#1f2a44;white-space:nowrap}
+.keys .kn{width:120px;font-size:22px;color:#56627a;text-align:left}
+/* ステージ部品 */
+.abs{position:absolute}
+.inp{height:64px;font-family:inherit;font-size:28px;padding:0 14px;border:3px solid #8a97ab;border-radius:10px;user-select:text;-webkit-user-select:text;background:#fff;color:#1f2a44;outline:none}
+.inp:focus{border-color:#3d7be0;box-shadow:0 0 0 4px rgba(61,123,224,.2)}
+.inp[readonly]{background:#f4f7fb}
+.tgt{position:absolute;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#fff 0 18%,#e8533a 19% 38%,#fff 39% 56%,#e8533a 57%);cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.15);transition:left .2s,top .2s}
+.fold{position:absolute;width:200px;height:170px}
+.fold .fb{position:absolute;left:10px;top:28px;width:180px;height:110px;background:#f3c64b;border-radius:4px 10px 10px 10px;border:3px solid #c99a1e}
+.fold .fb::before{content:'';position:absolute;left:-3px;top:-22px;width:72px;height:22px;background:#f3c64b;border:3px solid #c99a1e;border-bottom:none;border-radius:8px 8px 0 0}
+.fold .fl{position:absolute;left:0;top:142px;width:200px;height:28px;line-height:28px;text-align:center;font-size:21px;font-weight:bold;white-space:nowrap}
+.fold.sel .fb{box-shadow:0 0 0 5px #fff,0 0 0 9px #3d7be0}
+.fold.open .fb{background:#fbe39a}
+.fold .ppr{position:absolute;left:46px;top:6px;width:108px;height:72px;background:#fff;border:3px solid #8a97ab;border-radius:4px;display:none}
+.fold.open .ppr{display:block}
+.fold.open .fb{z-index:1}
+.fold.hot .fb{box-shadow:0 0 0 5px #fff,0 0 0 9px #e8833a}
+.item{position:absolute;width:110px;height:64px;border-radius:14px;color:#fff;font-size:22px;font-weight:bold;display:flex;align-items:center;justify-content:center;cursor:grab;box-shadow:0 4px 0 rgba(0,0,0,.2);touch-action:none}
+.dragging{z-index:20;transform:scale(1.06);cursor:grabbing;box-shadow:0 10px 18px rgba(0,0,0,.25)}
+.basket{position:absolute;border:4px dashed #a0703a;background:#f6e7cf;border-radius:20px}
+.basket .bl{position:absolute;left:0;top:6px;width:100%;text-align:center;font-size:20px;font-weight:bold;color:#7a5222}
+.basket.hot{background:#fbd9a9}
+.cmenu{position:absolute;width:240px;background:#fff;border:2px solid #b8c4d8;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.2);padding:6px;z-index:50}
+.cmenu button{display:flex;width:100%;height:52px;border:none;background:none;text-align:left;padding:0 16px;border-radius:8px;align-items:center;gap:12px;font-size:22px;color:#1f2a44;cursor:pointer}
+.cmenu button:hover{background:#e6efff}
+.cmenu button svg{width:26px;height:26px;flex:none}
+.pcard{position:absolute;width:300px;height:300px;border-radius:16px;border:3px solid #d5dce8;background:#fff;overflow:hidden}
+.pcard .pic{position:absolute;left:0;top:0;width:294px;height:220px}
+.pcard .pn{position:absolute;left:0;top:224px;width:294px;height:30px;text-align:center;font-size:21px;font-weight:bold}
+.pcard .lk{position:absolute;left:97px;top:256px;width:100px;height:34px;border-radius:17px;background:#fdeceb;color:#c4372a;font-size:18px;font-weight:bold;display:none;align-items:center;justify-content:center;gap:4px}
+.pcard .lk svg{width:20px;height:20px}
+.pcard.liked .lk{display:flex}
+.win{position:absolute;background:#fff;border:2px solid #b8c4d8;border-radius:12px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.wbar{position:absolute;left:0;top:0;width:100%;height:48px;background:#e9eef6;border-bottom:2px solid #d5dce8;display:flex;align-items:center;gap:8px;padding:0 12px;font-size:19px;font-weight:bold;color:#2b4c7e}
+.tbtn{height:38px;padding:0 14px;border:2px solid #b8c4d8;background:#fff;border-radius:8px;font-size:18px;font-weight:bold;color:#2b4c7e;display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap}
+.tbtn:hover{background:#e6efff}
+.tbtn svg{width:24px;height:24px}
+.srow{position:absolute;left:0;width:620px;height:64px;border-bottom:1px solid #e3e8f0;display:flex;align-items:center;padding:0 24px;font-size:24px}
+.srow.goal{background:#fff1d6;color:#a86a10;font-weight:bold;cursor:pointer}
+.srow.start{background:#e6efff;color:#2b4c7e;font-weight:bold;cursor:pointer}
+.srow.done{background:#e7f6ea;color:#2f8a4c}
+.strk{position:absolute;right:4px;top:4px;width:8px;height:408px;border-radius:4px;background:#eef2f8}
+.sthm{position:absolute;left:0;width:8px;height:80px;border-radius:4px;background:#9fb0c8}
+.side{position:absolute;display:flex;flex-direction:column;gap:16px}
+.side .sx{word-break:keep-all;font-size:22px;line-height:1.5;font-weight:bold;height:100px}
+.side .btn{width:380px}
+.chat{position:absolute;background:#f5f5fb;border:2px solid #c8c8e0;border-radius:12px}
+.chh{height:52px;background:#5b5fc7;color:#fff;font-size:22px;font-weight:bold;display:flex;align-items:center;padding:0 20px;border-radius:10px 10px 0 0}
+.msg{position:relative;display:flex;gap:14px;margin:60px 24px 0 24px;width:720px}
+.av{width:56px;height:56px;border-radius:50%;color:#fff;font-size:24px;font-weight:bold;display:flex;align-items:center;justify-content:center;flex:none}
+.bub{position:relative;background:#fff;border-radius:10px;padding:12px 18px;box-shadow:0 1px 3px rgba(0,0,0,.15);width:640px}
+.bub .nm{font-size:16px;color:#666;height:22px;line-height:22px}
+.bub .tx{font-size:23px;margin-top:4px;height:32px;line-height:32px;white-space:nowrap}
+.rchips{display:flex;gap:6px;margin-top:8px;height:34px}
+.chip{height:34px;padding:0 12px;border:2px solid #5b5fc7;border-radius:17px;display:flex;align-items:center;gap:4px;font-size:17px;background:#eef;font-weight:bold}
+.chip svg{width:22px;height:22px}
+.rbar{position:absolute;right:0;top:-58px;display:none;background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.25);padding:4px;gap:4px}
+.msg:hover .rbar{display:flex}
+.rbar button{width:72px;height:56px;border:none;background:none;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13px;cursor:pointer;gap:2px;color:#1f2a44}
+.rbar button:hover{background:#e6e6f8}
+.rbar button svg{width:28px;height:28px}
+.qbox{width:280px;height:72px;border-radius:12px;background:#2b4c7e;color:#fff;font-size:32px;font-weight:bold;display:flex;align-items:center;justify-content:center}
+.lbl{font-size:21px;font-weight:bold;color:#56627a}
+.mark{width:96px;height:52px;border-radius:26px;font-size:22px;font-weight:bold;display:flex;align-items:center;justify-content:center;background:#eef2f8;color:#9fb0c8}
+.mark.ok{background:#e7f6ea;color:#2f8a4c}
+.blk{position:absolute;width:88px;height:88px;border-radius:12px;transition:opacity .3s,transform .3s}
+.blk.gone{opacity:0;transform:scale(.4)}
+.file{position:absolute;width:180px;height:96px;background:#fff;border:3px solid #8a97ab;border-radius:8px;display:flex;align-items:center;justify-content:center;padding-left:14px;font-size:20px;font-weight:bold;cursor:grab;box-shadow:0 3px 0 rgba(0,0,0,.12);touch-action:none;white-space:nowrap}
+.file::before{content:'';position:absolute;left:0;top:0;width:14px;height:100%;background:#3d7be0}
+.dd{position:absolute;width:280px;background:#fff;border:2px solid #b8c4d8;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.2);padding:6px;z-index:30}
+.dd button{display:flex;width:100%;height:48px;border:none;background:none;padding:0 14px;border-radius:8px;align-items:center;font-size:20px;color:#1f2a44;cursor:pointer;justify-content:space-between}
+.dd button:hover{background:#e6efff}
+.dd button span{font-size:16px;color:#8a97ab}
+.dlg{position:absolute;background:#fff;border:2px solid #8a97ab;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.3);z-index:40;overflow:hidden}
+.dlg .dt{height:44px;background:#2b4c7e;color:#fff;font-size:20px;font-weight:bold;display:flex;align-items:center;padding:0 16px}
+.flist button{display:flex;width:220px;height:48px;border:none;background:none;align-items:center;font-size:20px;color:#1f2a44;cursor:pointer;border-radius:8px;padding:0 12px;white-space:nowrap}
+.flist button:hover{background:#e6efff}
+.flist button.on{background:#3d7be0;color:#fff}
+.scard{position:absolute;border-radius:20px;background:#f4f7fb;border:3px solid #d5dce8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.scard .sn{font-size:52px;font-weight:bold}
+.scard .sd{font-size:24px;color:#56627a;height:34px}
+.scard .sk{height:76px;display:flex;align-items:center;gap:12px;font-size:30px;font-weight:bold}
+.etext{position:absolute;font-size:26px;line-height:1.9;user-select:text;word-break:keep-all}
+.etext mark{background:#ffe066;border-radius:4px}
+.fpanel{position:absolute;background:#f4f7fb;border-left:2px solid #d5dce8;padding:20px;display:flex;flex-direction:column;gap:12px}
+.fpanel .lbl{font-size:19px}
+.fpanel .inp{height:52px;font-size:24px;width:300px}
+.fpanel .cnt{font-size:22px;font-weight:bold;height:32px;color:#2b4c7e}
+.fpanel .row3{display:flex;gap:12px}
+.fpanel .row3 .btn{width:92px;height:52px}
+.sent{word-break:keep-all;padding:10px 14px;border-radius:8px;font-size:24px;line-height:1.5;cursor:pointer;border:3px solid transparent;margin-bottom:10px}
+.sent:hover{background:#f4f7fb}
+.sent.on{background:#e6efff;border-color:#3d7be0}
+.sent.cm{background:#fff6e3;border-color:#e8b04a}
+.cpane{position:absolute;background:#f4f7fb;border:2px solid #d5dce8;border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.cpane .ch{font-size:22px;font-weight:bold;color:#2b4c7e;height:30px;line-height:30px}
+.cpane .cq{word-break:keep-all;font-size:18px;color:#56627a;height:54px;line-height:1.5;overflow:hidden}
+.cpane textarea{width:364px;height:150px;font-family:inherit;font-size:22px;padding:10px;border:3px solid #8a97ab;border-radius:10px;resize:none;user-select:text;-webkit-user-select:text;outline:none}
+.cpane textarea:focus{border-color:#3d7be0}
+.ccm{background:#fff;border-radius:10px;border-left:6px solid #e8b04a;padding:12px;font-size:20px;line-height:1.5;height:150px;overflow:hidden}
+.ccm .who{font-size:16px;color:#8a97ab}
+.pbtn{display:flex;flex-direction:column;justify-content:center;width:320px;height:64px;border:2px solid #b8c4d8;background:#fff;border-radius:10px;padding:0 16px;text-align:left;cursor:pointer}
+.pbtn:hover{background:#e6efff}
+.pbtn .a{font-size:22px;font-weight:bold;color:#1f2a44}
+.pbtn .b{font-size:15px;color:#8a97ab}
+.prow{display:flex;align-items:center;gap:8px;height:72px;border-bottom:1px solid #e3e8f0}
+.prow .pn2{width:150px;font-size:22px;font-weight:bold;white-space:nowrap}
+.tg{width:136px;height:52px;border:2px solid #b8c4d8;background:#fff;border-radius:10px;font-size:19px;font-weight:bold;color:#56627a;cursor:pointer}
+.tg.on{background:#3d7be0;border-color:#3d7be0;color:#fff}
+.xb{width:52px;height:52px;border:2px solid #b8c4d8;background:#fff;border-radius:10px;font-size:22px;font-weight:bold;color:#c4372a;cursor:pointer}
+/* 先生へ */
+.tpage{position:absolute;left:50px;top:84px;width:1180px;height:560px;background:#fff;border-radius:16px;border:2px solid #d5dce8;padding:28px 36px}
+.tpage h3{font-size:24px;margin-bottom:10px;color:#2b4c7e}
+.tpage p,.tpage li{font-size:19px;line-height:1.65}
+.tpage ul{margin:0 0 12px 24px}
+.tpage table{border-collapse:collapse;width:100%;margin-bottom:12px}
+.tpage td{border:2px solid #d5dce8;padding:8px 12px;font-size:18px;line-height:1.45;vertical-align:top}
+.tpage td:first-child{width:170px;font-weight:bold;background:#f4f7fb}
+.pager{position:absolute;left:50px;top:656px;width:1180px;height:52px;display:flex;justify-content:center;align-items:center;gap:20px}
+.pager .btn{height:52px;width:200px;font-size:21px}
+.pager .pi{width:120px;text-align:center;font-size:22px;font-weight:bold}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div id="title" class="screen on">
+  <div class="big">パソコンそうさ名人</div>
+  <div class="lead">トラックパッドと キーボードの きほんを みにつけよう</div>
+  <div class="tpad" id="titlePad"></div>
+  <div class="menu">
+    <button class="btn" data-go="prac">れんしゅう</button>
+    <button class="btn go" data-go="chal">チャレンジ</button>
+    <button class="btn sub" data-go="teach">先生へ</button>
+  </div>
+  <div class="cr">K.nom</div>
+</div>
+
+<div id="prac" class="screen">
+  <div class="hd"><button class="btn sub sm" data-go="title">もどる</button><div class="ttl">れんしゅう　えらんで やってみよう</div><div class="rt" id="pracCount"></div></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="grid" id="grid"></div>
+  <div class="foot">クリアした ステージには「クリア」が つきます。</div>
+</div>
+
+<div id="chal" class="screen">
+  <div class="hd"><button class="btn sub sm" data-go="title">もどる</button><div class="ttl">チャレンジ　ぜんぶの もんだいを はやく、ミスなく</div><div class="rt">タイム と ミス</div></div>
+  <div class="ccards" id="ccards"></div>
+  <div class="foot">ミス0 で めやすタイムより はやいと「名人」に なれます。</div>
+</div>
+
+<div id="teach" class="screen">
+  <div class="hd"><button class="btn sub sm" data-go="title">もどる</button><div class="ttl">先生へ</div><div class="rt" id="tpNo">1 / 2</div></div>
+  <div class="tpage" id="tpage"></div>
+  <div class="pager"><button class="btn sub" id="tpPrev">まえへ</button><div class="pi" id="tpPi">1 / 2</div><button class="btn sub" id="tpNext">つぎへ</button></div>
+</div>
+
+<div id="play" class="screen">
+  <div class="hd"><button class="btn sub sm" id="quit">やめる</button><div class="ttl" id="pTitle"></div><div class="rt" id="pRight"></div></div>
+  <div class="taskbar"><div class="tx" id="pTask"></div><div class="pg" id="pProg"></div></div>
+  <div id="area"></div>
+  <div class="pfoot"><button class="btn sub" id="howBtn">やり方を 見る</button><div id="msg"></div></div>
+  <div class="ov" id="howOv"><div class="panel" id="howP"><div class="ht" id="howT"></div><div class="hl" id="howL"></div><div class="hr" id="howR"></div><div class="hb"><button class="btn go" id="howGo">やってみる</button></div></div></div>
+  <div class="ov" id="clrOv"><div class="panel" id="clrP"><div class="c1" id="c1">できた！</div><div class="c2" id="c2"></div><div class="c3" id="c3"></div><div class="cbs" id="cbs"></div></div></div>
+  <div class="ov" id="flashOv"><div class="flash" id="flashT">クリア！</div></div>
+</div>
+
+</div>
+<script>
+'use strict';
+const app=document.getElementById('app');
+let S=1;
+function fit(){S=Math.min(innerWidth/1280,innerHeight/720);app.style.transform='translate(-50%,-50%) scale('+S+')';}
+addEventListener('resize',fit);fit();
+
+const $=id=>document.getElementById(id);
+function el(tag,cls,html,parent){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;if(parent)parent.appendChild(e);return e;}
+function pos(e,x,y,w,h){e.style.left=x+'px';e.style.top=y+'px';if(w!=null)e.style.width=w+'px';if(h!=null)e.style.height=h+'px';return e;}
+function inR(c,z){return c.x>=z.offsetLeft&&c.x<=z.offsetLeft+z.offsetWidth&&c.y>=z.offsetTop&&c.y<=z.offsetTop+z.offsetHeight;}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ---------- 保存 ---------- */
+const SKEY='pcsousa_v1';
+let SAVE={clear:{},best:{}};
+try{const s=JSON.parse(localStorage.getItem(SKEY));if(s&&s.clear)SAVE=s;}catch(e){}
+function store(){try{localStorage.setItem(SKEY,JSON.stringify(SAVE));}catch(e){}}
+
+/* ---------- アイコン ---------- */
+const IC={
+ like:'<svg viewBox="0 0 24 24"><path d="M2 10h4v11H2z" fill="#e8b04a"/><path d="M8 10l4-8c1.7 0 3 1.3 3 3v4h5.3c1.3 0 2.2 1.2 1.9 2.4l-1.6 7.4c-.2 1-1.1 1.7-2.1 1.7H8z" fill="#f3c64b" stroke="#c99a1e"/></svg>',
+ heart:'<svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C1 8.4 3.2 5 6.6 5c2.2 0 3.6 1.3 5.4 3.3C13.8 6.3 15.2 5 17.4 5c3.4 0 5.6 3.4 4.2 6.8C19.5 16.4 12 21 12 21z" fill="#e8533a"/></svg>',
+ smile:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f3c64b" stroke="#c99a1e"/><circle cx="8.5" cy="10" r="1.4" fill="#5a3b10"/><circle cx="15.5" cy="10" r="1.4" fill="#5a3b10"/><path d="M7.5 14c1.2 2.2 7.8 2.2 9 0" stroke="#5a3b10" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>',
+ wow:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f3c64b" stroke="#c99a1e"/><circle cx="8.5" cy="9.5" r="1.5" fill="#5a3b10"/><circle cx="15.5" cy="9.5" r="1.5" fill="#5a3b10"/><ellipse cx="12" cy="16" rx="2.2" ry="2.8" fill="#5a3b10"/></svg>',
+ copy:'<svg viewBox="0 0 24 24" fill="none" stroke="#2b4c7e" stroke-width="2"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M5 16V5a2 2 0 0 1 2-2h9"/></svg>',
+ trash:'<svg viewBox="0 0 24 24" fill="none" stroke="#2b4c7e" stroke-width="2"><path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14"/></svg>',
+ cmt:'<svg viewBox="0 0 24 24" fill="none" stroke="#2b4c7e" stroke-width="2"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+ undo:'<svg viewBox="0 0 24 24" fill="none" stroke="#2b4c7e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>',
+ redo:'<svg viewBox="0 0 24 24" fill="none" stroke="#2b4c7e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg>',
+ find:'<svg viewBox="0 0 24 24" fill="none" stroke="#2b4c7e" stroke-width="2.4" stroke-linecap="round"><circle cx="10" cy="10" r="6"/><path d="M15 15l6 6"/></svg>',
+ rep:'<svg viewBox="0 0 24 24" fill="none" stroke="#2b4c7e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>'
+};
+const RN={like:'いいね',heart:'ハート',smile:'にこにこ',wow:'びっくり'};
+
+/* ---------- トラックパッド図 ---------- */
+function padSVG(g){
+ const f=(x,y,c)=>'<g class="'+c+'"><circle cx="'+x+'" cy="'+y+'" r="20" class="fg"/></g>';
+ let z='',fs='';
+ if(g==='tap1'||g==='dbl'||g==='drag')z='<rect x="20" y="200" width="190" height="60" class="zone" clip-path="url(#pc)"/>';
+ if(g==='tap2')z='<rect x="210" y="200" width="190" height="60" class="zone" clip-path="url(#pc)"/>';
+ if(g==='tap1')fs=f(210,110,'a-tap');
+ else if(g==='dbl')fs=f(210,110,'a-dbl');
+ else if(g==='tap2')fs=f(186,110,'a-tap')+f(236,110,'a-tap');
+ else if(g==='drag')fs=f(130,140,'a-drag');
+ else if(g==='hover')fs=f(130,140,'a-hover');
+ else if(g==='scroll')fs=f(186,110,'a-scroll')+f(236,110,'a-scroll');
+ else if(g==='pinch')fs=f(190,110,'a-pinL')+f(230,110,'a-pinR');
+ return '<svg viewBox="0 0 420 280" width="420" height="280"><defs><clipPath id="pc"><rect x="20" y="20" width="380" height="240" rx="20"/></clipPath></defs><rect x="20" y="20" width="380" height="240" rx="20" class="pad"/>'+z+'<line x1="20" y1="200" x2="400" y2="200" class="pl"/><line x1="210" y1="200" x2="210" y2="260" class="pl"/><text x="115" y="238" class="pt">左</text><text x="305" y="238" class="pt">右</text>'+fs+'</svg>';
+}
+function keysHTML(list){return list.map(k=>'<span class="key">'+k+'</span>').join('<span>+</span>');}
+$('titlePad').innerHTML=padSVG('tap1');
+
+/* ---------- 右クリックメニュー ---------- */
+function showMenu(a,x,y,items){
+ closeMenu(a);
+ const m=el('div','cmenu',null,a.area);
+ items.forEach(it=>{const b=el('button',null,(it.ic?IC[it.ic]:'')+'<span>'+it.t+'</span>',m);b.addEventListener('click',ev=>{ev.stopPropagation();closeMenu(a);it.fn();});});
+ const w=240,h=items.length*52+16;
+ pos(m,Math.min(x,1228-w),Math.min(y,492-h));
+ a._menu=m;
+}
+function closeMenu(a){if(a._menu){a._menu.remove();a._menu=null;}}
+
+/* ---------- ドラッグ ---------- */
+function draggable(a,node,onDrop){
+ let sx,sy,ox,oy,on=false,moved=false;
+ a.on(node,'pointerdown',e=>{if(e.button!==0)return;e.preventDefault();node.setPointerCapture(e.pointerId);on=true;moved=false;sx=e.clientX;sy=e.clientY;ox=node.offsetLeft;oy=node.offsetTop;node.classList.add('dragging');});
+ a.on(node,'pointermove',e=>{if(!on)return;const dx=(e.clientX-sx)/S,dy=(e.clientY-sy)/S;if(Math.abs(dx)+Math.abs(dy)>5)moved=true;
+   const nx=Math.max(0,Math.min(1228-node.offsetWidth,ox+dx)),ny=Math.max(0,Math.min(492-node.offsetHeight,oy+dy));node.style.left=nx+'px';node.style.top=ny+'px';
+   if(a._hover)a._hover({x:nx+node.offsetWidth/2,y:ny+node.offsetHeight/2});});
+ const end=()=>{if(!on)return;on=false;node.classList.remove('dragging');const c={x:node.offsetLeft+node.offsetWidth/2,y:node.offsetTop+node.offsetHeight/2};
+   if(a._hover)a._hover(null);onDrop(c,moved,()=>{node.style.left=ox+'px';node.style.top=oy+'px';});};
+ a.on(node,'pointerup',end);a.on(node,'pointercancel',end);
+}
+
+/* =========================================================
+   ステージ
+   ========================================================= */
+const STEPS=[
+ {n:1,grade:'1・2年',color:'#e8833a',goal:90},
+ {n:2,grade:'3・4年',color:'#3d9a5b',goal:240},
+ {n:3,grade:'5・6年',color:'#7a5bd0',goal:240}
+];
+const ST=[];
+
+/* 1 クリック */
+ST.push({id:'click',step:1,title:'クリック',desc:'ものを えらぶ、ボタンを おす。いちばん きほんの そうさ',
+ how:{g:'tap1',cap:'1本の ゆびで トン',lines:['1本の ゆびで パッドを かるく「トン」','または パッドの 左下を「カチッ」と おす','やじるしを まるに あわせてから おそう']},
+ task:'あらわれる まとを クリックしよう',
+ build(a){const N=5;let n=0;a.prog(0,N);
+  const t=el('div','tgt',null,a.area);
+  const place=()=>pos(t,40+Math.random()*1030,30+Math.random()*320);place();
+  a.on(t,'click',()=>{n++;a.prog(n,N);if(n>=N)a.done();else{a.say('いいね！ つぎの まとへ','ok');place();}});
+  a.on(t,'contextmenu',()=>a.miss('それは 右クリック。1本ゆびで トン しよう'));
+ }});
+
+/* 2 ダブルクリック */
+ST.push({id:'dbl',step:1,title:'ダブルクリック',desc:'2回 つづけて はやく クリック。フォルダーを ひらくときに つかう',
+ how:{g:'dbl',cap:'1本の ゆびで トントン',lines:['1本の ゆびで「トントン」と 2回 つづけて','ゆっくりだと 1回の クリックに なるよ','左下を「カチカチッ」と おしても できる']},
+ task:'フォルダーを ダブルクリックして ぜんぶ ひらこう',
+ build(a){const names=['こくご','さんすう','せいかつ'];let n=0;a.prog(0,3);
+  names.forEach((nm,i)=>{const f=pos(el('div','fold','<div class="ppr"></div><div class="fb"></div><div class="fl">'+nm+'</div>',a.area),226+i*300,150);
+   let tm=null;
+   a.on(f,'click',e=>{if(f.classList.contains('open'))return;a.area.querySelectorAll('.fold').forEach(x=>x.classList.remove('sel'));f.classList.add('sel');
+     if(e.detail===1){clearTimeout(tm);tm=a.later(()=>{if(!f.classList.contains('open'))a.say('いまのは 1回の クリック。もっと はやく トントン','info');},550);}});
+   a.on(f,'dblclick',()=>{clearTimeout(tm);if(f.classList.contains('open'))return;f.classList.remove('sel');f.classList.add('open');n++;a.prog(n,3);
+     if(n>=3)a.done();else a.say('ひらいた！','ok');});
+   a.on(f,'contextmenu',()=>a.miss('それは 右クリック。1本ゆびで トントン'));
+  });
+ }});
+
+/* 3 右クリック */
+ST.push({id:'rclick',step:1,title:'右クリック',desc:'メニューを 出す クリック。2本の ゆびで トン',
+ how:{g:'tap2',cap:'2本の ゆびで トン',lines:['2本の ゆびを そろえて「トン」','または パッドの 右下を「カチッ」と おす','メニューが 出たら 1本ゆびで えらぶ']},
+ task:'絵を 右クリックして、メニューから「いいね」を えらぼう',
+ build(a){const P=[
+   {n:'たいようの 絵',h:'<div style="position:absolute;inset:0;background:#bfe3ff"></div><div style="position:absolute;left:97px;top:60px;width:100px;height:100px;border-radius:50%;background:#f3c64b;box-shadow:0 0 0 14px rgba(243,198,75,.35)"></div>'},
+   {n:'やまの 絵',h:'<div style="position:absolute;inset:0;background:#e8f6ff"></div><div style="position:absolute;left:27px;top:60px;width:0;height:0;border-left:120px solid transparent;border-right:120px solid transparent;border-bottom:160px solid #5aa36a"></div><div style="position:absolute;left:150px;top:100px;width:0;height:0;border-left:70px solid transparent;border-right:70px solid transparent;border-bottom:120px solid #3d8a52"></div>'},
+   {n:'おうちの 絵',h:'<div style="position:absolute;inset:0;background:#fff6e3"></div><div style="position:absolute;left:57px;top:30px;width:0;height:0;border-left:90px solid transparent;border-right:90px solid transparent;border-bottom:80px solid #e8533a"></div><div style="position:absolute;left:77px;top:110px;width:140px;height:90px;background:#f3c64b"></div><div style="position:absolute;left:127px;top:140px;width:40px;height:60px;background:#a0703a"></div>'}];
+  let n=0;a.prog(0,3);
+  P.forEach((p,i)=>{const c=pos(el('div','pcard','<div class="pic">'+p.h+'</div><div class="pn">'+p.n+'</div><div class="lk">'+IC.heart+'いいね</div>',a.area),100+i*370,90);
+   a.on(c,'contextmenu',e=>{e.preventDefault();const r=a.rel(e);
+     showMenu(a,r.x,r.y,[{t:'コピー',ic:'copy',fn:()=>a.say('いまは「いいね」を えらぼう','info')},{t:'いいね',ic:'heart',fn:()=>{
+        if(c.classList.contains('liked')){a.say('この 絵には もう いいね したよ','info');return;}
+        c.classList.add('liked');n++;a.prog(n,3);if(n>=3)a.done();else a.say('いいね できた！','ok');}},
+      {t:'さくじょ',ic:'trash',fn:()=>a.say('けしちゃ だめ。「いいね」を えらぼう','info')}]);});
+   a.on(c,'click',()=>{if(!a._menu)a.miss('それは 左クリック。2本ゆびで トン しよう');});
+  });
+  a.on(a.area,'pointerdown',e=>{if(a._menu&&!a._menu.contains(e.target)&&e.button===0)closeMenu(a);});
+ }});
+
+/* 4 ドラッグ＆ドロップ */
+ST.push({id:'drag',step:1,title:'ドラッグ＆ドロップ',desc:'おしたまま うごかして、はなす。ものを うごかす そうさ',
+ how:{g:'drag',cap:'おしたまま うごかす',lines:['うごかしたい ものに やじるしを あわせる','左下を おしたまま、べつの ゆびで パッドを なぞる','かごの 上で ゆびを はなす']},
+ task:'くだものを ぜんぶ かごに 入れよう',
+ build(a){const F=[['りんご','#e8533a','#fff'],['みかん','#f39a2b','#fff'],['ぶどう','#7a5bd0','#fff'],['バナナ','#f3d34b','#5a3b10'],['メロン','#6cbf5b','#fff']];
+  const B=pos(el('div','basket','<div class="bl">かご</div>',a.area),436,250,360,214);
+  let n=0;a.prog(0,5);
+  a._hover=c=>B.classList.toggle('hot',!!c&&inR(c,B));
+  F.forEach((f,i)=>{const it=pos(el('div','item',f[0],a.area),126+i*210,50);it.style.background=f[1];it.style.color=f[2];
+   draggable(a,it,(c,moved,back)=>{
+    if(inR(c,B)){const k=n;pos(it,B.offsetLeft+16+(k%3)*114,B.offsetTop+44+Math.floor(k/3)*78);it.style.pointerEvents='none';n++;a.prog(n,5);
+      if(n>=5)a.done();else a.say('かごに 入った！','ok');}
+    else{back();a.say(moved?'かごの 上で はなそう':'おしたまま うごかそう','info');}});
+  });
+ }});
+
+/* 5 2本ゆびスクロール */
+ST.push({id:'scroll',step:1,title:'スクロール',desc:'2本の ゆびで 上下に なぞって、画面を うごかす',
+ how:{g:'scroll',cap:'2本の ゆびで 上下に なぞる',lines:['2本の ゆびを そろえて パッドに おく','そのまま 上や 下に なぞる','見えない ところが 出てくるよ']},
+ task:'下の ほうに ある「ゴール」を さがして クリックしよう',
+ build(a){const W=pos(el('div','win',null,a.area),296,40,640,416);
+  const C=el('div','abs',null,W);pos(C,0,0,620,1024);
+  const names=['スタート','あさがお','ひまわり','チューリップ','たんぽぽ','さくら','ばら','ゆり','すみれ','コスモス','あじさい','つばき','パンジー','ゴール！ ここを クリック','なのはな','うめ'];
+  const rows=names.map((nm,i)=>{const r=pos(el('div','srow',(i===0||i===13)?nm:(i+'　'+nm),C),0,i*64);if(i===0)r.classList.add('start');if(i===13)r.classList.add('goal');return r;});
+  const trk=el('div','strk',null,W),th=el('div','sthm',null,trk);
+  let off=0,ph=0;const max=1024-412;
+  const upd=()=>{C.style.transform='translateY('+(-off)+'px)';th.style.top=(off/max*(408-80))+'px';};upd();
+  a.prog(0,2);
+  a.on(W,'wheel',e=>{e.preventDefault();if(e.ctrlKey)return;const d=e.deltaY*(e.deltaMode===1?32:1);off=Math.max(0,Math.min(max,off+d));upd();},{passive:false});
+  a.on(rows[13],'click',()=>{if(ph!==0)return;ph=1;rows[13].classList.add('done');rows[13].textContent='ゴール クリア';a.prog(1,2);
+    a.task('こんどは いちばん 上まで もどって「スタート」を クリックしよう');a.say('みつけた！ こんどは 上へ','ok');});
+  a.on(rows[0],'click',()=>{if(ph===0)a.say('2本ゆびで 下へ なぞって ゴールを さがそう','info');else a.done();});
+  let pd=null;a.on(W,'pointerdown',e=>{pd={x:e.clientX,y:e.clientY};});
+  a.on(W,'pointermove',e=>{if(pd&&e.buttons===1&&Math.abs(e.clientY-pd.y)>30){pd=null;a.say('おして うごかすのでは なく、2本ゆびで なぞろう','info');}});
+  a.on(W,'pointerup',()=>{pd=null;});
+ }});
+
+/* 6 ズーム（ピンチ） */
+ST.push({id:'pinch',step:1,title:'ズーム',desc:'2本の ゆびを ひろげて 大きく、ちぢめて 小さく',
+ how:{g:'pinch',cap:'2本の ゆびを ひろげる・ちぢめる',lines:['2本の ゆびを パッドに おく','ゆびを ひろげると 大きくなる（ピンチアウト）','ゆびを ちぢめると 小さくなる（ピンチイン）']},
+ task:'2本ゆびを ひろげて 大きくし、ひみつの ことばを よもう',
+ build(a){const words=['りんご','みかん','ぶどう','いちご','すいか'];const ans=words[Math.random()*5|0];
+  const W=pos(el('div','win',null,a.area),60,24,720,448);
+  const P=pos(el('div','abs',null,W),0,0,716,444);P.style.background='linear-gradient(#bfe3ff 0,#e8f6ff 60%,#8fd18a 60%)';P.style.transformOrigin='358px 222px';
+  [[80,200,90],[560,190,110],[200,230,70],[470,240,60]].forEach(t=>{const d=pos(el('div','abs',null,P),t[0],t[1],t[2],t[2]);d.style.borderRadius='50%';d.style.background='#4f9a5c';});
+  const sg=pos(el('div','abs','ひみつの ことばは<br><b style="font-size:9px">'+ans+'</b>',P),318,204,80,36);
+  sg.style.cssText+='background:#fff;border:1px solid #a0703a;border-radius:3px;font-size:6px;line-height:1.4;text-align:center;padding-top:6px';
+  const sd=pos(el('div','side',null,a.area),820,40,380);
+  const sx=el('div','sx','大きくして よめたら、こたえを えらぼう',sd);
+  let s=1,ph=0,ok=false,tw=0;a.prog(0,2);
+  const btns=shuffle(words.slice()).filter(w=>w!==ans).slice(0,2).concat([ans]);shuffle(btns);
+  const BB=btns.map(w=>{const b=el('button','btn off',w,sd);a.on(b,'click',()=>{if(!ok||ph!==0)return;
+     if(w===ans){ph=1;a.prog(1,2);sx.textContent='せいかい！ こんどは もとの 大きさに もどそう';a.task('2本ゆびを ちぢめて（ピンチイン）もとの 大きさに もどそう');a.say('せいかい！','ok');BB.forEach(x=>x.classList.add('off'));}
+     else a.miss('ちがうよ。もっと 大きくして よく 見よう');});return b;});
+  a.on(a.area,'wheel',e=>{e.preventDefault();
+    if(!e.ctrlKey){if(Date.now()-tw>1500){tw=Date.now();a.say('2本ゆびを ひろげるように うごかそう','info');}return;}
+    s=Math.max(1,Math.min(5,s*Math.exp(-e.deltaY*0.01)));P.style.transform='scale('+s+')';
+    if(ph===0&&!ok&&s>=2.5){ok=true;BB.forEach(b=>b.classList.remove('off'));a.say('よめたかな？ こたえを えらぼう','ok');}
+    if(ph===1&&s<=1.05){ph=2;a.done();}},{passive:false});
+ }});
+
+/* 7 スタンプ（いいね） */
+ST.push({id:'stamp',step:1,title:'スタンプを おくる',desc:'チャットの メッセージに「いいね」などの スタンプを おくる',
+ how:{g:'hover',cap:'1本の ゆびで なぞって のせる',lines:['メッセージの 上に やじるしを のせる（おさない）','上に スタンプが 出てくる','おくりたい スタンプを クリック']},
+ task:'',
+ build(a){const C=pos(el('div','chat',null,a.area),226,16,780,460);
+  el('div','chh','4年1組 チャット',C);
+  const M=[{n:'せんせい',c:'#e8833a',t:'きょうの 発表、とても よかったです。'},{n:'はると',c:'#3d9a5b',t:'あしたの 休み時間、いっしょに あそぼう！'}];
+  const T=a.chal?shuffle([{m:0,k:'like'},{m:1,k:['heart','smile','wow'][Math.random()*3|0]}]):[{m:0,k:'like'},{m:1,k:'heart'}];
+  let ti=0;const chips=[];
+  const setT=()=>{a.prog(ti,2);if(ti<2)a.task(M[T[ti].m].n+'の メッセージに「'+RN[T[ti].k]+'」を おくろう');};setT();
+  M.forEach((m,mi)=>{const w=el('div','msg',null,C);el('div','av',m.n[0],w).style.background=m.c;
+   const b=el('div','bub','<div class="nm">'+m.n+'</div><div class="tx">'+m.t+'</div>',w);chips[mi]=el('div','rchips',null,b);
+   const bar=el('div','rbar',null,b);
+   ['like','heart','smile','wow'].forEach(k=>{const bt=el('button',null,IC[k]+'<span>'+RN[k]+'</span>',bar);
+    a.on(bt,'click',()=>{if(ti>=2)return;const t=T[ti];
+     if(mi!==t.m){a.miss('メッセージが ちがうよ。'+M[t.m].n+'の メッセージだよ');return;}
+     if(k!==t.k){a.miss('スタンプが ちがうよ。「'+RN[t.k]+'」を さがそう');return;}
+     el('div','chip',IC[k]+'1',chips[mi]);ti++;setT();if(ti>=2)a.done();else a.say('おくれた！','ok');});});
+  });
+ }});
+
+/* 8 文字入力 */
+ST.push({id:'input',step:2,title:'文字入力',desc:'ひらがな・数字・ローマ字を「半角/全角」キーで きりかえて 入力',
+ how:{keys:[['半角/全角','きりかえ'],['Enter','かくてい']],cap:'キーボード',lines:['「半角/全角」キーで 日本語と 英数字を きりかえる','ひらがなは ローマ字で うって Enterで かくてい','数字や 英字は 半角で うつ']},
+ task:'お題と 同じに なるように 入力しよう',
+ build(a){const Q=a.chal?shuffle([['がっこう','k'],['えんそく','k'],['あさがお','k']]).slice(0,1).concat(shuffle([['2026','n'],['1234','n']]).slice(0,1),shuffle([['abc','a'],['pc','a']]).slice(0,1)):[['がっこう','k'],['2026','n'],['abc','a']];
+  let n=0;a.prog(0,3);const rows=[];
+  Q.forEach((q,i)=>{const r=pos(el('div','abs',null,a.area),156,44+i*144,920,96);r.style.display='flex';r.style.alignItems='center';r.style.gap='24px';
+   el('div','qbox',q[0],r);el('div','lbl','→',r);
+   const ip=el('input','inp allowctx',null,r);ip.style.width='380px';ip.setAttribute('autocomplete','off');
+   const mk=el('div','mark','まだ',r);let done=false,comp=false;
+   const chk=()=>{if(done||comp)return;const v=ip.value;
+     if(v===q[0]){done=true;mk.textContent='OK';mk.classList.add('ok');ip.readOnly=true;n++;a.prog(n,3);if(n>=3)a.done();else{a.say('OK！ つぎへ','ok');rows[i+1].focus();}return;}
+     if(/[０-９Ａ-Ｚａ-ｚ]/.test(v)){a.say('全角に なっているよ。「半角/全角」キーで きりかえよう','info');return;}
+     if(q[1]==='k'&&/[a-z]/i.test(v)&&v.length>=3){a.say('ローマ字の ままだよ。「半角/全角」キーで「あ」に しよう','info');return;}
+     if(q[1]!=='k'&&/[ぁ-ん]/.test(v)){a.say('ひらがなに なったよ。「半角/全角」キーで「A」に しよう','info');return;}
+     if(q[1]==='k'&&/[一-龠ァ-ヶ]/.test(v))a.say('へんかん しないで、ひらがなの まま Enter','info');};
+   a.on(ip,'compositionstart',()=>{comp=true;});a.on(ip,'compositionend',()=>{comp=false;setTimeout(chk,0);});a.on(ip,'input',chk);
+   rows.push(ip);});
+  a.start=()=>rows[0].focus();
+ }});
+
+/* 9 コピー＆はりつけ */
+ST.push({id:'copy',step:2,title:'コピー＆はりつけ',desc:'文字を えらんで コピーし、べつの ばしょに はりつける',
+ how:{keys:[['Ctrl','C','コピー'],['Ctrl','V','はりつけ']],cap:'右クリックメニューでも できる',lines:['うつしたい 文字を えらぶ（おしたまま なぞる）','Ctrl + C で コピー','はりつけたい ばしょを クリックして Ctrl + V']},
+ task:'',
+ build(a){const R=[{s:'あしたは えんそくです',w:'あしたは えんそくです',t:'上の 文を ぜんぶ コピーして、下に はりつけよう'},{s:'あめの あとに にじが でた',w:'にじ',t:'上の 文から「にじ」だけを コピーして、下に はりつけよう'}];
+  let ri=0;a.prog(0,2);
+  const l1=pos(el('div','abs lbl','もとの 文',a.area),266,50);
+  const src=pos(el('input','inp allowctx abs',null,a.area),266,86,700);src.readOnly=true;
+  const ar=pos(el('div','abs lbl','↓ コピーして はりつける',a.area),266,180);
+  const l2=pos(el('div','abs lbl','はりつける ばしょ',a.area),266,230);
+  const dst=pos(el('input','inp allowctx abs',null,a.area),266,266,700);dst.setAttribute('autocomplete','off');
+  let pasted=false;
+  const setR=()=>{src.value=R[ri].s;dst.value='';pasted=false;a.task(R[ri].t);};setR();
+  a.on(dst,'paste',()=>{pasted=true;});
+  a.on(dst,'input',()=>{const v=dst.value.trim();
+   if(v===R[ri].w){if(!pasted){a.say('うたないで、コピーと はりつけで やってみよう','info');dst.value='';return;}
+     ri++;a.prog(ri,2);if(ri>=2)a.done();else{a.say('できた！ つぎの もんだい','ok');setR();}}
+   else if(pasted){a.miss('はりつけた 文字が ちがうよ。えらびなおそう');dst.value='';pasted=false;}});
+  void l1;void ar;void l2;
+ }});
+
+/* 10 切り取り＆はりつけ */
+ST.push({id:'cut',step:2,title:'切り取り＆はりつけ',desc:'文字を 切り取って、べつの ばしょへ うごかす',
+ how:{keys:[['Ctrl','X','切り取り'],['Ctrl','V','はりつけ']],cap:'右クリックメニューでも できる',lines:['うごかしたい 文字を えらぶ','Ctrl + X で 切り取り（もとの ばしょから きえる）','うつしたい ばしょを クリックして Ctrl + V']},
+ task:'',
+ build(a){const R=[{a:'とりの なかま',av:'すずめ　いぬ　からす',b:'けものの なかま',bv:'ねこ　',w:'いぬ'},{a:'やさいの なかま',av:'にんじん　りんご　キャベツ',b:'くだものの なかま',bv:'みかん　',w:'りんご'}];
+  let ri=0,cut=false,pst=false;a.prog(0,2);
+  const la=pos(el('div','abs lbl','',a.area),266,50),A=pos(el('input','inp allowctx abs',null,a.area),266,86,700);
+  const lb=pos(el('div','abs lbl','',a.area),266,230),B=pos(el('input','inp allowctx abs',null,a.area),266,266,700);
+  A.setAttribute('autocomplete','off');B.setAttribute('autocomplete','off');
+  const setR=()=>{const r=R[ri];la.textContent=r.a;lb.textContent=r.b;A.value=r.av;B.value=r.bv;cut=pst=false;a.task('「'+r.w+'」は なかまが ちがうよ。切り取って「'+r.b+'」へ うつそう');};setR();
+  a.on(A,'cut',()=>{cut=true;});a.on(B,'paste',()=>{pst=true;});
+  const chk=()=>{const r=R[ri];
+   if(!A.value.includes(r.w)&&!cut){a.say('Delete で けすのでは なく、切り取りを つかおう','info');A.value=r.av;return;}
+   if(cut&&pst&&!A.value.includes(r.w)&&B.value.includes(r.w)){ri++;a.prog(ri,2);if(ri>=2)a.done();else{a.say('うつせた！ つぎの もんだい','ok');setR();}}};
+  a.on(A,'input',chk);a.on(B,'input',chk);
+ }});
+
+/* 11 元に戻す */
+ST.push({id:'undo',step:2,title:'元に戻す',desc:'まちがえた ときは ひとつ前に もどせる',
+ how:{keys:[['Ctrl','Z','元に戻す'],['Ctrl','Y','やり直し']],cap:'ボタンでも できる',lines:['まちがえて けしても あわてない','Ctrl + Z で ひとつ前に もどる','くりかえし おすと、どんどん もどる']},
+ task:'あっ、ブロックが けされた！ 元に戻すで ぜんぶ もどそう',
+ build(a){const W=pos(el('div','win',null,a.area),316,20,600,456);
+  const bar=el('div','wbar',null,W);const bu=el('button','tbtn',IC.undo+'元に戻す',bar),br=el('button','tbtn',IC.redo+'やり直し',bar);
+  const cols=['#e8533a','#f39a2b','#f3d34b','#6cbf5b','#3d7be0','#7a5bd0'];const B=[];
+  for(let i=0;i<15;i++){const b=pos(el('div','blk',null,W),56+(i%5)*100,104+Math.floor(i/5)*100);b.style.background=cols[(i+Math.floor(i/5))%6];B.push(b);}
+  const del=shuffle([...Array(15).keys()]).slice(0,3);const stack=[],red=[];let ready=false;a.prog(0,3);
+  const cnt=()=>a.prog(3-stack.length,3);
+  a.start=()=>{del.forEach((k,j)=>a.later(()=>{B[k].classList.add('gone');stack.push(k);if(j===2){ready=true;a.say('Ctrl + Z か「元に戻す」ボタンで もどそう','info');}},500+j*600));};
+  const undo=()=>{if(!ready){a.say('まだ けされて いるよ。ちょっと まってね','info');return;}if(!stack.length){a.say('もう もどすものは ないよ','info');return;}
+    const k=stack.pop();red.push(k);B[k].classList.remove('gone');cnt();if(!stack.length)a.done();else a.say('もどった！ あと '+stack.length+'こ','ok');};
+  const redo=()=>{if(!red.length){a.say('やり直す ものは ないよ','info');return;}const k=red.pop();B[k].classList.add('gone');stack.push(k);cnt();a.say('やり直しで また けえたよ。元に戻そう','info');};
+  a.on(bu,'click',undo);a.on(br,'click',redo);
+  a.key(e=>{if(e.ctrlKey&&e.code==='KeyZ'){e.preventDefault();undo();}else if(e.ctrlKey&&e.code==='KeyY'){e.preventDefault();redo();}});
+ }});
+
+/* 12 フォルダーに せいり */
+ST.push({id:'folder',step:2,title:'フォルダーに せいり',desc:'ファイルを ドラッグして、あう フォルダーに 入れる',
+ how:{g:'drag',cap:'おしたまま うごかす',lines:['ファイルの 名前を よく 見る','あう フォルダーの 上まで ドラッグ','フォルダーが 光ったら はなす']},
+ task:'ファイルを あう フォルダーに ドラッグして せいりしよう',
+ build(a){const FD=['こくご','さんすう','しゃかい'];
+  const FL=[['かん字テスト',0],['音読カード',0],['かけ算ドリル',1],['グラフづくり',1],['ごみの しらべ',2],['地図の きごう',2]];
+  const cnt=[0,0,0];let n=0;a.prog(0,6);
+  const fo=FD.map((nm,i)=>pos(el('div','fold','<div class="fb"></div><div class="fl">'+nm+'　0こ</div>',a.area),166+i*350,300));
+  a._hover=c=>fo.forEach(f=>f.classList.toggle('hot',!!c&&inR(c,f)));
+  shuffle(FL.slice()).forEach((f,i)=>{const d=pos(el('div','file',f[0],a.area),196+(i%3)*350,30+Math.floor(i/3)*120);
+   draggable(a,d,(c,moved,back)=>{const hit=fo.findIndex(x=>inR(c,x));
+    if(hit<0){back();a.say(moved?'フォルダーの 上で はなそう':'おしたまま うごかそう','info');return;}
+    if(hit!==f[1]){back();a.miss('その フォルダーで いいかな？ 名前を よく 見よう');return;}
+    d.style.display='none';cnt[hit]++;fo[hit].querySelector('.fl').textContent=FD[hit]+'　'+cnt[hit]+'こ';n++;a.prog(n,6);
+    if(n>=6)a.done();else a.say('せいり できた！','ok');});
+  });
+ }});
+
+/* 13 名前を付けて保存 */
+ST.push({id:'save',step:2,title:'名前を付けて保存',desc:'わかりやすい 名前を つけて、きめられた ばしょに 保存',
+ how:{keys:[['Ctrl','S','保存']],cap:'「ファイル」メニューからも できる',lines:['Ctrl + S か「ファイル」→「名前を付けて保存」','左の 一らんで 保存する ばしょを えらぶ','ファイル名を 入力して「保存」']},
+ task:'「しゃかい」フォルダーに「ごみのしらべ」という 名前で 保存しよう',
+ build(a){const W=pos(el('div','win',null,a.area),166,20,900,456);
+  const bar=el('div','wbar',null,W);const fb=el('button','tbtn','ファイル',bar);el('span',null,'　ワープロ ー 無題',bar);
+  const body=pos(el('div','abs',null,W),40,80,820,300);body.style.cssText+=';font-size:24px;line-height:1.8;color:#56627a';
+  body.innerHTML='ごみの しらべ（下書き）<br>わたしの 家では 1週間に ごみぶくろ 3こ 分の ごみが 出ます。<br>…';
+  let dd=null,dl=null,folder='ドキュメント';a.prog(0,2);
+  const closeDD=()=>{if(dd){dd.remove();dd=null;}};
+  const openDlg=()=>{closeDD();if(dl)return;a.prog(1,2);a.say('保存する ばしょと 名前を きめよう','ok');
+   dl=pos(el('div','dlg',null,W),100,56,700,380);el('div','dt','名前を付けて保存',dl);
+   const fl=pos(el('div','abs flist',null,dl),16,60,236,300);
+   const where=pos(el('div','abs lbl','',dl),276,72,400);
+   pos(el('div','abs lbl','ファイル名',dl),276,140);
+   const nm=pos(el('input','inp allowctx abs',null,dl),276,176,400,60);nm.value='無題';nm.setAttribute('autocomplete','off');
+   a.on(nm,'focus',()=>nm.select());
+   const setW=()=>{where.textContent='保存先：'+folder;fl.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.f===folder));};
+   [['デスクトップ',''],['ドキュメント',''],['こくご','　'],['さんすう','　'],['しゃかい','　']].forEach(f=>{const b=el('button',null,f[1]+f[0],fl);b.dataset.f=f[0];a.on(b,'click',()=>{folder=f[0];setW();});});setW();
+   const sv=pos(el('button','btn abs','保存',dl),276,300,180,56),cc=pos(el('button','btn sub abs','キャンセル',dl),476,300,180,56);
+   a.on(cc,'click',()=>{dl.remove();dl=null;a.prog(0,2);});
+   a.on(sv,'click',()=>{const v=nm.value.replace(/[\s　]/g,'');
+     if(folder!=='しゃかい'){a.miss('保存する ばしょが ちがうよ。左で「しゃかい」を えらぼう');return;}
+     if(v!=='ごみのしらべ'){a.miss('ファイル名を たしかめよう。「ごみのしらべ」だよ');return;}
+     a.prog(2,2);a.done();});
+  };
+  a.on(fb,'click',e=>{e.stopPropagation();if(dd){closeDD();return;}dd=pos(el('div','dd',null,W),12,48);
+   [['ひらく','Ctrl+O',()=>a.say('いまは「名前を付けて保存」だよ','info')],['名前を付けて保存','Ctrl+S',openDlg],['いんさつ','Ctrl+P',()=>a.say('いまは「名前を付けて保存」だよ','info')]].forEach(x=>{const b=el('button',null,x[0]+'<span>'+x[1]+'</span>',dd);a.on(b,'click',ev=>{ev.stopPropagation();closeDD();x[2]();});});});
+  a.on(W,'click',()=>closeDD());
+  a.key(e=>{if(e.ctrlKey&&e.code==='KeyS'){e.preventDefault();openDlg();}});
+ }});
+
+/* 14 ショートカットキー */
+const SC=[{k:'A',n:'ぜんぶ えらぶ',d:'文や ものを ぜんぶ えらぶ'},{k:'C',n:'コピー',d:'えらんだものを うつしとる'},{k:'V',n:'はりつけ',d:'コピーしたものを はりつける'},{k:'X',n:'切り取り',d:'えらんだものを 切りとる'},{k:'Z',n:'元に戻す',d:'ひとつ前に もどす'},{k:'Y',n:'やり直し',d:'もどしたことを やり直す'},{k:'S',n:'保存',d:'ファイルを 保存する'},{k:'F',n:'検索',d:'ことばを さがす'}];
+ST.push({id:'short',step:3,title:'ショートカットキー',desc:'Ctrl キーと 組み合わせて、すばやく そうさする',
+ how:{keys:[['Ctrl','C','コピー'],['Ctrl','V','はりつけ'],['Ctrl','Z','元に戻す']],cap:'Ctrl を おしたまま 文字キー',lines:['左下の Ctrl キーを おしたまま','もう1つの キーを トンと おす','チャレンジでは キーが かくれるよ']},
+ task:'出てきた そうさの ショートカットキーを おそう',
+ build(a){const L=shuffle(SC.slice()).slice(0,a.chal?6:8);let i=0,ms=0;a.prog(0,L.length);
+  const C=pos(el('div','scard',null,a.area),236,40,760,400);
+  const sn=el('div','sn','',C),sd=el('div','sd','',C),sk=el('div','sk','',C);
+  const show=()=>{const c=L[i];sn.textContent=c.n;sd.textContent=c.d;ms=0;sk.innerHTML=a.chal?'<span class="key">Ctrl</span><span>+</span><span class="key">？</span>':keysHTML(['Ctrl',c.k]);};show();
+  a.key(e=>{if(['Control','Shift','Alt','Meta'].includes(e.key))return;
+   if(!e.ctrlKey){if(/^Key/.test(e.code))a.say('Ctrl キーを おしたまま おそう','info');return;}
+   e.preventDefault();const k=e.code.replace('Key','');const c=L[i];
+   if(k===c.k){i++;a.prog(i,L.length);if(i>=L.length){a.done();return;}a.say('せいかい！ Ctrl + '+c.k,'ok');show();}
+   else{ms++;a.miss(/^[A-Z]$/.test(k)?'それは Ctrl + '+k+'。もう一度':'ちがう キーだよ');if(a.chal&&ms>=2)sk.innerHTML=keysHTML(['Ctrl',c.k]);}});
+ }});
+
+/* 15 検索と置換 */
+ST.push({id:'replace',step:3,title:'検索と置換',desc:'ことばを さがしたり、まとめて 書きかえたり する',
+ how:{keys:[['Ctrl','F','検索'],['Ctrl','H','置換']],cap:'ボタンでも ひらける',lines:['Ctrl + F で ことばを さがす','Ctrl + H で 置換（書きかえ）','「すべて置換」で まとめて 書きかえられる']},
+ task:'',
+ build(a){const T0='たろうくんは サッカーが とくいです。きのうの しあいでも、たろうくんは 2点 きめました。みんな たろうくんを おうえん しています。';
+  const EXP=T0.split('たろう').join('じろう');let text=T0,ph=0,mode='',q='';a.prog(0,2);
+  const W=pos(el('div','win',null,a.area),56,20,1120,456);
+  const bar=el('div','wbar',null,W);const bf=el('button','tbtn',IC.find+'検索',bar),bh=el('button','tbtn',IC.rep+'置換',bar);
+  el('span',null,'　ワープロ ー ともだちの さくぶん',bar);
+  const ET=pos(el('div','etext',null,W),36,72,640,360);
+  const FP=pos(el('div','fpanel',null,W),716,48,402,406);FP.style.display='none';
+  const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const render=()=>{if(q&&mode){ET.innerHTML=text.split(q).map(esc).join('<mark>'+esc(q)+'</mark>');}else ET.textContent=text;};render();
+  const setT=()=>a.task(ph===0?'名前を まちがえた！ まず Ctrl + F で「たろう」が いくつ あるか しらべよう':'Ctrl + H で「たろう」を ぜんぶ「じろう」に 置きかえよう');setT();
+  const open=m=>{if(m==='rep'&&ph===0){a.say('まずは 検索で かぞえよう（Ctrl + F）','info');return;}
+   mode=m;FP.style.display='flex';FP.innerHTML='';q='';
+   el('div','lbl',m==='find'?'検索する ことば':'検索する ことば',FP);const i1=el('input','inp allowctx',null,FP);i1.setAttribute('autocomplete','off');
+   if(m==='find'){const cn=el('div','cnt','',FP);el('div','lbl','いくつ ありましたか？',FP);const r3=el('div','row3',null,FP);
+     const up=()=>{q=i1.value;render();cn.textContent=q?(text.split(q).length-1)+'件 見つかりました':'';};
+     a.on(i1,'input',up);a.on(i1,'compositionend',()=>setTimeout(up,0));
+     [2,3,4].forEach(v=>{const b=el('button','btn sub',v+'こ',r3);a.on(b,'click',()=>{if(ph!==0)return;
+       if(v===3){ph=1;a.prog(1,2);a.say('せいかい！ 3こ あったね','ok');setT();FP.style.display='none';mode='';q='';render();}else a.miss('もう一度 かぞえよう。検索すると 色が つくよ');});});}
+   else{el('div','lbl','置きかえる ことば',FP);const i2=el('input','inp allowctx',null,FP);i2.setAttribute('autocomplete','off');
+     const up=()=>{q=i1.value;render();};a.on(i1,'input',up);a.on(i1,'compositionend',()=>setTimeout(up,0));
+     const rb=el('button','btn','すべて置換',FP);rb.style.width='300px';
+     a.on(rb,'click',()=>{if(!i1.value){a.say('検索する ことばを 入れよう','info');return;}
+       text=text.split(i1.value).join(i2.value);q='';render();
+       if(text===EXP){a.prog(2,2);a.done();}
+       else if(text!==T0){a.miss('ちがう 文に なったよ。もとに もどすので もう一度');a.later(()=>{text=T0;render();},1200);}});}
+   setTimeout(()=>i1.focus(),0);};
+  a.on(bf,'click',()=>open('find'));a.on(bh,'click',()=>open('rep'));
+  a.key(e=>{if(e.ctrlKey&&e.code==='KeyF'){e.preventDefault();open('find');}else if(e.ctrlKey&&e.code==='KeyH'){e.preventDefault();open('rep');}});
+ }});
+
+/* 16 コメント */
+ST.push({id:'comment',step:3,title:'コメントを 書く',desc:'友だちの 作品の 文を えらんで、コメントを つける',
+ how:{g:'tap2',cap:'右クリック →「コメントを追加」',lines:['コメントしたい 文を 右クリック','「コメントを追加」を えらぶ（ボタンでも できる）','あいてが うれしくなる ことばで 書いて 送信']},
+ task:'2つ目の 文を えらんで、よいところを コメントで つたえよう',
+ build(a){const SN=['わたしは 夏休みに 海へ 行きました。','海の 水は つめたくて、なみの 音が 大きく ひびいていました。','また 来年も 行きたいです。'];
+  const W=pos(el('div','win',null,a.area),24,20,760,456);
+  const bar=el('div','wbar',null,W);el('span',null,'ゆいさんの 作文',bar);const sp=el('span',null,'',bar);sp.style.flex='1';const bc=el('button','tbtn',IC.cmt+'コメント',bar);
+  const bx=pos(el('div','abs',null,W),24,72,712);let sel=-1;a.prog(0,2);
+  const SE=SN.map((s,i)=>{const d=el('div','sent',s,bx);a.on(d,'click',()=>pick(i));
+    a.on(d,'contextmenu',e=>{e.preventDefault();pick(i);const r=a.rel(e);showMenu(a,r.x,r.y,[{t:'コメントを追加',ic:'cmt',fn:()=>compose()},{t:'コピー',ic:'copy',fn:()=>a.say('いまは「コメントを追加」だよ','info')}]);});return d;});
+  const pick=i=>{sel=i;SE.forEach((d,j)=>d.classList.toggle('on',j===i));};
+  const CP=pos(el('div','cpane',null,a.area),808,20,404,456);
+  const idle=()=>{CP.innerHTML='';el('div','ch','コメント',CP);el('div','cq','まだ コメントは ありません',CP);};idle();
+  const BAD=['ばか','バカ','へた','ヘタ','きもい','キモい','うざい','ウザい','しね','つまらない','だめ','ダメ'];
+  const compose=()=>{if(sel<0){a.say('さきに 文を クリックして えらぼう','info');return;}
+   if(sel!==1){a.miss('コメントする 文が ちがうよ。2つ目の 文だよ');return;}
+   a.prog(1,2);CP.innerHTML='';el('div','ch','コメントを 書く',CP);el('div','cq','「'+SN[sel]+'」',CP);
+   const ta=el('textarea','allowctx',null,CP);const sb=el('button','btn','送信',CP);sb.style.width='364px';
+   a.on(sb,'click',()=>{const v=ta.value.trim();
+    if(BAD.some(w=>v.includes(w))){a.miss('あいてが うれしくなる ことばに しよう');return;}
+    if(v.length<5){a.say('もう少し くわしく 書こう（5文字 いじょう）','info');return;}
+    SE[1].classList.remove('on');SE[1].classList.add('cm');CP.innerHTML='';el('div','ch','コメント',CP);
+    const cm=el('div','ccm',null,CP);el('div','who','あなた',cm);el('div',null,null,cm).textContent=v;a.prog(2,2);a.done();});
+   setTimeout(()=>ta.focus(),0);};
+  a.on(bc,'click',compose);
+  a.on(a.area,'pointerdown',e=>{if(a._menu&&!a._menu.contains(e.target)&&e.button===0)closeMenu(a);});
+ }});
+
+/* 17 共有 */
+ST.push({id:'share',step:3,title:'共有の 設定',desc:'だれに、どこまで（編集・見るだけ）見せるかを きめる',
+ how:{g:'tap1',cap:'クリックで えらぶ',lines:['共有する 人を 左の 候補から えらぶ','「編集できる」か「見るだけ」かを きめる','ちがう 人に 共有しないよう よく たしかめる']},
+ task:'同じ班の「たなか」さんは「編集できる」、「先生」は「見るだけ」で 共有しよう',
+ build(a){const D=pos(el('div','dlg',null,a.area),146,16,940,464);el('div','dt','「グループ発表」を 共有',D);
+  pos(el('div','abs lbl','候補',D),24,56);pos(el('div','abs lbl','共有する 人',D),390,56);
+  const PL=[['たなか','同じ班'],['やまだ','同じ班'],['先生','たんにん'],['さとう','となりの クラス']];
+  const box=pos(el('div','abs',null,D),24,90,340);box.style.display='flex';box.style.flexDirection='column';box.style.gap='8px';
+  const lst=pos(el('div','abs',null,D),390,86,526,300);
+  const sh={};a.prog(0,2);
+  const draw=()=>{lst.innerHTML='';Object.keys(sh).forEach(n=>{const r=el('div','prow',null,lst);el('div','pn2',n,r);
+    const e1=el('button','tg'+(sh[n]==='e'?' on':''),'編集できる',r),e2=el('button','tg'+(sh[n]==='v'?' on':''),'見るだけ',r),x=el('button','xb','×',r);
+    a.on(e1,'click',()=>{sh[n]='e';draw();});a.on(e2,'click',()=>{sh[n]='v';draw();});a.on(x,'click',()=>{delete sh[n];draw();});});
+   a.prog((sh['たなか']==='e'?1:0)+(sh['先生']==='v'?1:0),2);};
+  PL.forEach(p=>{const b=el('button','pbtn','<span class="a">'+p[0]+'</span><span class="b">'+p[1]+'</span>',box);
+   a.on(b,'click',()=>{if(sh[p[0]]){a.say('もう 入っているよ','info');return;}if(Object.keys(sh).length>=4)return;sh[p[0]]='e';draw();});});
+  const sb=pos(el('button','btn abs','送信',D),24,394,340,56);
+  a.on(sb,'click',()=>{const k=Object.keys(sh);
+   if(k.some(n=>n!=='たなか'&&n!=='先生')){a.miss('共有しなくて いい 人が 入っているよ。×で はずそう');return;}
+   if(!sh['たなか']||!sh['先生']){a.miss('まだ 入っていない 人が いるよ');return;}
+   if(sh['先生']!=='v'){a.miss('先生は「見るだけ」に しよう');return;}
+   if(sh['たなか']!=='e'){a.miss('たなかさんは「編集できる」に しよう');return;}
+   a.done();});
+ }});
+
+/* =========================================================
+   進行
+   ========================================================= */
+let mode='prac',cur=null,curStep=1,chal=null,timerId=null;
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));}
+function say(t,k){const m=$('msg');m.textContent=t||'';m.className=k||'';}
+
+document.addEventListener('contextmenu',e=>{if(!e.target.closest('.allowctx'))e.preventDefault();});
+addEventListener('wheel',e=>{if(e.ctrlKey)e.preventDefault();},{passive:false});
+document.addEventListener('keydown',e=>{
+ if(e.ctrlKey&&['KeyS','KeyF','KeyH','KeyP','KeyO','KeyG','KeyD','KeyU','KeyJ','KeyY','Equal','Minus','Semicolon','Digit0'].includes(e.code))e.preventDefault();
+ if(cur&&cur.alive&&!$('howOv').classList.contains('on')&&!$('clrOv').classList.contains('on'))cur.keys.forEach(f=>f(e));
+});
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+function go(id){if(id==='prac')drawPrac();if(id==='chal')drawChal();if(id==='teach')drawTeach(0);show(id);}
+
+function cleanup(){if(cur){cur.alive=false;cur.offs.forEach(f=>f());}cur=null;$('area').innerHTML='';say('');}
+function makeApi(st){
+ const area=$('area');const c={alive:true,offs:[],keys:[],st:st,finished:false};
+ const a={area:area,chal:mode==='chal',_menu:null,_hover:null,start:null,
+  on(t,ty,fn,o){t.addEventListener(ty,fn,o);c.offs.push(()=>t.removeEventListener(ty,fn,o));},
+  later(fn,ms){const id=setTimeout(()=>{if(c.alive)fn();},ms);c.offs.push(()=>clearTimeout(id));return id;},
+  key(fn){c.keys.push(fn);},
+  rel(e){const r=area.getBoundingClientRect();return{x:(e.clientX-r.left)/S,y:(e.clientY-r.top)/S};},
+  task(t){$('pTask').textContent=t;},
+  prog(n,t){$('pProg').textContent=n+' / '+t;},
+  say:say,
+  miss(t){if(mode==='chal'&&chal)chal.miss++;say(t,'ng');updRight();},
+  done(){if(c.finished)return;c.finished=true;say('できた！','ok');setTimeout(()=>{if(cur===c)finish();},450);}
+ };
+ c.api=a;return c;
+}
+function startStage(st){
+ cleanup();
+ $('pTitle').textContent=(mode==='chal'?'チャレンジ　':'STEP'+st.step+'　')+st.title;
+ $('pTask').textContent=st.task;$('pProg').textContent='';
+ cur=makeApi(st);st.build(cur.api);updRight();
+ if(mode==='prac')openHow(st);else if(cur.api.start)cur.api.start();
+ show('play');
+}
+function updRight(){const r=$('pRight');
+ if(mode==='chal'&&chal){const t=(Date.now()-chal.t0)/1000;r.textContent=Math.floor(t)+'びょう　ミス'+chal.miss;}
+ else if(cur)r.textContent=STEPS[cur.st.step-1].grade;}
+function openHow(st){const h=st.how;$('howT').textContent=st.title+' の やり方';
+ const L=$('howL');L.innerHTML='';
+ if(h.keys){h.keys.forEach(k=>{const r=el('div','keys',null,L);el('span','kn',k[k.length-1],r);r.insertAdjacentHTML('beforeend',keysHTML(k.slice(0,-1)));});}
+ else L.innerHTML=padSVG(h.g);
+ el('div','hcap',h.cap,L);
+ const R=$('howR');R.innerHTML='';h.lines.forEach((t,i)=>{const d=el('div','li',null,R);el('b',null,String(i+1),d);el('span',null,t,d);});
+ $('howOv').classList.add('on');}
+$('howBtn').addEventListener('click',()=>{if(cur)openHow(cur.st);});
+$('howGo').addEventListener('click',()=>{$('howOv').classList.remove('on');if(cur&&cur.api.start&&!cur.started){cur.started=true;cur.api.start();}});
+$('quit').addEventListener('click',()=>{stopTimer();cleanup();$('howOv').classList.remove('on');$('clrOv').classList.remove('on');$('flashOv').classList.remove('on');go(mode==='chal'?'chal':'prac');});
+
+function finish(){const st=cur.st;
+ if(mode==='prac'){SAVE.clear[st.id]=true;store();
+  const list=ST.filter(s=>s.step===st.step);const idx=list.indexOf(st);const nx=list[idx+1];
+  $('c1').textContent='できた！';$('c2').textContent=st.title+' クリア';$('c3').textContent=nx?'つぎは「'+nx.title+'」':'STEP'+st.step+' の ステージを ぜんぶ やったね';
+  const B=$('cbs');B.innerHTML='';
+  const b1=el('button','btn sub','もう一度',B),b2=el('button','btn'+(nx?' go':' off'),'つぎへ',B),b3=el('button','btn sub','えらぶ画面',B);
+  b1.onclick=()=>{$('clrOv').classList.remove('on');startStage(st);};
+  b2.onclick=()=>{if(!nx)return;$('clrOv').classList.remove('on');startStage(nx);};
+  b3.onclick=()=>{$('clrOv').classList.remove('on');cleanup();go('prac');};
+  $('clrOv').classList.add('on');}
+ else{chal.i++;
+  if(chal.i>=chal.list.length){endChal();return;}
+  $('flashOv').classList.add('on');setTimeout(()=>{$('flashOv').classList.remove('on');if(chal)startStage(chal.list[chal.i]);},700);}
+}
+
+/* ---------- れんしゅう画面 ---------- */
+function drawPrac(){const T=$('tabs');T.innerHTML='';
+ STEPS.forEach(s=>{const b=el('button','tab'+(s.n===curStep?' on':''),'STEP'+s.n+'　'+s.grade,T);if(s.n===curStep)b.style.background=s.color;b.onclick=()=>{curStep=s.n;drawPrac();};});
+ const G=$('grid');G.innerHTML='';const col=STEPS[curStep-1].color;
+ const list=ST.filter(s=>s.step===curStep);
+ list.forEach((s,i)=>{const c=el('div','card'+(SAVE.clear[s.id]?' clr':''),null,G);const no=el('div','no',String(i+1),c);no.style.background=col;
+  el('div','ct',s.title,c);el('div','cd',s.desc,c);el('div','bd','クリア',c);c.onclick=()=>{mode='prac';startStage(s);};});
+ $('pracCount').textContent='クリア '+ST.filter(s=>SAVE.clear[s.id]).length+' / '+ST.length;}
+
+/* ---------- チャレンジ ---------- */
+function fmt(t){return Math.floor(t)+'びょう';}
+function rankOf(t,m,goal){return m===0&&t<=goal?'名人':m<=3?'たつじん':'みならい';}
+function drawChal(){const C=$('ccards');C.innerHTML='';
+ STEPS.forEach(s=>{const c=el('div','ccard',null,C);const h=el('div','cs','STEP'+s.n,c);h.style.background=s.color;
+  el('div','cg',s.grade,c);const n=ST.filter(x=>x.step===s.n).length;el('div','cn',n+'もん　めやす '+s.goal+'びょう',c);
+  const bx=el('div','cb',null,c);el('div','l','ベスト きろく',bx);const b=SAVE.best[s.n];
+  el('div','v',b?fmt(b.t)+'　ミス'+b.m:'まだ なし',bx);el('div','v2',b?b.r:'',bx);
+  c.onclick=()=>startChal(s.n);});}
+function startChal(n){mode='chal';chal={step:n,list:ST.filter(s=>s.step===n),i:0,miss:0,t0:Date.now()};stopTimer();timerId=setInterval(updRight,250);startStage(chal.list[0]);}
+function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}}
+function endChal(){stopTimer();const t=(Date.now()-chal.t0)/1000,m=chal.miss,s=STEPS[chal.step-1],r=rankOf(t,m,s.goal);
+ const b=SAVE.best[chal.step];let nb=false;
+ if(!b||m<b.m||(m===b.m&&t<b.t)){SAVE.best[chal.step]={t:t,m:m,r:r};store();nb=true;}
+ $('c1').textContent=r;$('c2').textContent='タイム '+fmt(t)+'　ミス '+m;$('c3').textContent=(nb?'ベスト きろく こうしん！':'ベスト '+fmt(b.t)+'　ミス'+b.m)+'　めやす '+s.goal+'びょう';
+ const B=$('cbs');B.innerHTML='';const step=chal.step;
+ const b1=el('button','btn go','もう一度',B),b3=el('button','btn sub','もどる',B);
+ b1.onclick=()=>{$('clrOv').classList.remove('on');startChal(step);};
+ b3.onclick=()=>{$('clrOv').classList.remove('on');cleanup();chal=null;go('chal');};
+ $('clrOv').classList.add('on');}
+
+/* ---------- 先生へ ---------- */
+const TP=[
+ '<h3>情報活用能力の計画（基本的操作）との対応</h3><table>'+
+ '<tr><td>STEP1（1・2年）</td><td>クリック／ダブルクリック／右クリック／ドラッグ＆ドロップ／スクロール／ズーム（ピンチ）／スタンプ（いいね）を送る</td></tr>'+
+ '<tr><td>STEP2（3・4年）</td><td>文字入力（入力モード切替・数値・ローマ字）／コピー＆貼り付け／切り取り＆貼り付け／元に戻す／フォルダーの整理／名前を付けて保存</td></tr>'+
+ '<tr><td>STEP3（5・6年）</td><td>ショートカットキー／検索と置換／コメント／共有の設定（共有範囲・編集権限）</td></tr></table>'+
+ '<h3>2つのモード</h3><ul><li>れんしゅう：ステージごとに、トラックパッドの指の動きを見てから取り組みます。</li><li>チャレンジ：STEPの全ステージを続けて行い、タイムとミス数で「名人・たつじん・みならい」を判定します。</li></ul>',
+ '<h3>トラックパッドの設定（うまく動かないとき）</h3><ul><li>Windowsの「設定」→「Bluetoothとデバイス」→「タッチパッド」で、2本指タップ（右クリック）、2本指スクロール、ピンチズームが有効になっているか確認してください。</li><li>ドラッグは「左下を押したまま別の指でなぞる」か、端末によっては「トントンと2回目を押したままなぞる」でもできます。</li></ul>'+
+ '<h3>記録について</h3><ul><li>クリア状況とベスト記録は、この端末のこのブラウザの中だけに保存されます（サーバーには送りません）。</li><li>文字入力のステージは日本語入力（IME）を使います。全角・半角の違いをメッセージで知らせます。</li></ul>'+
+ '<h3>メモ</h3><ul><li>ブラウザのズーム（Ctrl＋ホイール）はアプリ内のズーム練習に使うため、無効にしています。画面の大きさは自動で合わせます。</li></ul>'
+];
+let tpI=0;
+function drawTeach(i){tpI=i;$('tpage').innerHTML=TP[i];$('tpPi').textContent=(i+1)+' / '+TP.length;$('tpNo').textContent='ページ '+(i+1);
+ $('tpPrev').classList.toggle('off',i===0);$('tpNext').classList.toggle('off',i===TP.length-1);}
+$('tpPrev').onclick=()=>{if(tpI>0)drawTeach(tpI-1);};
+$('tpNext').onclick=()=>{if(tpI<TP.length-1)drawTeach(tpI+1);};
+</script>
+</body>
+</html>
