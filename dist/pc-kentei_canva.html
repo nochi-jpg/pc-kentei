@@ -1501,7 +1501,8 @@ STAGES.push({id:'search',g:3,title:'キーワードで 検索',icon:ICO.search,d
   const rt=el('button','btn rtbtn',null,B.top);rt.textContent='ローマ字ひょう';a.on(rt,'click',()=>{se('cursor');romajiTable(()=>B.ip.focus());});kanaInput(a,B.ip);
   if(v===1){const c=pos(el('div','sw',null,a.area),16,60,160,200);c.innerHTML=ART.かぶとむし;c.firstChild.style.cssText='width:130px;height:130px;margin:12px';const l=el('div',null,'この むしは？',c);l.style.cssText='text-align:center;font-size:18px;font-weight:700';}
   if(v===2)B.ip.value='いぬ';
-  const run=()=>{const q=hiraNorm(B.ip.value);B.res.innerHTML='';if(!q){a.info('ことばを 入れてから 検索しよう');return;}
+  const ALT={'犬':'いぬ','桜':'さくら','カブトムシ':'かぶとむし','甲虫':'かぶとむし','朝顔':'あさがお'};
+  const run=()=>{let q=hiraNorm(B.ip.value);if(ALT[nosp(B.ip.value)])q=ALT[nosp(B.ip.value)];B.res.innerHTML='';if(!q){a.info('ことばを 入れてから 検索しよう');return;}
    if(/[a-z]/i.test(q)){a.info('ローマ字の ままだよ。ひらがなに なるように うとう');}
    if(!D.q.includes(q)){const n=el('div',null,null,B.res);n.style.cssText='font-size:20px;padding:10px';n.textContent='「'+B.ip.value+'」の けっかは 見つかりませんでした';a.info('ことばを たしかめよう');return;}
    a.prog(1,2);se('cursor');const c=el('div',null,null,B.res);c.style.cssText='font-size:15px;color:#4d6290;padding:0 14px 4px';c.textContent='「'+B.ip.value+'」の けっか';
@@ -1778,19 +1779,19 @@ STAGES.push({id:'save',g:2,title:'名前を付けて保存',icon:ICO.save,desc:'
 /* 18 2つのことばで検索 */
 STAGES.push({id:'search2',g:2,title:'2つの ことばで 検索',icon:ICO.search2,desc:'1語では結果が多すぎるとき、スペースで区切って2語以上でしぼりこむ。',
  how:{keys:[['スペース','くぎる']],cap:'ことばと ことばの 間に スペース',lines:['1つの ことばだと けっかが 多すぎる ことが ある','「ねこ しいく」のように スペースで くぎって ことばを たす','けっかを よく 読んで、あう ページを えらぶ']},
- build(a,v){const D={p:{main:'いぬ',need:[['いぬ'],['さんぽ']],ok:'いぬの さんぽの しかた',many:['いぬの しゃしん','いぬの まんが','いぬの しゅるい','いぬの ぬいぐるみ']},
-   0:{main:'ねこ',need:[['ねこ'],['しいく']],ok:'ねこの しいくの しかた',many:['ねこの しゃしん','ねこの まんが','ねこの なきごえ']},
-   1:{main:'かぶとむし',need:[['かぶとむし'],['そだてかた','そだて方','育てかた','育て方']],ok:'かぶとむしの そだてかた',many:['かぶとむしの ずかん','かぶとむし ゲーム','かぶとむしの しゃしん']},
-   2:{main:'ごみ',need:[['ごみ'],['りさいくる'],['ほうほう','方法']],ok:'ごみの リサイクルの ほうほう',many:['ごみの 日','ごみばこの えらびかた','ごみ しゅうしゅう車']}}[v];
-  a.task(v==='p'?'まず「いぬ」で 検索してみよう（ローマ字で 入力してね）':v===0?'「ねこ」と「しいく」の 2つの ことばで 検索して、あう けっかを えらぼう（スペースは 半角に してね）':v===1?'かぶとむしの そだてかたを しらべよう。ことばを たして しぼりこもう（スペースは 半角に してね）':'「ごみ」「リサイクル」「ほうほう」の 3つの ことばで 検索して、あう けっかを えらぼう（スペースは 半角に してね）');
+ build(a,v){const D={p:{main:'いぬ',alt:['犬'],need:[['いぬ','犬'],['さんぽ','散歩']],ok:'いぬの さんぽの しかた',many:['いぬの しゃしん','いぬの まんが','いぬの しゅるい','いぬの ぬいぐるみ']},
+   0:{main:'ねこ',alt:['猫'],need:[['ねこ','猫'],['しいく','飼育']],ok:'ねこの しいくの しかた',many:['ねこの しゃしん','ねこの まんが','ねこの なきごえ']},
+   1:{main:'かぶとむし',alt:['甲虫'],need:[['かぶとむし'],['そだてかた','そだて方','育てかた','育て方']],ok:'かぶとむしの そだてかた',many:['かぶとむしの ずかん','かぶとむし ゲーム','かぶとむしの しゃしん']},
+   2:{main:'ごみ',alt:[],need:[['ごみ'],['りさいくる'],['ほうほう','方法']],ok:'ごみの リサイクルの ほうほう',many:['ごみの 日','ごみばこの えらびかた','ごみ しゅうしゅう車']}}[v];
+  a.task(v==='p'?'まず「いぬ」で 検索してみよう（ローマ字で 入力してね）':v===0?'「ねこ」と「しいく」の 2つの ことばで 検索して、あう けっかを えらぼう':v===1?'かぶとむしの そだてかたを しらべよう。ことばを たして しぼりこもう':'「ごみ」「リサイクル」「ほうほう」の 3つの ことばで 検索して、あう けっかを えらぼう');
   a.prog(0,v==='p'?3:2);let ph=0;
   const B=browser(a,120,4,984,428);const rt=el('button','btn rtbtn',null,B.top);rt.textContent='ローマ字ひょう';a.on(rt,'click',()=>{se('cursor');romajiTable(()=>B.ip.focus());});
   const match=ws=>D.need.length===ws.length&&D.need.every(alts=>ws.some(w=>alts.map(x=>toHira(x)).includes(w)));
   const run=()=>{const ws=words(toHira(B.ip.value));B.res.innerHTML='';if(!ws.length){a.info('ことばを 入れてから 検索しよう');return;}
    const head=el('div',null,null,B.res);head.style.cssText='font-size:15px;color:#4d6290;padding:0 14px 2px';
    let L;if(match(ws)){L=shuffle([[D.ok,1]].concat(D.many.slice(0,2).map(x=>[x,0])));head.textContent='「'+B.ip.value+'」の けっか　やく 120けん';if(v==='p'){ph=2;a.prog(2,3);}else a.prog(1,2);}
-   else if(ws.includes(toHira(D.main))){L=D.many.map(x=>[x,0]);head.textContent='「'+B.ip.value+'」の けっか　やく 1,240,000けん';
-    if(v==='p'&&ph===0){ph=1;a.prog(1,3);a.good('けっかが 多すぎるね');a.task('「いぬ さんぽ」のように スペースで くぎって、ことばを たそう（スペースは 半角に してね）');}
+   else if(ws.includes(toHira(D.main))||ws.some(w=>(D.alt||[]).includes(w))){L=D.many.map(x=>[x,0]);head.textContent='「'+B.ip.value+'」の けっか　やく 1,240,000けん';
+    if(v==='p'&&ph===0){ph=1;a.prog(1,3);a.good('けっかが 多すぎるね');a.task('「いぬ さんぽ」のように スペースで くぎって、ことばを たそう');}
     else a.info('けっかが 多すぎるね。ことばを たして しぼりこもう');}
    else{head.textContent='「'+B.ip.value+'」の けっかは 見つかりませんでした';a.info('ことばを たしかめよう');return;}
    L.slice(0,4).forEach(r=>{const b=el('button','res','<div class="rt">'+r[0]+'</div><div class="rd">'+(r[1]?'しらべたい ことが のっている ページ':'しらべたい ことと ちょっと ちがう ページ')+'</div>',B.res);
@@ -1849,17 +1850,18 @@ STAGES.push({id:'image',g:2,title:'画像を入れて 大きさを 変える',ic
 /* 21 お気に入り */
 /* 21 お気に入り（ブックマーク） */
 ICO.bookmark=svg('<rect x="10" y="18" width="80" height="64" rx="8" fill="#fff" '+SW+'/><path d="M10 34h80" stroke="#10264d" stroke-width="3.5"/><path d="M50 42l6 12 13 2-9 9 2 13-12-6-12 6 2-13-9-9 13-2z" fill="#ffd23f" '+SW+'/>');
+const STAR0='<svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" fill="#ffffff" stroke="#10264d" stroke-width="1.8" stroke-linejoin="round"/></svg>';
 const STAR='<svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" fill="#ffd23f" stroke="#10264d" stroke-width="1.8" stroke-linejoin="round"/></svg>';
 STAGES.push({id:'bookmark',g:2,title:'お気に入り（ブックマーク）',icon:ICO.bookmark,desc:'よく見るページを「お気に入り」に入れ（☆／Ctrl+D）、お気に入りバーから開く・いらないものを消す。',
  how:{g:'tap1',cap:'☆ボタン（または Ctrl ＋ D）',lines:['☆を クリック','完了','バーから ひらく']},
  build(a,v){const A=a.area;const PG={'がっこうの ホーム':'きょうの お知らせ：あしたは 図書の 時間が あります。','みどり市 図書館':'あたらしい 本が 30さつ 入りました。','ゲームの こうりゃく':'ステージ 5の こうりゃく ほうほう','天気 よほう':'あしたは はれ のち くもり','どうぶつ ずかん':'いろいろな どうぶつを しょうかい します。'};
   const W=sw(A,40,4,1144,428,'ブラウザ');W.W.classList.add('brw');const B=W.body;
   const ad=el('div','addr',null,B);const home=el('button','tb',null,ad);home.textContent='ホーム';const url=el('div','url',null,ad);
-  let star=null;if(!a.exam||v!==0){star=el('button','tb',STAR,ad);star.setAttribute('aria-label','お気に入りに 追加');star.style.cssText+=';width:56px;justify-content:center';}
+  let star=null;if(!a.exam||v!==0){star=el('button','tb',STAR0,ad);star.setAttribute('aria-label','お気に入りに 追加');star.style.cssText+=';width:56px;justify-content:center';}
   const bar=pos(el('div','abs',null,B),0,46,1136,48);bar.style.cssText+=';display:flex;align-items:center;gap:10px;padding:0 14px;background:#f7faff;border-bottom:3px solid #c3d4f0';
   const body=pos(el('div','abs',null,B),30,110,1076,250);let cur='';
   const open=(t)=>{cur=t;url.textContent='https://'+({'がっこうの ホーム':'school','みどり市 図書館':'library','ゲームの こうりゃく':'game','天気 よほう':'tenki','どうぶつ ずかん':'zukan'}[t])+'.example';
-   body.innerHTML='';const h=el('div',null,null,body);h.style.cssText='font-size:32px;font-weight:700;margin-bottom:16px';h.textContent=t;const p2=el('div',null,null,body);p2.style.cssText='font-size:22px';p2.textContent=PG[t];};
+   if(star)star.innerHTML=favs.includes(t)?STAR:STAR0;body.innerHTML='';const h=el('div',null,null,body);h.style.cssText='font-size:32px;font-weight:700;margin-bottom:16px';h.textContent=t;const p2=el('div',null,null,body);p2.style.cssText='font-size:22px';p2.textContent=PG[t];};
   let favs=v===1||v===2?['みどり市 図書館','ゲームの こうりゃく','天気 よほう','どうぶつ ずかん']:[];let added=false;
   const drawBar=()=>{bar.innerHTML='';const lb=el('span',null,null,bar);lb.style.cssText='font-size:15px;font-weight:700;color:#4d6290';lb.textContent='お気に入りバー';
    if(!favs.length){const e=el('span',null,null,bar);e.style.cssText='font-size:15px;color:#7f8ca3';e.textContent='（まだ ありません）';}
@@ -1868,7 +1870,7 @@ STAGES.push({id:'bookmark',g:2,title:'お気に入り（ブックマーク）',i
      if(v==='p'&&added&&f==='みどり市 図書館'){if(stepHome){a.prog(3,3);a.done();}else a.info('まず「ホーム」に もどってから ひらいてみよう');return;}
      if(v===1){if(f==='どうぶつ ずかん'){a.prog(1,1);a.done();}else a.miss('ひらく ページが ちがうよ');}});
     a.on(c,'contextmenu',e=>{e.preventDefault();a.menu(e,[{t:'お気に入りから けす',ic:'trash',fn:()=>{
-     if(v!==2){a.info('いまは けさないよ');return;}if(f!=='ゲームの こうりゃく'){a.miss('けす お気に入りが ちがうよ');return;}favs=favs.filter(x=>x!==f);drawBar();a.prog(1,1);a.done();}}]);});});};
+     if(v!==2){a.info('いまは けさないよ');return;}if(f!=='ゲームの こうりゃく'){a.miss('けす お気に入りが ちがうよ');return;}favs=favs.filter(x=>x!==f);drawBar();if(star)star.innerHTML=favs.includes(cur)?STAR:STAR0;a.prog(1,1);a.done();}}]);});});};
   let stepHome=false;
   a.on(home,'click',()=>{open('がっこうの ホーム');se('cursor');if(v==='p'&&added&&!stepHome){stepHome=true;a.prog(2,3);a.good('ホームに もどったね。お気に入りバーから「みどり市 図書館」を ひらこう');}});
   const addDlg=()=>{if(A.querySelector('.favdlg'))return;if(v===1||v===2){a.info('いまは お気に入りに 入れないよ');return;}
@@ -1877,7 +1879,7 @@ STAGES.push({id:'bookmark',g:2,title:'お気に入り（ブックマーク）',i
    pos(el('div','abs lbl','名前',D.body),24,22);const nm=pos(el('input','inp abs',null,D.body),100,10,390,52);nm.value=cur;nm.setAttribute('aria-label','名前');
    const ok=pos(el('button','btn y abs','完了',D.body),40,104,200,52),cc=pos(el('button','btn abs','キャンセル',D.body),272,104,200,52);
    a.on(cc,'click',()=>D.W.remove());
-   a.on(ok,'click',()=>{const n=nm.value.trim()||cur;D.W.remove();favs.push(cur);drawBar();added=true;se('fav');
+   a.on(ok,'click',()=>{const n=nm.value.trim()||cur;D.W.remove();favs.push(cur);drawBar();added=true;se('fav');if(star)star.innerHTML=STAR;
     if(v===0){a.prog(1,1);a.done();}else{a.prog(1,3);a.good('お気に入りに 入った！ つぎは「ホーム」に もどってみよう');a.task('「ホーム」に もどってから、お気に入りバーで「みどり市 図書館」を ひらこう');}void n;});};
   if(star)a.on(star,'click',addDlg);
   a.key(e=>{if(e.ctrlKey&&e.code==='KeyD'){e.preventDefault();addDlg();}});
@@ -1891,7 +1893,7 @@ ICO.privacy=svg('<rect x="16" y="20" width="54" height="64" rx="8" fill="#fff" '
 STAGES.push({id:'privacy',g:2,title:'これ、のせて いい？（情報モラル）',icon:ICO.privacy,desc:'個人情報：住所・電話番号・パスワードはどこにものせない。だれでも見られる場所では本名・学校の名前・顔写真ものせない。',
  how:{g:'drag',cap:'左下を おしこんだまま なぞる',lines:['どこに のせるのか、上の 場面を よく 読む','カードを「のせて いい」か「のせない」の 箱へ ドラッグ','住所・電話番号・パスワードは どこにも のせない']},
  build(a,v){const A=a.area;
-  const D=[{s:'学級新聞（クラスと おうちの 人が 読む）',ok:['クラスで つかう 名前','すきな 食べもの','がんばった こと'],ng:[['住所','家の 場所が わかって しまうよ'],['電話番号','しらない 人から 電話が くるかも しれないよ'],['パスワード','パスワードは だれにも おしえないよ']]},
+  const D=[{s:'学級新聞（クラスと おうちの 人が 読む）',ok:['名前','すきな 食べもの','がんばった こと'],ng:[['住所','家の 場所が わかって しまうよ'],['電話番号','しらない 人から 電話が くるかも しれないよ'],['パスワード','パスワードは だれにも おしえないよ']]},
    {s:'ゲームの プロフィール（しらない 人も 見る）',ok:['ニックネーム','すきな 食べもの','すきな 色'],ng:[['本名（フルネーム）','だれなのか わかって しまうよ'],['学校の 名前','どこに いるのか わかって しまうよ'],['住所','家の 場所が わかって しまうよ']]},
    {s:'クラスの チャット（クラスの みんなが 見る）',ok:['宿題の しつもん','発表の 感想','あしたの もちもの'],ng:[['自分の パスワード','パスワードは だれにも おしえないよ'],['友だちの 住所','友だちの ことを かってに 広げては いけないよ'],['友だちの 悪口','相手を きずつけて しまうよ']]}][v==='p'?0:v];
   a.task('この 場面に のせて いい ものと、のせない ものに わけよう');

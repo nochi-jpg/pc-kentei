@@ -377,7 +377,8 @@ STAGES.push({id:'search',g:3,title:'キーワードで 検索',icon:ICO.search,d
   const rt=el('button','btn rtbtn',null,B.top);rt.textContent='ローマ字ひょう';a.on(rt,'click',()=>{se('cursor');romajiTable(()=>B.ip.focus());});kanaInput(a,B.ip);
   if(v===1){const c=pos(el('div','sw',null,a.area),16,60,160,200);c.innerHTML=ART.かぶとむし;c.firstChild.style.cssText='width:130px;height:130px;margin:12px';const l=el('div',null,'この むしは？',c);l.style.cssText='text-align:center;font-size:18px;font-weight:700';}
   if(v===2)B.ip.value='いぬ';
-  const run=()=>{const q=hiraNorm(B.ip.value);B.res.innerHTML='';if(!q){a.info('ことばを 入れてから 検索しよう');return;}
+  const ALT={'犬':'いぬ','桜':'さくら','カブトムシ':'かぶとむし','甲虫':'かぶとむし','朝顔':'あさがお'};
+  const run=()=>{let q=hiraNorm(B.ip.value);if(ALT[nosp(B.ip.value)])q=ALT[nosp(B.ip.value)];B.res.innerHTML='';if(!q){a.info('ことばを 入れてから 検索しよう');return;}
    if(/[a-z]/i.test(q)){a.info('ローマ字の ままだよ。ひらがなに なるように うとう');}
    if(!D.q.includes(q)){const n=el('div',null,null,B.res);n.style.cssText='font-size:20px;padding:10px';n.textContent='「'+B.ip.value+'」の けっかは 見つかりませんでした';a.info('ことばを たしかめよう');return;}
    a.prog(1,2);se('cursor');const c=el('div',null,null,B.res);c.style.cssText='font-size:15px;color:#4d6290;padding:0 14px 4px';c.textContent='「'+B.ip.value+'」の けっか';
