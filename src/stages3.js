@@ -17,7 +17,7 @@ const ART={
  ねずみ:svg('<circle cx="28" cy="34" r="16" fill="#c7cfdb" '+SW+'/><circle cx="72" cy="34" r="16" fill="#c7cfdb" '+SW+'/><ellipse cx="50" cy="58" rx="26" ry="24" fill="#dfe5ee" '+SW+'/><circle cx="41" cy="54" r="3" fill="#10264d"/><circle cx="59" cy="54" r="3" fill="#10264d"/><circle cx="50" cy="66" r="4" fill="#ff8fa0" '+SW+'/>'),
  ねこ:svg('<path d="M24 44l4-26 16 14M76 44l-4-26-16 14" fill="#f3b562" '+SW+'/><circle cx="50" cy="56" r="28" fill="#f3b562" '+SW+'/><circle cx="40" cy="52" r="3.5" fill="#10264d"/><circle cx="60" cy="52" r="3.5" fill="#10264d"/><path d="M46 62l4 4 4-4M22 58h14M64 58h14M24 66l12-3M64 63l12 3" fill="none" stroke="#10264d" stroke-width="2.5" stroke-linecap="round"/>'),
  うさぎ:svg('<ellipse cx="38" cy="26" rx="8" ry="22" fill="#fff" '+SW+'/><ellipse cx="62" cy="26" rx="8" ry="22" fill="#fff" '+SW+'/><circle cx="50" cy="62" r="26" fill="#fff" '+SW+'/><circle cx="41" cy="58" r="3.5" fill="#e8533a"/><circle cx="59" cy="58" r="3.5" fill="#e8533a"/><path d="M46 68l4 3 4-3" fill="none" stroke="#10264d" stroke-width="2.5"/>'),
- かぶとむし:svg('<ellipse cx="50" cy="62" rx="26" ry="30" fill="#7a4a1c" '+SW+'/><path d="M50 34v58" stroke="#10264d" stroke-width="3"/><circle cx="50" cy="32" r="13" fill="#5a3410" '+SW+'/><path d="M50 22q-2-14 8-20M50 20q-10-6-12-14" fill="none" stroke="#10264d" stroke-width="5" stroke-linecap="round"/><path d="M24 54l-14-6M24 66l-16 2M24 78l-12 8M76 54l14-6M76 66l16 2M76 78l12 8" stroke="#10264d" stroke-width="4" stroke-linecap="round"/><path d="M38 50q4-6 10-6" stroke="#fff" stroke-width="3" fill="none" opacity=".5"/>'),
+ かぶとむし:svg('<path d="M40 74l-6 14M56 76l0 14M72 74l8 13" stroke="#10264d" stroke-width="4" stroke-linecap="round"/><ellipse cx="62" cy="60" rx="30" ry="18" fill="#6b3b12" '+SW+'/><path d="M62 42v36" stroke="#10264d" stroke-width="2.5"/><path d="M52 50q8-6 18-4" stroke="#fff" stroke-width="3.5" fill="none" opacity=".55" stroke-linecap="round"/><path d="M28 50q4-12 18-12 6 0 8 6l-2 22q-12 4-22-2z" fill="#4a280b" '+SW+'/><path d="M46 40q-2-8 4-12" fill="none" stroke="#10264d" stroke-width="5" stroke-linecap="round"/><path d="M30 54q-14-6-16-24 0-8 4-14" fill="none" stroke="#10264d" stroke-width="10" stroke-linecap="round"/><path d="M30 54q-14-6-16-24 0-8 4-14" fill="none" stroke="#4a280b" stroke-width="5" stroke-linecap="round"/><path d="M18 18l-8-8M18 18l6-9" stroke="#10264d" stroke-width="5" stroke-linecap="round"/><circle cx="34" cy="58" r="2.5" fill="#fff"/>'),
  たいようの絵:svg('<rect width="100" height="100" fill="#bfe3ff"/><circle cx="50" cy="48" r="20" fill="#ffd23f" '+SW+'/>'+[0,45,90,135,180,225,270,315].map(d=>'<path d="M50 18v-10" transform="rotate('+d+' 50 48)" stroke="#f3a51b" stroke-width="5" stroke-linecap="round"/>').join('')+'<rect y="82" width="100" height="18" fill="#8fd18a"/>','0 0 100 100'),
  やまの絵:svg('<rect width="100" height="100" fill="#e8f6ff"/><path d="M-4 90L34 30l38 60z" fill="#5aa36a" '+SW+'/><path d="M40 90l30-44 34 44z" fill="#3d8a52" '+SW+'/><path d="M26 43l8-13 8 13-8 5z" fill="#fff"/><circle cx="80" cy="22" r="9" fill="#ffd23f"/>'),
  おうちの絵:svg('<rect width="100" height="100" fill="#fff6e3"/><path d="M14 50L50 18l36 32z" fill="#e8533a" '+SW+'/><rect x="22" y="50" width="56" height="38" fill="#ffd23f" '+SW+'/><rect x="44" y="64" width="14" height="24" fill="#a0703a" '+SW+'/><rect x="28" y="58" width="11" height="11" fill="#bfe3ff" '+SW+'/>'),
@@ -86,7 +86,7 @@ STAGES.push({id:'login',g:3,title:'ログイン・ログアウト',icon:ICO.logi
   const card=pos(el('div','sw',null,a.area),30,40,360,300);card.style.background='#fff4c2';
   card.innerHTML='<div style="position:absolute;left:0;top:0;width:100%;height:46px;background:#ffd23f;border-bottom:3px solid #10264d;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700">ログイン カード</div>';
   const cb=pos(el('div','abs',null,card),24,66,310);cb.style.cssText+=';font-size:22px;line-height:2.1';
-  cb.innerHTML='なまえ：<b>'+esc(SAVE.name)+'</b><br>ID：<b style="font-size:32px;letter-spacing:4px">'+id+'</b><br>パスワード：<b style="font-size:32px;letter-spacing:4px">'+pw+'</b>';
+  cb.innerHTML='なまえ：<b>'+nmH(SAVE.name)+'</b><br>ID：<b style="font-size:32px;letter-spacing:4px">'+id+'</b><br>パスワード：<b style="font-size:32px;letter-spacing:4px">'+pw+'</b>';
   const W=sw(a.area,430,4,760,428,'がっこうの パソコン');const B=W.body;B.style.background='#eaf2ff';
   const steps=(v==='p'||v===0)?2:1;let ph=0;a.prog(0,steps);
   const form=()=>{B.innerHTML='';
@@ -109,7 +109,7 @@ STAGES.push({id:'login',g:3,title:'ログイン・ログアウト',icon:ICO.logi
     a.on(y,'click',()=>a.miss('パスワードは だれにも おしえないよ'));a.on(n,'click',()=>{m.remove();se('decide');a.good('そうだね。パスワードは ひみつ！');a.task('カードの ID と パスワードで ログインしよう（数字は 半角に してね）');});}
    if(v===1)a.later(()=>{i2.focus();i2.select();},500);};
   const desk=(lo)=>{B.innerHTML='';B.style.background='linear-gradient(160deg,#2a63c9,#62a9ff)';
-   const w=pos(el('div','abs',null,B),0,90,752);w.style.cssText+=';text-align:center;font-size:30px;font-weight:700;color:#fff;-webkit-text-stroke:5px #10264d;paint-order:stroke fill';w.textContent='ようこそ、'+SAVE.name+' さん';
+   const w=pos(el('div','abs',null,B),0,90,752);w.style.cssText+=';text-align:center;font-size:30px;font-weight:700;color:#fff;-webkit-text-stroke:5px #10264d;paint-order:stroke fill';w.innerHTML='ようこそ、'+nmH(SAVE.name)+' さん';
    if(lo){const b=pos(el('button','btn abs','ログアウト',B),556,10,180,52);a.on(b,'click',()=>{se('decide');ph++;a.prog(ph,steps);B.innerHTML='';B.style.background='#10264d';
      const t=pos(el('div','abs',null,B),0,150,752);t.style.cssText+=';text-align:center;font-size:26px;font-weight:700;color:#fff';t.textContent='ログアウト しました';a.done();});}};
   a.task((v===1?'パスワードが ちがっていた！ けして、カードの パスワードを 入れなおそう':v===2?'メッセージが きたよ。よく 考えて えらぼう':(v===0||v==='p')?'カードの ID と パスワードで ログインして、ログアウトまで しよう':'カードの ID と パスワードで ログインしよう')+'（数字は 半角に してね）');
@@ -285,8 +285,8 @@ STAGES.push({id:'zoom',g:3,title:'ズーム',icon:ICO.zoom,desc:'2本指を広�
    an.forEach((x,i)=>{const d=pos(el('div','abs',ART[x[0]],P),sp[i].x+30,sp[i].y+30,10,10);d.firstChild.style.cssText='width:10px;height:10px';d.style.cursor='pointer';
     a.on(d,'click',e=>{e.stopPropagation();if(x[1]){a.prog(1,1);a.done();}else a.miss('それは ねこでは ないよ');});});}
   const sd=pos(el('div','abs',null,A),800,8,410,420);
-  const msg=el('div',null,null,sd);msg.style.cssText='font-size:20px;line-height:1.6;font-weight:700;height:100px;word-break:keep-all';
-  const zl=el('div',null,null,sd);zl.style.cssText='font-size:18px;color:#4d6290;height:34px';
+  const msg={set textContent(t){a.later(()=>a.say(t,'info'),30);}};
+  const zl=el('div',null,null,sd);zl.style.cssText='font-size:20px;font-weight:700;color:#4d6290;height:44px;margin:10px 0 20px 50px';
   const BB=[];let s=1,tx=0,ty=0,ph=0;
   const upd=()=>{P.style.transform='translate('+tx+'px,'+ty+'px) scale('+s+')';zl.textContent='いまの 大きさ：'+s.toFixed(1)+'ばい';
    BB.forEach(b=>{b.disabled=!(s>=4&&ph===0);});};

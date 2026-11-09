@@ -27,7 +27,7 @@ for(const b of app.querySelectorAll(BOX)){if(!vis(b)||clipped(b))continue;const 
   const r=e.getBoundingClientRect();if(r.left<R.left-1||r.top<R.top-1||r.right>R.right+1||r.bottom>R.bottom+1){
    if(b.matches('.bubble')&&e.matches('.bnext'))continue;out.push('はみ出し('+name(b).slice(0,30)+'): '+name(e));}}}
 // 4) かぶり（ボタンどうし・カードどうし）
-const OV='button,.card,.ico,.chip,.zone,.qbox,.inp,.sw,.drg,.panel,.dlgbox,.bubble,.pasota,.hello,.namebox,.mark';
+const OV='.howlines div,.howcap,.howfig,button,.card,.ico,.chip,.zone,.qbox,.inp,.sw,.drg,.panel,.dlgbox,.bubble,.pasota,.hello,.namebox,.mark';
 const items=[...app.querySelectorAll(OV)].filter(e=>vis(e)&&!clipped(e)&&!e.closest('.cmenu,.rbar,.ov .conf'));
 for(let i=0;i<items.length;i++)for(let j=i+1;j<items.length;j++){const A=items[i],B=items[j];if(A.contains(B)||B.contains(A))continue;
  if(A.closest('.ov')!==B.closest('.ov'))continue;

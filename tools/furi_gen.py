@@ -1,6 +1,6 @@
 import re, json, pathlib, collections, pykakasi
 K = pykakasi.kakasi()
-src = ''.join(pathlib.Path('/home/claude/pc-kentei/src/'+n+'.js').read_text() for n in ['tips','core','ui','play','stages3','stages2','stages1'])
+src = ''.join(pathlib.Path('/home/claude/pc-kentei/src/'+n+'.js').read_text() for n in ['tips','core','ui','play','stages3','stages2','stages1','how'])
 src = re.sub(r'/\*.*?\*/', '', src, flags=re.S)
 strs = re.findall(r"'((?:[^'\\\n]|\\.)*)'", src)
 KJ = r'[一-鿿々]'

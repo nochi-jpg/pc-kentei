@@ -174,8 +174,8 @@ STAGES.push({id:'folder',g:2,title:'フォルダーに せいり',icon:ICO.folde
  build(a,v){const A=a.area;const COL=['#ff9f9f','#9fd0ff','#a8e6a0'];
   let FD=['こくご','さんすう','しゃかい'],FL;
   if(v==='p')FL=[['かん字テスト',0],['音読カード',0],['かけ算ドリル',1],['グラフづくり',1],['ごみのゆくえ',2],['地図の きごう',2]];
-  else if(v===0)FL=[['ものがたりの かんそう',0],['かんじ ドリル',0],['わり算 プリント',1],['ぼうグラフの よみかた',1],['ちいきの 地図',2],['ごみのゆくえ',2]];
-  else if(v===1){FD=['こくご','さんすう','りか'];FL=[['音読カード',0],['かんじ ドリル',0],['わり算 プリント',1],['ぼうグラフ',1],['こん虫の かんさつ',2],['天気の しらべ',2]];}
+  else if(v===0)FL=[['ものがたりの かんそう',0],['かんじ ドリル',0],['わり算 プリント',1],['大きな 数の けいさん',1],['ちいきの 地図',2],['ごみのゆくえ',2]];
+  else if(v===1){FD=['こくご','さんすう','りか'];FL=[['音読カード',0],['かんじ ドリル',0],['わり算 プリント',1],['かけ算 ドリル',1],['こん虫の かんさつ',2],['天気の しらべ',2]];}
   else{FD=['こくご','さんすう','しゃかい','ごみばこ'];FL=[['かんじ ドリル',0],['かんじ ドリル - コピー',3],['わり算 プリント',1],['ちいきの 地図',2],['ごみのゆくえ',2],['ごみのゆくえ - コピー（2）',3]];}
   a.task(v==='p'?'ファイルを あう フォルダーに ドラッグして せいりしよう（色が ヒント）':v===0?'ファイルの 名前から 考えて、あう フォルダーに 入れよう':v===1?'「4年1組」を ひらいて、中の フォルダーに ファイルを 入れよう':'「コピー」の いらない ファイルは ごみばこへ。のこりを せいりしよう');
   let n=0;a.prog(0,FL.length);const cnt=FD.map(()=>0);
@@ -311,6 +311,46 @@ STAGES.push({id:'image',g:2,title:'画像を入れて 大きさを 変える',ic
   if(v===2){place(pick(['ひまわり','ちょうちょ']),620,40,240);
    a.key(e=>{if((e.key==='Delete'||e.key==='Backspace')&&img&&sel){e.preventDefault();img.remove();img=null;a.prog(1,2);a.good('けせた！ つぎは「挿入」→「画像」');}});}
  }});
+
+/* 21 お気に入り */
+/* 21 お気に入り（ブックマーク） */
+ICO.bookmark=svg('<rect x="10" y="18" width="80" height="64" rx="8" fill="#fff" '+SW+'/><path d="M10 34h80" stroke="#10264d" stroke-width="3.5"/><path d="M50 42l6 12 13 2-9 9 2 13-12-6-12 6 2-13-9-9 13-2z" fill="#ffd23f" '+SW+'/>');
+const STAR='<svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z" fill="#ffd23f" stroke="#10264d" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+STAGES.push({id:'bookmark',g:2,title:'お気に入り（ブックマーク）',icon:ICO.bookmark,desc:'よく見るページを「お気に入り」に入れ（☆／Ctrl+D）、お気に入りバーから開く・いらないものを消す。',
+ how:{g:'tap1',cap:'☆ボタン（または Ctrl ＋ D）',lines:['☆を クリック','完了','バーから ひらく']},
+ build(a,v){const A=a.area;const PG={'がっこうの ホーム':'きょうの お知らせ：あしたは 図書の 時間が あります。','みどり市 図書館':'あたらしい 本が 30さつ 入りました。','ゲームの こうりゃく':'ステージ 5の こうりゃく ほうほう','天気 よほう':'あしたは はれ のち くもり','どうぶつ ずかん':'いろいろな どうぶつを しょうかい します。'};
+  const W=sw(A,40,4,1144,428,'ブラウザ');W.W.classList.add('brw');const B=W.body;
+  const ad=el('div','addr',null,B);const home=el('button','tb',null,ad);home.textContent='ホーム';const url=el('div','url',null,ad);
+  let star=null;if(!a.exam||v!==0){star=el('button','tb',STAR,ad);star.setAttribute('aria-label','お気に入りに 追加');star.style.cssText+=';width:56px;justify-content:center';}
+  const bar=pos(el('div','abs',null,B),0,46,1136,48);bar.style.cssText+=';display:flex;align-items:center;gap:10px;padding:0 14px;background:#f7faff;border-bottom:3px solid #c3d4f0';
+  const body=pos(el('div','abs',null,B),30,110,1076,250);let cur='';
+  const open=(t)=>{cur=t;url.textContent='https://'+({'がっこうの ホーム':'school','みどり市 図書館':'library','ゲームの こうりゃく':'game','天気 よほう':'tenki','どうぶつ ずかん':'zukan'}[t])+'.example';
+   body.innerHTML='';const h=el('div',null,null,body);h.style.cssText='font-size:32px;font-weight:700;margin-bottom:16px';h.textContent=t;const p2=el('div',null,null,body);p2.style.cssText='font-size:22px';p2.textContent=PG[t];};
+  let favs=v===1||v===2?['みどり市 図書館','ゲームの こうりゃく','天気 よほう','どうぶつ ずかん']:[];let added=false;
+  const drawBar=()=>{bar.innerHTML='';const lb=el('span',null,null,bar);lb.style.cssText='font-size:15px;font-weight:700;color:#4d6290';lb.textContent='お気に入りバー';
+   if(!favs.length){const e=el('span',null,null,bar);e.style.cssText='font-size:15px;color:#7f8ca3';e.textContent='（まだ ありません）';}
+   favs.forEach(f=>{const c=el('button','tb',STAR.replace('width="24" height="24"','width="18" height="18"')+'<span></span>',bar);c.querySelector('span').textContent=f;
+    a.on(c,'click',()=>{if(a.menuOpen())return;open(f);se('cursor');
+     if(v==='p'&&added&&f==='みどり市 図書館'){if(stepHome){a.prog(3,3);a.done();}else a.info('まず「ホーム」に もどってから ひらいてみよう');return;}
+     if(v===1){if(f==='どうぶつ ずかん'){a.prog(1,1);a.done();}else a.miss('ひらく ページが ちがうよ');}});
+    a.on(c,'contextmenu',e=>{e.preventDefault();a.menu(e,[{t:'お気に入りから けす',ic:'trash',fn:()=>{
+     if(v!==2){a.info('いまは けさないよ');return;}if(f!=='ゲームの こうりゃく'){a.miss('けす お気に入りが ちがうよ');return;}favs=favs.filter(x=>x!==f);drawBar();a.prog(1,1);a.done();}}]);});});};
+  let stepHome=false;
+  a.on(home,'click',()=>{open('がっこうの ホーム');se('cursor');if(v==='p'&&added&&!stepHome){stepHome=true;a.prog(2,3);a.good('ホームに もどったね。お気に入りバーから「みどり市 図書館」を ひらこう');}});
+  const addDlg=()=>{if(A.querySelector('.favdlg'))return;if(v===1||v===2){a.info('いまは お気に入りに 入れないよ');return;}
+   if(favs.includes(cur)){a.info('もう お気に入りに 入っているよ');return;}
+   const D=sw(A,440,90,520,250,'お気に入りに 追加');D.W.classList.add('favdlg');D.W.style.zIndex='10';D.W.dataset.ovok='1';
+   pos(el('div','abs lbl','名前',D.body),24,22);const nm=pos(el('input','inp abs',null,D.body),100,10,390,52);nm.value=cur;nm.setAttribute('aria-label','名前');
+   const ok=pos(el('button','btn y abs','完了',D.body),40,104,200,52),cc=pos(el('button','btn abs','キャンセル',D.body),272,104,200,52);
+   a.on(cc,'click',()=>D.W.remove());
+   a.on(ok,'click',()=>{const n=nm.value.trim()||cur;D.W.remove();favs.push(cur);drawBar();added=true;se('fav');
+    if(v===0){a.prog(1,1);a.done();}else{a.prog(1,3);a.good('お気に入りに 入った！ つぎは「ホーム」に もどってみよう');a.task('「ホーム」に もどってから、お気に入りバーで「みどり市 図書館」を ひらこう');}void n;});};
+  if(star)a.on(star,'click',addDlg);
+  a.key(e=>{if(e.ctrlKey&&e.code==='KeyD'){e.preventDefault();addDlg();}});
+  if(v==='p'||v===0){open('みどり市 図書館');a.prog(0,v==='p'?3:1);a.task(v==='p'?'いま 見ている「みどり市 図書館」を、☆ボタンで お気に入りに 入れよう':'いま 見ている ページを、Ctrl ＋ D で お気に入りに 入れよう');}
+  if(v===1){open('がっこうの ホーム');a.prog(0,1);a.task('お気に入りバーから「どうぶつ ずかん」の ページを ひらこう');}
+  if(v===2){open('がっこうの ホーム');a.prog(0,1);a.task('もう 見ない「ゲームの こうりゃく」を、お気に入りから けそう（右クリック）');}
+  drawBar();}});
 
 /* 20 これ、のせて いい？（情報モラル：個人情報） */
 ICO.privacy=svg('<rect x="16" y="20" width="54" height="64" rx="8" fill="#fff" '+SW+'/><path d="M26 38h34M26 50h34M26 62h20" stroke="#7f95bf" stroke-width="4" stroke-linecap="round"/><path d="M64 46l22 8v14c0 12-10 20-22 24-12-4-22-12-22-24V54z" fill="#36c96f" '+SW+'/><path d="M55 70l7 7 13-14" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>');

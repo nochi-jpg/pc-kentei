@@ -241,7 +241,7 @@ def solve(B, sid, v):
         if v==0: panel('h','たろう','じろう'); B.click(B.text('すべて置換','button'))
         if v==1: panel('h','すいか','メロン'); B.click(B.text('すべて置換','button')); panel('h','あかい','みどりの'); B.click(B.text('すべて置換','button'))
         if v==2:
-            panel('h','さくらが','もみじが'); B.click(B.text('すべて置換','button')); panel('h','さくらの','もみじの'); B.click(B.text('すべて置換','button'))
+            panel('h','ねこ','いぬ'); B.click(B.text('すべて置換','button')); panel('h','ニャー','ワン'); B.click(B.text('すべて置換','button'))
     elif sid=='comment':
         def cm(i, how):
             s2 = pg.query_selector_all('#area .sent')[i]
@@ -291,6 +291,29 @@ def solve(B, sid, v):
         B.click(B.h("document.querySelector('#area input[aria-label=\"引用\"]')")); B.key('Control+v'); B.wait(150)
         B.click(B.h("[...document.querySelectorAll('#area .sbtn2')].find(b=>/「|『|2026年/.test(b.textContent)&&b.textContent.length>8)")); B.chk('chosen')
         B.click(B.text('かんせい','button'))
+    elif sid=='bookmark':
+        if v in ('p',0):
+            if v=='p': B.click(B.h("document.querySelector('#area button[aria-label=\"お気に入りに 追加\"]')"))
+            else: B.key('Control+d')
+            B.wait(250); B.chk('dlg'); B.click(B.text('完了','button'))
+            if v=='p': B.wait(300); B.click(B.text('ホーム','button')); B.wait(200); B.click(B.h("[...document.querySelectorAll('#area .tb')].find(b=>TX(b).includes('みどり市 図書館'))"))
+        if v==1: B.click(B.h("[...document.querySelectorAll('#area .tb')].find(b=>TX(b).includes('どうぶつ ずかん'))"))
+        if v==2:
+            B.rclick(B.h("[...document.querySelectorAll('#area .tb')].find(b=>TX(b).includes('ゲームの こうりゃく'))")); B.chk('menu'); B.click(B.text('お気に入りから けす','.cmenu button'))
+    elif sid=='capslock':
+        T = {'p':'ABC',0:'TOKYO',1:'school',2:'ABCdef'}[v]
+        ip = B.h("document.querySelector('#area input')"); B.click(ip)
+        kd = "([k,c])=>document.dispatchEvent(new KeyboardEvent('keydown',{key:k,modifierCapsLock:c,bubbles:true}))"
+        ku = "([k,c])=>document.dispatchEvent(new KeyboardEvent('keyup',{key:k,modifierCapsLock:c,bubbles:true}))"
+        if v==1: B.ins('school')
+        else:
+            B.ev(kd, ['CapsLock', True]); B.ev(ku, ['CapsLock', True])
+            for ch in T:
+                caps = ch.isupper()
+                if not caps and B.ev("1"): B.ev(kd, ['CapsLock', False]); B.ev(ku, ['CapsLock', False])
+                B.ev(kd, [ch, caps]); B.ins(ch)
+            B.ev(kd, ['CapsLock', False]); B.ev(ku, ['CapsLock', False])
+        B.chk('typed'); B.click(B.h("[...document.querySelectorAll('#area .btn.y')][0]"))
     elif sid=='history':
         B.click(B.textc('変更履歴','.tb')); B.wait(200); B.chk('panel')
         rows = pg.query_selector_all('#area .vrow')

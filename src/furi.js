@@ -3,6 +3,8 @@
    ========================================================= */
 const KJR=/[一-鿿々]/;
 const DAYS={1:'ついたち',2:'ふつか',3:'みっか',4:'よっか',5:'いつか',6:'むいか',7:'なのか',8:'ようか',9:'ここのか',10:'とおか',14:'じゅうよっか',20:'はつか',24:'にじゅうよっか'};
+/* 前の ひらがなで 読みが かわる もの */
+const FURI_PRE={'気に入':'い','こん虫':'ちゅう','よう虫':'ちゅう','お茶':'ちゃ','お店':'みせ'};
 const FKEYS=Object.keys(FURI).concat(Object.keys(FURI_CTX)).sort((a,b)=>b.length-a.length);
 function furiSplit(t){const out=[];let i=0,buf='';
  const push=(b,r)=>{if(buf){out.push(buf);buf='';}out.push([b,r]);};
@@ -14,6 +16,9 @@ function furiSplit(t){const out=[];let i=0,buf='';
   if(num!=null&&ch==='分'){const n1=num%10;push('分',[1,3,4,6,8,0].includes(n1)?'ぷん':'ふん');i++;continue;}
   if(num!=null&&ch==='行'){push('行','ぎょう');i++;continue;}
   if(num!=null&&ch==='音'){push('音','おん');i++;continue;}
+  if(t==='先'){push('先','せん');i++;continue;}
+  let pre=null;for(const k in FURI_PRE){const L=k.length-1;if(k[L]===ch&&t.slice(i-L,i)===k.slice(0,L)){pre=FURI_PRE[k];break;}}
+  if(pre){push(ch,pre);i++;continue;}
   let hit=null;for(const k of FKEYS){if(t.startsWith(k,i)){hit=k;break;}}
   if(hit&&FURI_CTX[hit]){const c=FURI_CTX[hit];push(c[0],c[1]);i+=c[0].length;continue;}
   if(hit){push(hit,FURI[hit]);i+=hit.length;continue;}

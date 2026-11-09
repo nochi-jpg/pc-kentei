@@ -11,6 +11,7 @@ function el(tag,cls,html,parent){const e=document.createElement(tag);if(cls)e.cl
 function pos(e,x,y,w,h){e.style.left=x+'px';e.style.top=y+'px';if(w!=null)e.style.width=w+'px';if(h!=null)e.style.height=h+'px';return e;}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;}
 function pick(a){return a[Math.random()*a.length|0];}
+function nmH(n){return '<span class="noruby">'+esc(n)+'</span>';}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function z2h(s){return String(s).replace(/[０-９Ａ-Ｚａ-ｚ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0));}
 function nsp(s){return String(s).replace(/[\s　]+/g,' ').trim();}
@@ -95,7 +96,7 @@ function makePasota(scr,parent,x,y,w,opt){opt=opt||{};const h=Math.round(w*380/4
 
 /* 吹き出し（2行まで・長いときは「つぎへ」） */
 function makeBubble(parent,x,y,w,h,cls){const b=pos(el('div','bubble '+(cls||''),null,parent),x,y,w,h);const t=el('div','bt',null,b);
- return{el:b,set(s){t.textContent=String(s).replace(/\|/g,'\n');}};}
+ return{el:b,set(s){t.textContent=String(s).replace(/\|/g,'\n');},html(h){t.innerHTML=h;}};}
 
 /* ---------- 画面の切りかえ ---------- */
 const ROOT=document.getElementById('scr');

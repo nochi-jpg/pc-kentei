@@ -66,9 +66,8 @@ STAGES.push({id:'replace',g:1,title:'検索と置換',icon:ICO.replace,desc:'Ctr
  build(a,v){const A=a.area;let T0,ok,task;
   if(v==='p'||v===0){T0='たろうくんは サッカーが とくいです。きのうの しあいでも、たろうくんは 2点 きめました。みんな たろうくんを おうえん しています。';const F=T0.split('たろう').join('じろう');ok=t=>t===T0?0:t===F?2:-1;}
   if(v===1){T0='なつに すいかを たべました。あかい すいかは あまくて おいしかったです。また あかい すいかを たべたいです。';const s1=T0.split('すいか').join('メロン'),s2=T0.split('あかい').join('みどりの'),F=s1.split('あかい').join('みどりの');ok=t=>t===T0?0:(t===s1||t===s2)?1:t===F?2:-1;}
-  if(v===2){T0='さくらさんと こうえんへ 行きました。さくらが とても きれいでした。さくらの 木の 下で おべんとうを たべました。';
-   const A1=T0.replace('さくらが','もみじが'),A2=T0.replace('さくらの','もみじの'),F=A1.replace('さくらの','もみじの');ok=t=>t===T0?0:(t===A1||t===A2)?1:t===F?2:-1;}
-  task=v==='p'?'名前を まちがえた！ まず 検索で「たろう」が いくつ あるか しらべよう':v===0?'「たろう」を ぜんぶ「じろう」に 置きかえよう':v===1?'「すいか」を「メロン」に、「あかい」を「みどりの」に 置きかえよう':'花の「さくら」だけを「もみじ」に しよう。人の 名前の「さくらさん」は そのまま（さがす ことばを くふうしよう）';
+  if(v===2){T0='うちの ねこは まいあさ ニャーと なきます。ねこは ニャーと ないて ごはんを まちます。';const s1=T0.split('ねこ').join('いぬ'),s2=T0.split('ニャー').join('ワン'),F=s1.split('ニャー').join('ワン');ok=t=>t===T0?0:(t===s1||t===s2)?1:t===F?2:-1;}
+  task=v==='p'?'名前を まちがえた！ まず 検索で「たろう」が いくつ あるか しらべよう':v===0?'「たろう」を ぜんぶ「じろう」に 置きかえよう':v===1?'「すいか」を「メロン」に、「あかい」を「みどりの」に 置きかえよう':'「ねこ」を ぜんぶ「いぬ」に、「ニャー」を ぜんぶ「ワン」に 置きかえよう';
   a.task(task);let text=T0,ph=v==='p'?0:1,mode='',q='',cur=-1;a.prog(0,v==='p'?2:1);
   const W=sw(A,16,4,720,428,'ワープロ ー ともだちの さくぶん');let bf=null,bh=null;
   if(!a.exam){bf=el('button','tb',IC.find+'検索',W.bar);bh=el('button','tb',IC.rep+'置換',W.bar);}
@@ -114,8 +113,8 @@ STAGES.push({id:'comment',g:1,title:'コメントを 書く',icon:ICO.comment,de
    if(!L.children.length){const e=el('div',null,'まだ コメントは ありません',L);e.style.cssText='font-size:18px;color:#4d6290';}};list();
   const compose=(reply)=>{if(reply!=='r'){if(sel<0){a.info('さきに 文を クリックして えらぼう');return;}
     if(v===2||!need.includes(sel)){a.miss('コメントする 文が ちがうよ');return;}if(done2.has(sel)){a.info('その 文には もう コメントしたよ');return;}}
-   CB.innerHTML='';const h=el('div',null,null,CB);h.style.cssText='font-size:17px;color:#4d6290;margin-bottom:8px;height:54px;overflow:hidden';h.textContent=reply==='r'?'はるとさんへの 返信':'「'+SN[sel]+'」';
-   const ta=el('textarea','inp'+(a.exam?'':' allowctx'),null,CB);ta.style.cssText+=';width:380px;height:150px';ta.setAttribute('aria-label','コメント');
+   CB.innerHTML='';const h=el('div',null,null,CB);h.style.cssText='font-size:17px;line-height:1.9;color:#4d6290;margin-bottom:6px;height:66px;overflow:hidden';h.textContent=reply==='r'?'はるとさんへの 返信':'「'+SN[sel]+'」';
+   const ta=el('textarea','inp'+(a.exam?'':' allowctx'),null,CB);ta.style.cssText+=';width:380px;height:140px';ta.setAttribute('aria-label','コメント');
    const r=el('div',null,null,CB);r.style.cssText='display:flex;gap:12px;margin-top:14px';const sb=el('button','btn y',null,r),cc=el('button','btn',null,r);sb.textContent='送信';cc.textContent='やめる';sb.style.width=cc.style.width='184px';
    const target=sel;
    a.on(cc,'click',()=>list());
@@ -208,6 +207,35 @@ STAGES.push({id:'history',g:1,title:'変更履歴',icon:ICO.history,desc:'「変
    const rb=el('button','btn y',null,PB);rb.textContent='この版に もどす';rb.style.cssText+=';width:420px;margin-top:16px';
    a.on(rb,'click',()=>{if(selI<0){a.info('さきに 版を えらぼう');return;}if(selI===0){a.info('それは いまの 版だよ');return;}
     if(selI!==want){a.miss('その 版では ないよ');return;}a.prog(2,2);info.textContent='「'+V[selI][0]+'」の 版に もどしました';a.done();});});}});
+
+/* CapsLock */
+/* CapsLock（キャップスロック） */
+ICO.capslock=svg('<rect x="14" y="26" width="72" height="54" rx="10" fill="#fff" '+SW+'/><path d="M50 36l-14 16h8v12h12V52h8z" fill="#ffd23f" '+SW+'/><circle cx="76" cy="36" r="5" fill="#36c96f" stroke="#10264d" stroke-width="2.5"/>');
+STAGES.push({id:'capslock',g:1,title:'CapsLock（キャップスロック）',icon:ICO.capslock,desc:'CapsLockのオン・オフで大文字と小文字が切りかわることを知り、使ったあとはオフにもどす。',
+ how:{keys:[['Shift','英数','オン・オフ']],cap:'Shift を おしながら 英数キー',lines:['オンだと 大文字','切りかえ','さいごは オフ']},
+ build(a,v){const A=a.area;const T=v==='p'?'ABC':v===0?'TOKYO':v===2?'ABCdef':'school';
+  const P=pos(el('div','sw',null,A),212,10,800,416);el('div','swbar',v===1?'ログイン':'にゅうりょく',P);const B=el('div','swbody',null,P);
+  const lamp=pos(el('div','abs',null,B),40,24,720,60);lamp.style.cssText+=';display:flex;align-items:center;gap:16px;font-size:24px;font-weight:700';
+  const dot=el('span',null,null,lamp);dot.style.cssText='width:34px;height:34px;border-radius:50%;border:3px solid #10264d;background:#dfe5ee;flex:none';const lt=el('span',null,null,lamp);
+  const q=pos(el('div','abs',null,B),40,100,720,50);q.style.cssText+=';display:flex;align-items:center;gap:16px;font-size:22px;font-weight:700';
+  q.innerHTML=v===1?'パスワード：<span class="qbox" style="width:auto;padding:0 20px">school</span>（ぜんぶ 小文字）':'お題：<span class="qbox" style="width:auto;padding:0 20px"></span>';if(v!==1)q.querySelector('.qbox').textContent=T;
+  const ip=pos(el('input','inp abs',null,B),40,170,720,60);ip.setAttribute('autocomplete','off');ip.setAttribute('spellcheck','false');ip.setAttribute('aria-label','入力');if(v===1)ip.type='password';
+  const okb=pos(el('button','btn y abs',v===1?'ログイン':'けってい',B),250,262,300,56);
+  let caps=null,used=false;const steps=v===1?1:3;a.prog(0,steps);
+  const show=()=>{dot.style.background=caps===null?'#dfe5ee':caps?'#36c96f':'#dfe5ee';lt.textContent=caps===null?'CapsLock：キーを おすと わかるよ':caps?'CapsLock：オン（大文字に なる）':'CapsLock：オフ';};show();
+  const upd=e=>{if(!e.getModifierState)return;const c=e.getModifierState('CapsLock');if(c!==caps){caps=c;show();if(v!==1&&a.alive()){if(caps&&!used){a.prog(1,3);a.good('オンに なった！ お題を うとう');}if(!caps&&used)a.info('オフに なったよ');}}};
+  a.on(document,'keydown',e=>{upd(e);if(/^[A-Z]$/.test(e.key)&&!e.shiftKey&&e.getModifierState&&e.getModifierState('CapsLock'))used=true;
+   if(/^[A-Z]$/.test(e.key)&&e.shiftKey&&v!==1)a.info('Shift では なく、CapsLock を オンに して うとう');},true);
+  a.on(document,'keyup',upd,true);
+  a.on(ip,'input',()=>{if(v!==1&&ip.value===T&&used)a.prog(2,3);});
+  a.task(v===1?'パスワード「school」で ログインしよう。大文字に なって しまう ときは、CapsLock が オンに なって いないか たしかめよう':v===2?'「ABC」は CapsLock を オンに して、「def」は オフに もどして うとう。さいごは オフで「けってい」':'CapsLock を オンに して「'+T+'」と うち、オフに もどしてから「けってい」を おそう');
+  a.on(okb,'click',()=>{const val=ip.value;
+   if(v===1){if(val==='school'){a.prog(1,1);a.done();}else if(val.toLowerCase()==='school')a.miss('大文字に なって いるよ。CapsLock を オフに しよう');else a.miss('パスワードが ちがうよ');return;}
+   if(val!==T){a.miss(val.toLowerCase()===T.toLowerCase()?'大文字と 小文字が ちがうよ':'お題と ちがうよ');return;}
+   if(!used){a.miss('CapsLock を オンに して 大文字を うとう（Shift では なく）');return;}
+   if(caps){a.miss('さいごに CapsLock を オフに もどそう');return;}
+   a.prog(3,3);a.done();});
+  a.start=()=>ip.focus();}});
 
 /* 28 この 情報、しんじて いい？（情報モラル：情報の確かさ） */
 ICO.trust=svg('<circle cx="42" cy="42" r="26" fill="#e3eeff" '+SW+'/><path d="M62 62l24 24" stroke="#10264d" stroke-width="10" stroke-linecap="round"/><path d="M30 42l9 9 16-18" fill="none" stroke="#36c96f" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>');

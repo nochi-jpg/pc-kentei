@@ -16,15 +16,20 @@ function padSVG(g){
  return '<svg class="pad" viewBox="0 0 420 300" width="400" height="286"><defs><clipPath id="pclip"><rect x="20" y="20" width="380" height="260" rx="22"/></clipPath></defs><rect x="20" y="20" width="380" height="260" rx="22" class="pd"/>'+hl+'<line x1="20" y1="214" x2="400" y2="214" class="pl"/><line x1="210" y1="214" x2="210" y2="280" class="pl"/><text x="140" y="254" class="pt">左クリック</text><text x="280" y="254" class="pt">右クリック</text>'+fs+'</svg>';}
 function keysFig(rows){return '<div class="keyfig">'+rows.map(r=>{const k=r.slice(0,-1),l=r[r.length-1];return '<div class="keyrow">'+k.map(x=>'<span class="key">'+x+'</span>').join('<span>+</span>')+'<span class="kl">'+l+'</span></div>';}).join('')+'</div>';}
 
-function showHow(st,first,cb){const o=overlay();const h=st.how;const d=el('div','dlgbox howbox popin',null,o);d.style.position='absolute';
+function showHow(st,first,cb){const o=overlay();const H=Array.isArray(st.how)?st.how:[st.how];let pg=0;
+ const d=el('div','dlgbox howbox popin',null,o);d.style.position='absolute';
  el('div','ht',st.title+' の やり方',d);
- const fg=el('div','howfig',h.keys?keysFig(h.keys):padSVG(h.g),d);void fg;
- el('div','howcap',h.cap,d);
- const L=el('div','howlines',null,d);h.lines.forEach((t,i)=>{el('div',null,'<b>'+(i+1)+'</b><span>'+esc(t)+'</span>',L);});
- if(SCR){const P=makePasota(SCR,d,716,392,150,{still:true});P.face(first?'cheer':'normal');}
- const b=pos(el('button','btn y abs',first?'はじめる':'とじる',d),334,460,224,60);b.style.fontSize='24px';
- b.addEventListener('click',()=>{se('decide');closeOverlay();lockFor(250);if(cb)cb();});}
-
+ const fg=el('div','howfig',null,d),cap=el('div','howcap',null,d),L=el('div','howlines',null,d);
+ const draw=()=>{const h=H[pg];fg.innerHTML=h.keys?keysFig(h.keys):padSVG(h.g);cap.textContent=h.cap;L.innerHTML='';
+  h.lines.forEach((t,i)=>{el('div',null,'<b>'+(i+1)+'</b><span>'+esc(t)+'</span>',L);});
+  if(pn){pn.textContent=(pg+1)+' / '+H.length;bp.disabled=pg===0;bn.disabled=pg===H.length-1;b.classList.toggle('hide',first&&pg<H.length-1);}};
+ if(SCR){const P=makePasota(SCR,d,716,392,150,{still:true});P.face('normal');}
+ let pn=null,bp=null,bn=null;
+ if(H.length>1){const pr=el('div','pager',null,d);pos(pr,36,462);bp=el('button','btn sm','まえへ',pr);pn=el('div','pn','',pr);bn=el('button','btn sm','つぎへ',pr);bp.style.width=bn.style.width='120px';
+  bp.addEventListener('click',()=>{se('cursor');pg--;draw();});bn.addEventListener('click',()=>{se('cursor');pg++;draw();});}
+ const b=pos(el('button','btn y abs',first?'はじめる':'とじる',d),H.length>1?440:334,460,224,60);b.style.fontSize='24px';
+ b.addEventListener('click',()=>{se('decide');closeOverlay();lockFor(250);if(cb)cb();});
+ draw();}
 /* ローマ字ひょう */
 const RJ1=[['あ','a'],['い','i'],['う','u'],['え','e'],['お','o'],['か','ka'],['き','ki'],['く','ku'],['け','ke'],['こ','ko'],['さ','sa'],['し','shi'],['す','su'],['せ','se'],['そ','so'],['た','ta'],['ち','chi'],['つ','tsu'],['て','te'],['と','to'],['な','na'],['に','ni'],['ぬ','nu'],['ね','ne'],['の','no'],['は','ha'],['ひ','hi'],['ふ','fu'],['へ','he'],['ほ','ho'],['ま','ma'],['み','mi'],['む','mu'],['め','me'],['も','mo'],['や','ya'],['',''],['ゆ','yu'],['',''],['よ','yo'],['ら','ra'],['り','ri'],['る','ru'],['れ','re'],['ろ','ro'],['わ','wa'],['',''],['を','wo'],['',''],['ん','nn']];
 const RJ2=[['が','ga'],['ぎ','gi'],['ぐ','gu'],['げ','ge'],['ご','go'],['ざ','za'],['じ','ji'],['ず','zu'],['ぜ','ze'],['ぞ','zo'],['だ','da'],['ぢ','di'],['づ','du'],['で','de'],['ど','do'],['ば','ba'],['び','bi'],['ぶ','bu'],['べ','be'],['ぼ','bo'],['ぱ','pa'],['ぴ','pi'],['ぷ','pu'],['ぺ','pe'],['ぽ','po']];
@@ -124,7 +129,7 @@ function scrPlay(s,cfg){const mode=cfg.mode;const exam=mode==='exam',soft=mode!=
     setTimeout(()=>{if(SCR!==s||ctx!==c)return;afterDone(it);},1500);},
    menu(e,items){closeMenu();const p=a.rel(e);const m=el('div','cmenu',null,area);
     items.forEach(t=>{const b=el('button',null,(t.ic?IC[t.ic]:'')+'<span>'+t.t+'</span>',m);b.addEventListener('click',ev=>{ev.stopPropagation();closeMenu();t.fn();});});
-    const h=items.length*48+14;pos(m,Math.min(p.x,1224-226),Math.min(p.y,436-h));menuEl=m;return m;},
+    const h=items.length*48+14;pos(m,Math.min(p.x,1224-276),Math.min(p.y,436-h));menuEl=m;return m;},
    closeMenu:()=>closeMenu(),
    menuOpen:()=>!!menuEl,
    toast(t,x,y,ms){const d=pos(el('div','toast',null,area),x,y);d.textContent=t;a.later(()=>d.remove(),ms||1400);return d;},
